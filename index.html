@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-  <title>Google Drive Realtime quickstart</title>
+  <title>Snug-Baby App</title>
   <meta http-equiv="X-UA-Compatible" content="IE=9">
 
   <!-- Load the Realtime libraries. -->
@@ -17,9 +17,22 @@
 <!-- Start Realtime when the body has loaded. -->
 <body onLoad='startRealtime()'>
 
-  <h1>Drive Realtime API :: quickstart</h1>
+  <h1>Snug-Baby App</h1>
 
-  <button id="authorizeButton" disabled>You must authorize</button>
+  <button id="authorizeButton" disabled>Authenticate</button>
+
+  <p>Add a baby!</p>
+  <form>
+    First name: <input type="text" id="fname" name="fname"><br>
+    Last name: <input type="text" id="lname" name="lname"><br>
+    <input type="submit" id="submitButton" value="Submit">
+  </form>  
+  <p>List of Babies!</p>
+  <button id="clearButton">Clear List</button>
+  <br />
+  <textarea id="editor3" rows="15" cols="50" disabled="true"></textarea>
+
+
 
   <p>These text areas are on the same page. You can also <a target="_blank" href="#">open them on separate users'
   browsers</a> and they will remain synchronized.</p>
@@ -34,7 +47,7 @@
   <button id="redoButton" disabled>Redo</button>
 
   <script>
-    /**
+        /**
      * This function is called the first time that the Realtime model is created
      * for a file. This function should be used to initialize any values of the
      * model. In this case, we just create the single string model that will be
@@ -45,6 +58,11 @@
     function initializeModel(model) {
       var string = model.createString('Hello Realtime World!');
       model.getRoot().set('text', string);
+
+      // Initializing List
+      var collaborativeList = model.createList();
+      collaborativeList.pushAll(['Cat', 'Dog', 'Sheep', 'Chicken']);
+      model.getRoot().set('demo_list', collaborativeList);
     }
 
     /**
@@ -55,6 +73,48 @@
      * @param doc {gapi.drive.realtime.Document} the Realtime document.
      */
     function onFileLoaded(doc) {
+
+      //Let's play with list!!
+      //Load List
+      var listDemo = doc.getModel().getRoot().get('demo_list');
+      var array = listDemo.asArray();
+      var length = listDemo.length;
+
+      //Dispaly List
+      var textArea3 = document.getElementById('editor3');
+      //textArea3.value = "Default text";
+      //textArea3.value = length;
+      textArea3.value = array;
+
+      // Add logic for submit button
+      var submitButton = document.getElementById('submitButton');
+
+      submitButton.onclick = function(e) {
+        e.preventDefault();
+        var fname = document.getElementById("fname").value;
+        var lname = document.getElementById("lname").value;
+        var fullname = fname + " " + lname;
+        console.log("Adding to list baby: " + fullname);     
+        listDemo.push(fullname);
+      };
+
+      //Keeping one box updated with a custom EventListener.
+      var onListChange = function(e) {
+        textArea3.setAttribute('value', array);
+      }
+      listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, onListChange);
+      listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, onListChange);
+      listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, onListChange);
+      onListChange();
+
+      // Add logic for clear list button
+      var clearButton = document.getElementById('clearButton');
+      clearButton.onclick = function(e) {
+        console.log("Clearing list");   
+        listDemo.clear();
+      };
+
+      //########  OLD CODE #######
       var string = doc.getModel().getRoot().get('text');
 
       // Keeping one box updated with a String binder.
@@ -76,6 +136,7 @@
       // Enabling UI Elements.
       textArea1.disabled = false;
       textArea2.disabled = false;
+      textArea3.disabled = false;
 
       // Add logic for undo button.
       var model = doc.getModel();
