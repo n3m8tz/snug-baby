@@ -52,18 +52,10 @@
 		return "{nickname: '" + this.nickname +
 			 "', birthday: '" + this.birthday +
 			 "', avatarType: '" + this.avatarType +
-<<<<<<< HEAD
-			 "', color: '" + this.color.toString() + "'}";
-	};
-
-
-
-=======
 			 "', color: '" + this.color + "'}";
 	};
 
 
->>>>>>> origin/master
 	function handleFiles(files) {
 	  
 	    var file = files[0];
@@ -94,11 +86,7 @@
 	}
 
 
-<<<<<<< HEAD
-	function setInitialPage(page, custom_appear ){
-=======
 	function setInitialPage(page, custom_appear, preventPersonAppending){
->>>>>>> origin/master
 
 		//setting the default value for the element if it's undefined
 		custom_appear = (typeof custom_appear !== 'undefined') ?  custom_appear: {speed: 400};
@@ -148,70 +136,6 @@
 
 				var $checked_activity = $("#wizard_new_activity   input[type='radio']:checked");
 				var $data_diaper_type = $checked_activity.parent().prev().attr("data-activity-type");
-<<<<<<< HEAD
-
-				var babyData = '<tr class="table_row_baby_data">' +
-									'<td class="table_avatar"></td>' +
-									'<td class="table_baby_name">Name</td>' +
-									'<td class="table_baby_activity">Activity</td>' +
-									'<td class="table_feed_time">Time</td>' +
-									'<td class="table_notes">Notes</td>' +
-								'</tr>';
-
-				selector = "#posted_results_table";
-
-				$(selector).find("table > tbody").append(babyData);
-
-				$(selector)
-					.find( "table caption" )
-					.text( "Today, " + $(".datepicker").val() );
-
-				$(selector)
-					.find("table tr.table_row_baby_data")
-					.last()
-					.find("td.table_avatar")
-					.html( $("section[data-type='avatar']").find("div.avatar.selected").html() );
-
-				//making the border around the default avatar
-				if (current_baby.avatarType == "type1")
-					$(selector)
-						.find("table tr.table_row_baby_data")
-						.last()
-						.find("td.table_avatar *")
-						.css("border", "thin solid #E93578");
-
-				if (current_baby.avatarType == "type2")
-					$(selector)
-						.find("table tr.table_row_baby_data")
-						.last()
-						.find("td.table_avatar *")
-						.css("border", "thin solid #3B1D8F");
-
-				$(selector)
-					.find("table tr.table_row_baby_data")
-					.last()
-					.find("td.table_baby_name")
-					.text(current_baby.nickname);
-
-				$(selector)
-					.find("table tr.table_row_baby_data")
-					.last()
-					.find("td.table_baby_activity")
-					.html(  current_baby.activityImg );
-
-				$(selector)
-					.find("table tr.table_row_baby_data")
-					.last()
-					.find("td.table_feed_time")
-					.text($(".timepicker").val());
-
-				$(selector)
-					.find("table tr.table_row_baby_data")
-					.last()
-					.find("td.table_notes")
-					.text( current_baby.notes );
-
-=======
 				selector = "#posted_results_table";
 
 				if(!preventPersonAppending){
@@ -294,7 +218,6 @@
 							});
 
 				}
->>>>>>> origin/master
 			break;
 		}
 
@@ -324,38 +247,22 @@
 		mode = BabyTrackMode.ADD_FOOD_EVENT;
 		previousWindow = BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
 		var nickname = (current_baby.nickname !== '') ?  current_baby.nickname : "a baby";
 
 		$("#food_content").find("h1").replaceWith("<h1>What and how much did "+ nickname +" eat?</h1>");
 
 		$("#food_content > section > div > section[data-type='subactivity_food']")
-<<<<<<< HEAD
-					.click(function(){
-
-						unselectOthers({window: "ADD_FOOD_EVENT"}); 
-						$(this).find("div.subactivity_food").toggleClass("selected unselected");
-						$(this).find("input[type=radio]").prop("checked", true);
-					});
-=======
 			.click(function(){
 
 				unselectOthers({window: "ADD_FOOD_EVENT"}); 
 				$(this).find("div.subactivity_food").toggleClass("selected unselected");
 				$(this).find("input[type=radio]").prop("checked", true);
 			});
->>>>>>> origin/master
 
 		clearWindows({effect: "drop", speed: 500, direction: "left"});
 		var timer = setInterval(function(){
 			if(windowsAnimationOver){
-<<<<<<< HEAD
-=======
 				clearResults({window: "ADD_FOOD_EVENT"});
->>>>>>> origin/master
 				$("#food_content").show("drop", {direction: "right"}, 400);
 				clearInterval(timer);
 			}
@@ -425,11 +332,7 @@
 			var nickname = $("#create_person_block  input#person_nickname").val();
 			var birthday = $("#create_person_block  input#person_birthday").val();
 			var avatarType =  $("#create_person_block  .avatar.selected").attr("data-avatar-type");
-<<<<<<< HEAD
-			var color = $("#create_person_block  div#palette_field")[0];     			//in processing... not supported yet
-=======
 			var color = $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");
->>>>>>> origin/master
 
 			var $prevSibling = $("#choose_person > section > div > .add_person_button").prev();
 			if( $.isEmptyObject($prevSibling[0]) ||
@@ -643,15 +546,7 @@
 				clearInterval(timer);
 				
 				//clear all the fields in Create New Person Window
-<<<<<<< HEAD
-				$("#create_person_block  input#person_nickname").val("");
-				$("#create_person_block  input#person_birthday").val("");
-				$("#create_person_block  div.avatar.selected[data-avatar-type='type3']").toggleClass("uploaded unuploaded").empty();
-				$("#create_person_block  div.avatar.selected").toggleClass("selected unselected");
-				var color = $("#create_person_block  div#palette_field")[0];     				//in processing... not supported yet
-=======
 				clearResults({window: "CREATE_NEW_PERSON"});
->>>>>>> origin/master
 
 			}
 		}, 10);
@@ -659,19 +554,11 @@
 	}
 
 	function createCurrentBabyToSnug(){
-<<<<<<< HEAD
-		var nickname =	$("#choose_person input[type='radio']:checked").parent().text();		//should be loaded from a server
-		var birthday = undefined;																//should be loaded from a server
-		var avatarType =  $("#choose_person  .avatar.selected").attr("data-avatar-type");		//should be loaded from a server
-		var color = undefined;																	//should be loaded from a server.  in processing... not supported yet
-		//$("section[data-type='avatar']").find("div.avatar.selected").html()
-=======
 		var nickname =	$("#choose_person input[type='radio']:checked").parent().text();								//should be loaded from a server
 		var birthday = undefined;																						//should be loaded from a server
 		var avatarType =  $("#choose_person  .avatar.selected").attr("data-avatar-type");								//should be loaded from a server
 		var color =  $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");			//should be loaded from a server. 
 	 
->>>>>>> origin/master
 		current_baby = new SnugBabyPerson(nickname, birthday, avatarType, color);
 	}
 
@@ -682,11 +569,7 @@
 				var nickname = $("#create_person_block  input#person_nickname").val();
 				var birthday = $("#create_person_block  input#person_birthday").val();
 				var $avatar =  $("#create_person_block  .avatar.selected");
-<<<<<<< HEAD
-				var color = $("#create_person_block  div#palette_field");     			           //in processing... not supported yet
-=======
 				var color = $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");
->>>>>>> origin/master
 
 				if( nickname === "")
 					throw new IncorrectInputException( "Nickname is not specified!" );
@@ -775,15 +658,9 @@
 		var notes = '';
 		switch(activity){
 			case "food":
-<<<<<<< HEAD
-
-				var food_amount = $("#food_content").find("input[name=food_amount]").val();
-				var food_duration = $("#food_content").find("input[name=food_duration]").val();
-=======
 				var food_amount = $("#food_content").find("input[name=food_amount]").val();
 				var food_duration = $("#food_content").find("input[name=food_duration]").val();
 
->>>>>>> origin/master
 				if (food_amount !== ""	&&	food_duration !== "")
 					notes = food_amount + "ml in " + food_duration + " minutes";
 
@@ -792,18 +669,6 @@
 
 				if (food_amount === ""	&& 	food_duration !== "")
 					notes = food_duration + " minutes";
-<<<<<<< HEAD
-
-				break;
-
-				case "diaper":
-
-					var diaperType = $("#diaper_content").find(".subactivity_diaper.selected").css("data-diaper-type");
-
-					notes = (diaperType == "type1") ?  "Peed" : "Pooped" ;
-
-					break;
-=======
 				break;
 
 
@@ -811,7 +676,6 @@
 				var diaperType = $("#diaper_content").find(".subactivity_diaper.selected").attr("data-diaper-type");
 				notes = (diaperType == "peed") ?  "Peed" : "Pooped" ;
 				break;
->>>>>>> origin/master
 		}
 
 		return notes;
@@ -860,11 +724,7 @@
 			switch(previousWindow){
 
 				case BabyTrackWindows.NONE:
-<<<<<<< HEAD
-					break;
-=======
 				break;
->>>>>>> origin/master
 
 				case BabyTrackWindows.WELCOME_POST:
 					$("#add_event_button").show(1000);
@@ -885,26 +745,6 @@
 						if(windowsAnimationOver){
 							setInitialPage(initialPage, {effect: "drop", speed: 500});
 							clearInterval(timer);
-<<<<<<< HEAD
-							//clear all the fields in Create New Person Window
-							$("#create_person_block  input#person_nickname").val("");
-							$("#create_person_block  input#person_birthday").val("");
-							$("#create_person_block  .avatar.selected").toggleClass("selected unselected");
-							$("#create_person_block  div[data-avatar-type='type3']")
-								.toggleClass("uploaded unuploaded")
-								.empty();
-							var color = $("#create_person_block  div#palette_field")[0];     				//in processing... not supported yet
-						}
-					}, 10);
-
-
-					break;
-
-				case BabyTrackWindows.POSTED_RESULTS_TABLE:
-					//get rid of buttons NEXT and BACK
-					$("#bt_body > div").last().hide(600);
-					$("#add_event_button").show(1000);
-=======
 							
 							//clear all the fields in Create New Person Window
 							clearResults({window: "CREATE_NEW_PERSON"});
@@ -937,15 +777,10 @@
 							clearResults({window: "CREATE_NEW_PERSON"});
 						}
 					}, 10);
->>>>>>> origin/master
 				break;
 				
 				case BabyTrackWindows.CREATE_NEW_PERSON:
 					needToCorrectInputs = true;
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
 					previousWindow = BabyTrackWindows.WELCOME_POST;
 					mode = BabyTrackMode.CREATE_NEW_PERSON;
 
@@ -975,11 +810,7 @@
 				break;
 
 				case BabyTrackWindows.ADD_EVENT_WIZARD_NEW_PERSON:
-<<<<<<< HEAD
-					break;
-=======
 				break;
->>>>>>> origin/master
 				
 				case BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY:
 
@@ -993,21 +824,12 @@
 							clearInterval(timer);
 						}
 					}, 10);
-<<<<<<< HEAD
-					break;
-=======
 				break;
->>>>>>> origin/master
 
 			}
 		});
 	}
 
-<<<<<<< HEAD
-
-	/******************************************************************/
-
-=======
 	/******************************************************************/
 
 	function clearResults(obj){
@@ -1026,7 +848,6 @@
 		}
 	}
 
->>>>>>> origin/master
 	function unselectOthers(obj){
 		var selector = "";
 		switch(obj.window){
@@ -1149,20 +970,12 @@
 							previousWindow = BabyTrackWindows.POSTED_RESULTS_TABLE;
 
 							//toggling CREATE_NEW_PERSON mode
-<<<<<<< HEAD
-							mode = BabyTrackMode.CREATE_NEW_PERSON;
-=======
 							mode = BabyTrackMode.CHOOSE_EXISTED_PERSON;
->>>>>>> origin/master
 
 							var $welcome_guide_block = $("#posted_results_table");
 							
 							$welcome_guide_block.fadeOut(500, function(){	
-<<<<<<< HEAD
-							   		$("#create_person_block").fadeIn(400);
-=======
 							   		$("#choose_person").fadeIn(400);
->>>>>>> origin/master
 							});
 							//--
 
@@ -1183,22 +996,6 @@
 						if(windowsAnimationOver){
 							$("#create_person_block").fadeIn(400);
 							clearInterval(timer);
-<<<<<<< HEAD
-						}
-					}, 10);
-
-					//clear all the fields in Create New Person Window
-					$("#create_person_block  input#person_nickname").val("");
-					$("#create_person_block  input#person_birthday").val("");
-					$("#create_person_block  .avatar.selected").toggleClass("selected unselected");
-					$("#create_person_block  div[data-avatar-type='type3']")
-						.toggleClass("uploaded unuploaded")
-						.empty();
-					var color = $("#create_person_block  div#palette_field")[0];     				//in processing... not supported yet
-
-		});
-
-=======
 
 							//clear all the fields in Create New Person Window
 							clearResults({window: "CREATE_NEW_PERSON"});
@@ -1208,7 +1005,6 @@
 		});
 	    
 	    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
->>>>>>> origin/master
 	});
 
 })(jQuery)
