@@ -16,9 +16,12 @@
 	}
 
 	hr { 
+<<<<<<< HEAD
 	    display: block;
 	    margin-top: 0.5em;
 	    margin-bottom: 0.5em;
+=======
+>>>>>>> origin/master
 	    margin-left: auto;
 	    margin-right: auto;
 	    border-style: inset;
@@ -425,6 +428,7 @@
 	#create_person_block > section hr{
 		width: 90%;
 		position: relative;
+<<<<<<< HEAD
 		left: -10px;
 	}
 
@@ -445,6 +449,21 @@
 	}
 		
 
+=======
+		margin-top: 15px;
+		margin-bottom: 15px;
+		left: -10px;
+	}
+
+	#create_person_block 	div[data-avatar-type = "type1"],
+	#create_person_block 	div[data-avatar-type = "type2"]{
+		width: 65px;
+		height: 65px;
+		float: left;
+		margin-right: 20px; 
+	}
+	
+>>>>>>> origin/master
 	div[data-avatar-type = "type3"].unuploaded,
 	div[data-avatar-type = "type3"].uploaded{
 		border-radius: 6px;
@@ -470,7 +489,10 @@
 		border: 0;
 	}
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 	#create_person_block  	div[data-avatar-type = "type3"].unuploaded:before{
 		content: "Drop or click to browse";
 		font-size: 13px;
@@ -509,8 +531,27 @@
 	}
 
 
+<<<<<<< HEAD
 	#create_person_block > section > div:nth-of-type(3) #palette_field {
 		margin-bottom: 20%;
+=======
+	#create_person_block > section > div:last-of-type {
+		position: relative;
+		margin-bottom: 5px;
+	}
+
+	#create_person_block > section > div:last-of-type > div#palette_field,
+	#create_person_block > section > div:last-of-type > div#color_scheme_desc{
+		float: left;
+	}
+	
+	#color_scheme_desc{
+		font-size: 17px;
+		float:left;
+		color: #000000;
+		margin: 5px 10px;
+		text-shadow: 0px 1px 3px #D3D3D3;
+>>>>>>> origin/master
 	}
 
 	div[data-diaper-type="peed"] > img,
@@ -565,6 +606,14 @@
 		text-shadow: 0px 1px 3px #D3D3D3;
 	}
 
+<<<<<<< HEAD
+=======
+	#choose_person > section > div:first-of-type > section[data-type="avatar"]   div{
+		width: 65px;
+		height: 65px;
+	}
+
+>>>>>>> origin/master
 	#choose_person > section,
 	#wizard_new_activity > section,
 	#diaper_content > section,
@@ -738,7 +787,12 @@
 		text-align: center;
 		font-size: 15px;
 	    border-collapse: collapse;
+<<<<<<< HEAD
 	    border:2px solid #dadada;
+=======
+	    border-spacing: 0px 4px;
+	    border: 1px solid #787;
+>>>>>>> origin/master
 		border-radius:5px;
 	}
 
@@ -746,6 +800,10 @@
 		height: 20px;
 	}
 
+<<<<<<< HEAD
+=======
+	
+>>>>>>> origin/master
 	#posted_results_table   table caption{
 		text-align: left;
 		margin-bottom: 5px;
@@ -753,6 +811,21 @@
 
 	#posted_results_table   table tr.table_row_baby_data{
 		background: #FFF;
+<<<<<<< HEAD
+=======
+		border:2px solid #dadada;
+		border-radius:5px;
+		-webkit-transition: all 0.30s ease-in-out;
+		-moz-transition: all 0.30s ease-in-out;
+		-ms-transition: all 0.30s ease-in-out;
+		-o-transition: all 0.30s ease-in-out;
+		cursor: pointer;
+	}
+
+	#posted_results_table   table tr.table_row_baby_data:hover{
+		color: #FFF;
+		font-weight: bold;
+>>>>>>> origin/master
 	}
 
 	#posted_results_table   table td.table_avatar,
@@ -769,6 +842,10 @@
 	}
 
 	#posted_results_table   table td.table_avatar *{
+<<<<<<< HEAD
+=======
+		border: 2px solid #FFFFFF;
+>>>>>>> origin/master
 		border-radius: 50%;
 		width: 30px;
 		height: 30px;
@@ -797,4 +874,9 @@
 	#posted_results_table   table td.table_notes{
 		width: 35%;
 		text-align: left;
+<<<<<<< HEAD
+=======
+		padding-left: 5px;
+		font-size: 12px;
+>>>>>>> origin/master
 	}
