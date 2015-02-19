@@ -1,5 +1,3 @@
-(function($, undefined){
-
 	var BabyTrackInitialPage = {
 		NONE: 0,
 		WELCOME_POST: 1,
@@ -40,6 +38,7 @@
 	var date;
 	var needToCorrectInputs = false;
 
+(function($, undefined){
 
 	function SnugBabyPerson(nickname, birthday, avatarType, color){
 		this.nickname = nickname;
@@ -555,7 +554,7 @@
 
 	function createCurrentBabyToSnug(){
 		var nickname =	$("#choose_person input[type='radio']:checked").parent().text();								//should be loaded from a server
-		var birthday = undefined;																						//should be loaded from a server
+		var birthday = $("#create_person_block  input#person_birthday").val();											//should be loaded from a server
 		var avatarType =  $("#choose_person  .avatar.selected").attr("data-avatar-type");								//should be loaded from a server
 		var color =  $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");			//should be loaded from a server. 
 	 
@@ -874,6 +873,8 @@
 
 	$(function(){
 
+		//startGoogleDriveRealtime();
+
 		current_baby = new SnugBabyPerson();
 
 		setInitialPage(initialPage);
@@ -1005,6 +1006,8 @@
 		});
 	    
 	    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
+
+
 	});
 
 })(jQuery)
