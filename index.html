@@ -6,19 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=9">
 
   <!-- Load the Realtime libraries. -->
-<<<<<<< HEAD
   <script type="text/javascript"  src="https://apis.google.com/js/api.js"></script>
 
   <!-- Load the utility library. -->
   <script type="text/javascript"  src="realtime-client-utils.js"></script>
-=======
-  <script type="text/javascript"
-          src="https://apis.google.com/js/api.js"></script>
-
-  <!-- Load the utility library. -->
-  <script type="text/javascript"
-          src="realtime-client-utils.js"></script>
->>>>>>> origin/master
 </head>
 
 <!-- Start Realtime when the body has loaded. -->
@@ -51,7 +42,7 @@
 
   <!-- Undo and redo buttons. -->
   <button id="undoButton" disabled>Undo</button>
-
+  <button id="redoButton" disabled>Redo</button>
 
   <script>
         /**
@@ -121,10 +112,7 @@
         listDemo.clear();
       };
 
-<<<<<<< HEAD
-      
-=======
-      //########  OLD CODE     #######
+      //########  OLD CODE #######
       var string = doc.getModel().getRoot().get('text');
 
       // Keeping one box updated with a String binder.
@@ -166,7 +154,6 @@
         redoButton.disabled = !e.canRedo;
       };
       model.addEventListener(gapi.drive.realtime.EventType.UNDO_REDO_STATE_CHANGED, onUndoRedoStateChanged);
->>>>>>> parent of f556c8f... Snug-baby 4.0 Testing
     }
 
     /**
