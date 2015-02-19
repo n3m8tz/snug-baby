@@ -4,23 +4,28 @@
 	<title>Snug-Baby App</title>
   	<meta http-equiv="X-UA-Compatible" content="IE=9">
 
-	<script src="js/jquery-1.11.1.min.js"></script>
-	<script src="js/jquery-ui.min.js"></script>
-	<script src="js/snugbaby-daytime.js"></script>
-	<script src="js/main.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="js/snugbaby-daytime.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
 	<script type="text/javascript" src="js/jquery.simplecolorpicker.js"></script>
 
 	<!-- Load the Realtime libraries. -->
-  	<script type="text/javascript"  src="https://apis.google.com/js/api.js"></script>
+  	<script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
  	<!-- Load the utility library. -->
-  	<script type="text/javascript"  src="realtime-client-utils.js"></script>
+  	<script type="text/javascript" src="js/realtime-client-utils.js"></script>
+  	<!-- Load Snug Baby Goorle Drive Realtime QuickStart implementation. -->
+  	<script type="text/javascript" src="js/gapi.realtime.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="style.css" />
 	<link rel="stylesheet" type="text/css" href="jquery-ui.min.css" />
 	<link rel="stylesheet" href="jquery.simplecolorpicker.css" />
 
 </head>   
-<body>                 
+<body>                
+<button id="authorizeButton" disabled>Authenticate</button>
+<button id="submitButton"> Submit</button>
+<textarea id="textarea" cols='300' rows='300' style="display:none"></textarea>
 
 		<!--------------------------------------------------------------------------------------------------------------------------------------------->
 
@@ -47,9 +52,7 @@
 					<div class="clear"></div>
 				</div>
 
-				<div id="bt_person_profile">
-
-				</div>
+				<div id="bt_person_profile"></div>
 
 			</header>
 

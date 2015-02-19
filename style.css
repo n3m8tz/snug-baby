@@ -1,6 +1,11 @@
+	html{
+		max-height: 700px;
+		max-width: 1500px;
+	}
+
 	body{
-		background-color: #00C8F8;
-		width: 526px;
+		background-color: #65DCF7;
+
 		position: relative;
 	    -moz-user-select: none;
 		-webkit-user-select: none;
@@ -9,10 +14,14 @@
 	}
 
 	main{
-		position:absolute;
-		left:-8px;
-		top:-8px;
-		width: 540px;
+		margin-left: auto;
+		margin-right: auto;
+		overflow: hidden;
+		border-radius: 7px;
+		border-radius: 7px;
+		box-shadow: 1px 1px 5px 3px #61939F;
+		margin-top: 150px;
+		width: 38%;
 	}
 
 	hr { 
@@ -162,7 +171,9 @@
 		height: 45px;
 		width: 100%;
 		position:relative;
-		border: thin solid #00C8F8;
+		border-top-left-radius: 7px;
+		border-top-right-radius: 7px;
+		border: 2px solid #61939F;
 	}
 
 	#bt_body{
@@ -170,14 +181,16 @@
 		position:relative;
 		height:400px;
 		border: 2px solid #61939F;
-		width: 99.7%;
+		border-bottom-left-radius: 5px;
+		border-bottom-right-radius: 5px;
+		width: 100%;
 		z-index: 5;
+
 	}
 
 	#bt_header > div:first-of-type{
-		border: 1px solid #00C8F8;
 		float:left;
-		width: 90%;
+		width: 91.3%;
 		height:45px;
 		left:0;
 		top:0;
@@ -191,11 +204,12 @@
 		border-radius: 4px;
 		cursor: pointer;
 		float:left;
-		width: 9%;
+		width: 46px;
 		height:46px;
 		z-index: 4;
+		padding-right: 0;
 		margin-top: 1px;
-		right:0;
+		right:100px;
 	}
 
 
@@ -329,7 +343,8 @@
 
 	#welcome_guide_block > section > p > img {
 		top: 4px;
-		left: 10px;
+		left: 8px;
+		margin-right: 5px;
 		width: 20px;
 		height: 20px;
 		position: relative;	
