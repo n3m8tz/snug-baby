@@ -34,10 +34,7 @@
 	function initializeModel(model){
 		
 		var collaborativeList = model.createList();
-		collaborativeList.pushAll([
-			'Andrew&&&&&March 11, 1996&&&&&type2&&&&&yellow',
-			'Julia&&&&&May 23, 1996&&&&&type2&&&&&light-green'
-		]);
+		collaborativeList.pushAll(['Andrew','Julia']);
 		model.getRoot().set('data_list', collaborativeList);
 	}
 
@@ -64,8 +61,8 @@
 			var color = current_baby.color;*/
 
 			console.log("Submited button was pressed");
-			console.log("Saving information --> " + current_baby.toString());
-			listDemo.push(current_baby.toString());
+			//console.log("Saving information --> " + current_baby.toString());
+			listDemo.push('Julia');
 		});	
 
 		var onListChange = function(event){

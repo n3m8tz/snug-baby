@@ -873,7 +873,7 @@
 
 	$(function(){
 
-		//startGoogleDriveRealtime();
+		startGoogleDriveRealtime();
 
 		current_baby = new SnugBabyPerson();
 
