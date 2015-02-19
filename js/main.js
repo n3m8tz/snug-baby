@@ -874,6 +874,8 @@
 
 	$(function(){
 
+		startGoogleDriveRealtime();
+
 		current_baby = new SnugBabyPerson();
 
 		setInitialPage(initialPage);
@@ -1005,6 +1007,8 @@
 		});
 	    
 	    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
+
+
 	});
 
 })(jQuery)
