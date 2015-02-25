@@ -1,221 +1,320 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-  <title>Snug-Baby App</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=9">
+	<title>Snug-Baby App</title>
+  	<meta http-equiv="X-UA-Compatible" content="IE=9">
 
-  <!-- Load the Realtime libraries. -->
-  <script type="text/javascript"  src="https://apis.google.com/js/api.js"></script>
+	<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="js/snugbaby-daytime.js"></script>
+	<script type="text/javascript" src="js/jquery.simplecolorpicker.js"></script>
+	<script type="text/javascript" src="js/jquery.reveal.js"></script>
 
-  <!-- Load the utility library. -->
-  <script type="text/javascript"  src="realtime-client-utils.js"></script>
-</head>
+	<!-- Load the Realtime libraries. -->
+  	<script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+ 	<!-- Load the utility library. -->
+  	<script type="text/javascript" src="js/realtime-client-utils.js"></script>
+  	<!-- Load Snug Baby Google Drive Realtime QuickStart implementation. -->
+  	<script type="text/javascript" src="js/gapi.realtime.js"></script>
 
-<!-- Start Realtime when the body has loaded. -->
-<body onLoad='startRealtime()'>
+	<script type="text/javascript" src="js/main.js"></script>
 
-  <h1>Snug-Baby App</h1>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<link rel="stylesheet" type="text/css" href="jquery-ui.min.css" />
+	<link rel="stylesheet" href="jquery.simplecolorpicker.css" />
 
-  <button id="authorizeButton" disabled>Authenticate</button>
-
-  <p>Add a baby!</p>
-  <form>
-    First name: <input type="text" id="fname" name="fname"><br>
-    Last name: <input type="text" id="lname" name="lname"><br>
-    <input type="submit" id="submitButton" value="Submit">
-  </form>  
-  <p>List of Babies!</p>
-  <button id="clearButton">Clear List</button>
-  <br />
-  <textarea id="editor3" rows="15" cols="50" disabled="true"></textarea>
+</head>   
+<body>                
 
 
+		<!--------------------------------------------------------------------------------------------------------------------------------------------->
 
-  <p>These text areas are on the same page. You can also <a target="_blank" href="#">open them on separate users'
-  browsers</a> and they will remain synchronized.</p>
 
-  <!-- Text areas that will be used as our collaborative controls. -->
-  <textarea id="editor1" rows="15" cols="50" disabled="true"></textarea>
-  <textarea id="editor2" rows="15" cols="50" disabled="true"></textarea>
-  <br />
+												<!------------------------------------------------------------------------>
+												<!-----			Baby track Main Page HTML Implementation			------>
+												<!------------------------------------------------------------------------>
+		
+		<main id="bt_main_table">
+			<header id="bt_header">
 
-  <!-- Undo and redo buttons. -->
-  <button id="undoButton" disabled>Undo</button>
-  <button id="redoButton" disabled>Redo</button>
+				<div>
+					<div id = "bt_title_main">BABY TRACKER</div>
 
-  <script>
-        /**
-     * This function is called the first time that the Realtime model is created
-     * for a file. This function should be used to initialize any values of the
-     * model. In this case, we just create the single string model that will be
-     * used to control our text box. The string has a starting value of 'Hello
-     * Realtime World!', and is named 'text'.
-     * @param model {gapi.drive.realtime.Model} the Realtime root model object.
-     */
-    function initializeModel(model) {
-      var string = model.createString('Hello Realtime World!');
-      model.getRoot().set('text', string);
+					<div id="bt_search_engine_area">
+						<span title="Search"></span>
+						<div id="bt_search_engine">
+							<input type="text" name="search_field" placeholder="Search" spellcheck="false"/>
+						</div>
+						<span title="Reset results"></span>
+					</div>
 
-      // Initializing List
-      var collaborativeList = model.createList();
-      collaborativeList.pushAll(['Cat', 'Dog', 'Sheep', 'Chicken']);
-      model.getRoot().set('demo_list', collaborativeList);
-    }
+					<div class="clear"></div>
+				</div>
 
-    /**
-     * This function is called when the Realtime file has been loaded. It should
-     * be used to initialize any user interface components and event handlers
-     * depending on the Realtime model. In this case, create a text control binder
-     * and bind it to our string model that we created in initializeModel.
-     * @param doc {gapi.drive.realtime.Document} the Realtime document.
-     */
-    function onFileLoaded(doc) {
+				<div id="bt_person_profile"></div>
 
-      //Let's play with list!!
-      //Load List
-      var listDemo = doc.getModel().getRoot().get('demo_list');
-      var array = listDemo.asArray();
-      var length = listDemo.length;
+			</header>
 
-      //Dispaly List
-      var textArea3 = document.getElementById('editor3');
-      //textArea3.value = "Default text";
-      //textArea3.value = length;
-      textArea3.value = array;
+			<div id="bt_body">
+				<div id="bt_container">
 
-      // Add logic for submit button
-      var submitButton = document.getElementById('submitButton');
+					<section id="create_person_block">
+						<section>
+							<h1>Let's add a new person to track!</h1>
 
-      submitButton.onclick = function(e) {
-        e.preventDefault();
-        var fname = document.getElementById("fname").value;
-        var lname = document.getElementById("lname").value;
-        var fullname = fname + " " + lname;
-        console.log("Adding to list baby: " + fullname);     
-        listDemo.push(fullname);
-      };
+							<div>
+								<label for="person_nickname">Nickname</label>
+									<input type="text" id="person_nickname" name="person_nickname" placeholder="Alexander" spellcheck="false" /><br />
+								<label for="person_birthday">Birthday</label>
+									<input type="text" id="person_birthday" name="person_birthday" placeholder="January 17, 2015" spellcheck="false" />
+							</div>
 
-      //Keeping one box updated with a custom EventListener.
-      var onListChange = function(e) {
-        textArea3.setAttribute('value', array);
-      }
-      listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, onListChange);
-      listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, onListChange);
-      listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, onListChange);
-      onListChange();
+							<hr/>
 
-      // Add logic for clear list button
-      var clearButton = document.getElementById('clearButton');
-      clearButton.onclick = function(e) {
-        console.log("Clearing list");   
-        listDemo.clear();
-      };
+							<div> 
+								<div id="avatar_select_desc">Select Avatar:</div>
+								<div>
+									<div class="avatar unselected" data-avatar-type="type1"><img src="images/avatar-type1.png" /></div> 
+									<div class="avatar unselected" data-avatar-type="type2"><img src="images/avatar-type2.png" /></div>
+									<div class="avatar unselected unuploaded" data-avatar-type="type3"></div>
+									<input type="file" accept="image/*" />
+									<span class="clear"></span>
+								</div>
+								<div class="clear"></div>
+								<!--<input type="radio" id="female_gender" name="person_gender" checked="checked"/>
+								<label for="female_gender" data-gender-name="female">Girl</label>
 
-      //########  OLD CODE #######
-      var string = doc.getModel().getRoot().get('text');
+								<input type="radio" id="male_gender" name="person_gender" />
+								<label for="male_gender" data-gender-name="male">Boy</label>-->
+							</div>
 
-      // Keeping one box updated with a String binder.
-      var textArea1 = document.getElementById('editor1');
-      gapi.drive.realtime.databinding.bindString(string, textArea1);
+							<hr/>
 
-      // Keeping one box updated with a custom EventListener.
-      var textArea2 = document.getElementById('editor2');
-      var updateTextArea2 = function(e) {
-        textArea2.value = string;
-      };
-      string.addEventListener(gapi.drive.realtime.EventType.TEXT_INSERTED, updateTextArea2);
-      string.addEventListener(gapi.drive.realtime.EventType.TEXT_DELETED, updateTextArea2);
-      textArea2.onkeyup = function() {
-        string.setText(textArea2.value);
-      };
-      updateTextArea2();
+							<div>
+								<div id="color_scheme_desc">Color Scheme:</div>
+								<div id="palette_field">
+									<select name="colorpicker-regularfont">
+										<option value="#7bd148">Green</option>
+										<option value="#5484ed">Bold blue</option>
+										<option value="#a4bdfc">Blue</option>
+										<option value="#7ae7bf">Light green</option>
+										<option value="#51b749">Bold green</option>
+										<option value="#fbd75b">Yellow</option>
+										<option value="#ffb878">Orange</option>
+										<option value="#ff887c">Red</option>
+										<option value="#dc2127">Bold red</option>
+										<option value="#dbadff">Purple</option>
+									</select>
+								</div>
+								<div class="clear"></div>
+							</div>
+						</section>
+					</section>
+					
+					<section id="choose_person">
+						<section>
+							<h1>Choose a person</h1>
+							<div>	
+									<!--
+										Here is gonna be a block of persons... 
+										an optimized algorithm of constructuring them is required... 
+									-->
 
-      // Enabling UI Elements.
-      textArea1.disabled = false;
-      textArea2.disabled = false;
-      textArea3.disabled = false;
+									<!-- Example
+										<section data-type="avatar">
+											<div>
+												<div class = "avatar selected" data-avatar-type="type1">
+													
+												</div>
+												
+												<label>
+													<input type="radio" name="avatar_radio" checked="checked" />Andrew
+												</label>
+											</div>
+										</section>
+									-->
 
-      // Add logic for undo button.
-      var model = doc.getModel();
-      var undoButton = document.getElementById('undoButton');
-      var redoButton = document.getElementById('redoButton');
+								<div class="add_person_button">
+									<div>
+										<div></div>
+									</div>
+								</div>
 
-      undoButton.onclick = function(e) {
-        model.undo();
-      };
-      redoButton.onclick = function(e) {
-        model.redo();
-      };
+								<span class="clear"></span>
+							</div>
+						</section>
+					</section>
 
-      // Add event handler for UndoRedoStateChanged events.
-      var onUndoRedoStateChanged = function(e) {
-        undoButton.disabled = !e.canUndo;
-        redoButton.disabled = !e.canRedo;
-      };
-      model.addEventListener(gapi.drive.realtime.EventType.UNDO_REDO_STATE_CHANGED, onUndoRedoStateChanged);
-    }
+					<section id="wizard_new_activity">
+						<section>
+							<h1></h1>
+							<div>	
+									<!--
+										Here is gonna be a block of persons... 
+										an optimized algorithm of constructuring them is required... 
+									-->
 
-    /**
-     * Options for the Realtime loader.
-     */
-    var realtimeOptions = {
-      /**
-       * Client ID from the console.
-       */
-      clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
+									<section data-type="activity">
+										<div>
+											<div class = "activity selected" data-activity-type="food">
+												
+											</div>
+											
+											<label>
+												<input type="radio" name="activity_radio" />Food
+											</label>
+										</div>
+									</section>
 
-      /**
-       * The ID of the button to click to authorize. Must be a DOM element ID.
-       */
-      authButtonElementId: 'authorizeButton',
+									<section data-type="activity">
+										<div>
+											<div class = "activity unselected" data-activity-type="diaper">
+												
+											</div>
+											
+											<label>
+												<input type="radio" name="activity_radio" />Diaper
+											</label>
+										</div>
+									</section>
 
-      /**
-       * Function to be called when a Realtime model is first created.
-       */
-      initializeModel: initializeModel,
+									<section data-type="activity">
+										<div>
+											<div class = "activity unselected" data-activity-type="weight">
+												
+											</div>
+											
+											<label>
+												<input type="radio" name="activity_radio" />Weight
+											</label>
+										</div>
+									</section>
 
-      /**
-       * Autocreate files right after auth automatically.
-       */
-      autoCreate: true,
+								<div class="add_person_button">
+									<div>
+										<div></div>
+									</div>
+								</div>
 
-      /**
-       * The name of newly created Drive files.
-       */
-      defaultTitle: "New Realtime Quickstart File",
+								<span class="clear"></span>
+							</div>
+			
+						</section>
+					</section>
 
-      /**
-       * The MIME type of newly created Drive Files. By default the application
-       * specific MIME type will be used:
-       *     application/vnd.google-apps.drive-sdk.
-       */
-      newFileMimeType: null, // Using default.
+					<section id="diaper_content">
+						<section>
+							<h1></h1>
+							<p>
+								<input type="text" class="datepicker" /> 
+								<input type="text" class="timepicker" />
+							</p>
+							<hr />
+							<div>	
+									<!--
+										Here is gonna be a block of persons... 
+										an optimized algorithm of constructuring them is required... 
+									-->
 
-      /**
-       * Function to be called every time a Realtime file is loaded.
-       */
-      onFileLoaded: onFileLoaded,
+									<section data-type="subactivity_diaper">
+										<div>
+											<div class = "subactivity_diaper selected" data-diaper-type="peed"><img /></div>
+											
+											<label>
+												<input type="radio" name="subactivity_diaper_radio" />Pee
+											</label>
+										</div>
+									</section>
 
-      /**
-       * Function to be called to inityalize custom Collaborative Objects types.
-       */
-      registerTypes: null, // No action.
+									<section data-type="subactivity_diaper">
+										<div>
+											<div class = "subactivity_diaper unselected" data-diaper-type="pooped"><img /></div>
+											
+											<label>
+												<input type="radio" name="subactivity_diaper_radio" />Poop
+											</label>
+										</div>
+									</section>
+									<section class="clear"></section>
+							</div>
+						</section>
 
-      /**
-       * Function to be called after authorization and before loading files.
-       */
-      afterAuth: null // No action.
-    }
+					</section>
 
-    /**
-     * Start the Realtime loader with the options.
-     */
-    function startRealtime() {
-      var realtimeLoader = new rtclient.RealtimeLoader(realtimeOptions);
-      realtimeLoader.start();
-    }
 
-  </script>
+					<section id="food_content">
+						<section>
+							<h1></h1>
+							<p>
+								<input type="text" class="datepicker" /> 
+								<input type="text" class="timepicker" />
+							</p>
+							<hr />
+							<div>
+								<label>
+									Amount&nbsp;
+									<input type="text" name="food_amount" placeholder="0" spellcheck="false" />
+									(ml)
+								</label><br />
+								<label>
+									Duration
+									<input type="text" name="food_duration" placeholder="15" spellcheck="false" />
+									(minutes)
+								</label><br />
+
+							</div>
+			
+						</section>
+					</section>
+
+
+					<section id="posted_results_table">
+						<section>
+							<table>	
+								<caption>Caption</caption>
+									<!--
+										Here is gonna be a block of persons... 
+										an optimized algorithm of constructuring them is required... 
+									-->
+								<tbody>
+									<!--  The structure of the table with posted results 
+										<tr class="table_row_baby_data">
+											<td class="table_avatar"></td>
+											<td class="table_baby_name">Name</td>
+											<td class="table_baby_activity">Activity</td>
+											<td class="table_feed_time">Time</td>
+											<td class="table_notes">Notes</td>
+										</tr>; 
+									-->
+								</tbody>
+								
+							</table>
+						</section>
+					</section>
+
+
+					<section class="pseudo-off" id="welcome_guide_block">
+						<section>
+							<h1>Welcome to Baby Tracker!</h1>
+							<p>
+								This tool will help you track the daily activities of your baby!, such as poop, feeding, sleep cycles, etc. Welcome to baby tracker! To get started press the green button<img src="images/addevent_icon.png" /> on the button right to add a new entry
+							</p>
+							<img src="images/addevent_pointer_icon.png" />
+						</section>
+					</section>
+
+				</div>
+				<div>
+						<a class="button back" href="#" >Back</a>
+						<a class="button next" href="#" >Next</a>
+				</div>
+				<span id="add_event_button"></span>
+			</div>
+		</main> 
+
+		<button id="authorizeButton" class="authBtn" disabled>Authenticate</button>
+		<textarea id="textarea" cols='300' rows='300' style="display:none"></textarea>
+
 </body>
+
 </html>

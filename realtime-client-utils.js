@@ -193,7 +193,6 @@ rtclient.Authorizer.prototype.fetchUserId = function(callback) {
   });
 };
 
-
 /**
  * Creates a new Realtime file.
  * @param title {string} title of the newly created file.

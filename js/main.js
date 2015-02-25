@@ -605,6 +605,20 @@
 		}
 	}
 
+	function submitChangesToGoogleDrive(){
+
+		var info = {};
+
+		info['nickname'] = current_baby.nickname;
+		info['birthday'] = current_baby.birthday;
+		info['avatarType'] = current_baby.avatarType;
+		info['color'] = current_baby.color;
+
+		if (typeof listDemo === undefined) 
+			return false;
+
+		listDemo.push(info);
+	}
 
 	//The function is used to get rid of major (not popup and dropdown!!!) 
 	//windows as only one major (not popup and dropdown!!!) window may be 
@@ -704,7 +718,7 @@
 					current_baby.activityImg = "<img src = 'images/bottle.png' />";
 					current_baby.activity = "food";
 					current_baby.notes  = getDefaultNotes("food");
-
+					submitChangesToGoogleDrive();
 					openPostedResultsWindowLogic();
 					break;
 
@@ -712,9 +726,10 @@
 					current_baby.activityImg = $("#diaper_content").find(".subactivity_diaper.selected[data-diaper-type]").html();
 					current_baby.activity = "diaper";
 					current_baby.notes = getDefaultNotes("diaper");
-
+					submitChangesToGoogleDrive();
 					openPostedResultsWindowLogic();
 					break;
+
 			}
 		});
 
