@@ -1036,11 +1036,12 @@
 						switch (authButtonState){
 							case "disabled": 
 								$("#authModal").modal("hide");
+								//enabling add event button
+								$("#add_event_button").show(1000);
 							break;
 
 							case "enabled":
-								//enabling add event button
-								$("#add_event_button").show(1000);
+								
 							break;
 						}
 						clearInterval(timer);
