@@ -958,9 +958,6 @@
 					.val("");
 		});
 
-
-		$("#add_event_button").click(function(){});
-
 		var addEventBtnClickEvent = function(){
 
 			$("#add_event_button").hide(1000);
@@ -1003,6 +1000,8 @@
 					}
 			}
 		}
+
+		$("#add_event_button").click(addEventBtnClickEvent);
 
 		$("#choose_person").find(".add_person_button").click(function(){
 
