@@ -500,9 +500,9 @@ button.close {
 }
 
 .modal-vertical-centered {
-  transform: translate(0, 100%) !important;
-  -ms-transform: translate(0, 100%) !important; /* IE 9 */
-  -webkit-transform: translate(0, 100%) !important; /* Safari and Chrome */
+  transform: translate(0, 50%) !important;
+  -ms-transform: translate(0, 50%) !important; /* IE 9 */
+  -webkit-transform: translate(0, 50%) !important; /* Safari and Chrome */
   -webkit-transition: -webkit-transform 0.3s ease-out;
   -o-transition: -o-transform 0.3s ease-out;
   transition: transform 0.3s ease-out;
@@ -651,4 +651,9 @@ button.close {
 }
 .affix {
   position: fixed;
+}
+
+#authModal  .modal-content{
+  border-radius:  10px !important;
+  padding: 30px;
 }

@@ -896,7 +896,7 @@
 
 		setInitialPage(initialPage);
 		setNextBackButtonsLogic();
-
+		$("#add_event_button").hide();
 
 		//establishing default values for radio boxes
 		$("#wizard_new_activity    section[data-type='activity']:first-child   input[type=radio]").prop("checked", true);
@@ -959,7 +959,9 @@
 		});
 
 
-		$("#add_event_button").click(function(){
+		$("#add_event_button").click(function(){});
+
+		var addEventBtnClickEvent = function(){
 
 			$("#add_event_button").hide(1000);
 
@@ -1000,7 +1002,7 @@
 							break;
 					}
 			}
-		});
+		}
 
 		$("#choose_person").find(".add_person_button").click(function(){
 
@@ -1037,6 +1039,8 @@
 							break;
 
 							case "enabled":
+								//enabling add event button
+								$("#add_event_button").show(1000);
 							break;
 						}
 						clearInterval(timer);
@@ -1050,6 +1054,9 @@
 				if (authButtonState !== undefined){
 					switch (authButtonState){
 						case "disabled": 
+							//enabling add event button
+							$("#add_event_button").show(1000);
+
 						break;
 
 						case "enabled":
@@ -1061,5 +1068,6 @@
 			}catch(e){}
 		}, 10);
 	});
+
 
 })(jQuery)
