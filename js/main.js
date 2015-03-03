@@ -580,7 +580,7 @@
 
 			case "CHOOSE_EXISTED_PERSON":
 				var $avatar_checked_radio = $("#choose_person input[type='radio']:checked");
-				if( $avatar_checked_radio.length == 0 )											//if not exists
+				if( $avatar_checked_radio.length == 0 )												//if not exists
 					throw new IncorrectInputException( "A baby to snug is not selected! \n Please, create a new one." );
 				break;
 
@@ -593,7 +593,7 @@
 
 			case "ADD_DIAPER_EVENT":
 				var $diaper_checked_radio = $("#diaper_content input[type='radio']:checked");
-				if( $diaper_checked_radio.length == 0 )											//if not exists
+				if( $diaper_checked_radio.length == 0 )												//if not exists
 					throw new IncorrectInputException( "Diaper type is not selected!" );
 				break;
 
@@ -613,6 +613,11 @@
 		info['birthday'] = current_baby.birthday;
 		info['avatarType'] = current_baby.avatarType;
 		info['color'] = current_baby.color;
+<<<<<<< HEAD
+=======
+		info['date'] = $(".datepicker").val();
+		info['time'] = date.time;
+>>>>>>> origin/master
 
 		if (typeof listDemo === undefined) 
 			return false;
@@ -900,7 +905,7 @@
 		$("#wizard_new_activity    section[data-type='activity']:first-child   input[type=radio]").prop("checked", true);
 		$("#diaper_content    section[data-type='subactivity_diaper']:first-child   input[type=radio]").prop("checked", true);
 
-		//handaling an avatar selection
+		//handling an avatar selection
 		//by means of increasing/descreasing an opacity value
 		$("#create_person_block").find(".avatar").each(function(index){
 
@@ -934,9 +939,9 @@
           .find("div[data-avatar-type='type3']")
           .click(function (e) {
              $(this)
-             	.next()					
-                .click();
-              e.preventDefault(); // prevent navigation to "#"
+				.next()				
+				.click();
+				e.preventDefault(); // prevent navigation to "#"
           });
 
         $("#create_person_block")
@@ -1019,10 +1024,49 @@
 					}, 10);
 
 		});
-	    
+
+			    
 	    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
 
+<<<<<<< HEAD
 
+=======
+		$("#authorizeButton").click(function(){
+			clearInterval(timer);
+			authButtonState = undefined;
+			var timer = setInterval(function(){
+				try{
+					if (authButtonState !== undefined){
+						switch (authButtonState){
+							case "disabled": 
+								$("#authModal").modal("hide");
+							break;
+
+							case "enabled":
+							break;
+						}
+						clearInterval(timer);
+					}
+				}catch(e){}
+			}, 10);
+		});
+
+		var timer = setInterval(function(){
+			try{
+				if (authButtonState !== undefined){
+					switch (authButtonState){
+						case "disabled": 
+						break;
+
+						case "enabled":
+							$("#authModal").modal("show");
+						break;
+					}
+					clearInterval(timer);
+				}
+			}catch(e){}
+		}, 10);
+>>>>>>> origin/master
 	});
 
 })(jQuery)

@@ -93,7 +93,11 @@
 
 			//Closing Animation
 			modal.bind('reveal:close', function () {
+<<<<<<< HEAD
 			  if(!locked) {
+=======
+			  	if(!locked) {
+>>>>>>> origin/master
 					lockModal();
 					if(options.animation == "fadeAndPop") {
 						modalBG.delay(options.animationspeed).fadeOut(options.animationspeed);

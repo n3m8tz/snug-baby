@@ -1,11 +1,19 @@
 	var listDemo;
+<<<<<<< HEAD
+=======
+	var initialAppStart = false;
+>>>>>>> origin/master
 
 	var realtimeOptions = {
 
 		/**
 		* Client ID from the console.
 		*/
+<<<<<<< HEAD
 		clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
+=======
+		clientId: '777750276820-30pop6psr99unjqt34ubmrq50fi5ao76.apps.googleusercontent.com',
+>>>>>>> origin/master
  
 		/**
 		* The ID of the button to click to authorize. Must be a DOM element ID.
@@ -65,15 +73,24 @@
 
 	/**
 	* Retrieve a list of File resources.
+<<<<<<< HEAD
 	*
+=======
+	* 
+>>>>>>> origin/master
 	* @param {Function} callback Function to call when the request is complete.
 	*/
 
 	function retrieveAllFiles(callback) {
 
 		var retrievePageOfFiles = function(request, result) {
+<<<<<<< HEAD
 		request.execute(function(resp) {
 		  	result = result.concat(resp.items);
+=======
+			request.execute(function(resp) {
+		  		result = result.concat(resp.items);
+>>>>>>> origin/master
 				var nextPageToken = resp.nextPageToken;
 				if (nextPageToken) {
 					request = gapi.client.drive.files.list({
@@ -105,7 +122,11 @@
 
 		var onListChange = function(event){
 			textarea.setAttribute('value', array);
+<<<<<<< HEAD
 			console.log("TextArea value is "+textarea.value);
+=======
+			console.log("TextArea value is " + textarea.value);
+>>>>>>> origin/master
 		}
 
 		listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, onListChange);
