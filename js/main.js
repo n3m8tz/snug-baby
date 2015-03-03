@@ -1,5 +1,3 @@
-(function($, undefined){
-
 	var BabyTrackInitialPage = {
 		NONE: 0,
 		WELCOME_POST: 1,
@@ -40,6 +38,7 @@
 	var date;
 	var needToCorrectInputs = false;
 
+(function($, undefined){
 
 	function SnugBabyPerson(nickname, birthday, avatarType, color){
 		this.nickname = nickname;
@@ -555,7 +554,7 @@
 
 	function createCurrentBabyToSnug(){
 		var nickname =	$("#choose_person input[type='radio']:checked").parent().text();								//should be loaded from a server
-		var birthday = undefined;																						//should be loaded from a server
+		var birthday = $("#create_person_block  input#person_birthday").val();											//should be loaded from a server
 		var avatarType =  $("#choose_person  .avatar.selected").attr("data-avatar-type");								//should be loaded from a server
 		var color =  $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");			//should be loaded from a server. 
 	 
@@ -581,7 +580,7 @@
 
 			case "CHOOSE_EXISTED_PERSON":
 				var $avatar_checked_radio = $("#choose_person input[type='radio']:checked");
-				if( $avatar_checked_radio.length == 0 )											//if not exists
+				if( $avatar_checked_radio.length == 0 )												//if not exists
 					throw new IncorrectInputException( "A baby to snug is not selected! \n Please, create a new one." );
 				break;
 
@@ -594,7 +593,7 @@
 
 			case "ADD_DIAPER_EVENT":
 				var $diaper_checked_radio = $("#diaper_content input[type='radio']:checked");
-				if( $diaper_checked_radio.length == 0 )											//if not exists
+				if( $diaper_checked_radio.length == 0 )												//if not exists
 					throw new IncorrectInputException( "Diaper type is not selected!" );
 				break;
 
@@ -606,6 +605,22 @@
 		}
 	}
 
+	function submitChangesToGoogleDrive(){
+
+		var info = {};
+
+		info['nickname'] = current_baby.nickname;
+		info['birthday'] = current_baby.birthday;
+		info['avatarType'] = current_baby.avatarType;
+		info['color'] = current_baby.color;
+		info['date'] = $(".datepicker").val();
+		info['time'] = date.time;
+
+		if (typeof listDemo === undefined) 
+			return false;
+
+		listDemo.push(info);
+	}
 
 	//The function is used to get rid of major (not popup and dropdown!!!) 
 	//windows as only one major (not popup and dropdown!!!) window may be 
@@ -705,7 +720,7 @@
 					current_baby.activityImg = "<img src = 'images/bottle.png' />";
 					current_baby.activity = "food";
 					current_baby.notes  = getDefaultNotes("food");
-
+					submitChangesToGoogleDrive();
 					openPostedResultsWindowLogic();
 					break;
 
@@ -713,9 +728,10 @@
 					current_baby.activityImg = $("#diaper_content").find(".subactivity_diaper.selected[data-diaper-type]").html();
 					current_baby.activity = "diaper";
 					current_baby.notes = getDefaultNotes("diaper");
-
+					submitChangesToGoogleDrive();
 					openPostedResultsWindowLogic();
 					break;
+
 			}
 		});
 
@@ -886,7 +902,7 @@
 		$("#wizard_new_activity    section[data-type='activity']:first-child   input[type=radio]").prop("checked", true);
 		$("#diaper_content    section[data-type='subactivity_diaper']:first-child   input[type=radio]").prop("checked", true);
 
-		//handaling an avatar selection
+		//handling an avatar selection
 		//by means of increasing/descreasing an opacity value
 		$("#create_person_block").find(".avatar").each(function(index){
 
@@ -920,9 +936,9 @@
           .find("div[data-avatar-type='type3']")
           .click(function (e) {
              $(this)
-             	.next()					
-                .click();
-              e.preventDefault(); // prevent navigation to "#"
+				.next()				
+				.click();
+				e.preventDefault(); // prevent navigation to "#"
           });
 
         $("#create_person_block")
@@ -1005,10 +1021,45 @@
 					}, 10);
 
 		});
-	    
+
+			    
 	    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
 
+		$("#authorizeButton").click(function(){
+			clearInterval(timer);
+			authButtonState = undefined;
+			var timer = setInterval(function(){
+				try{
+					if (authButtonState !== undefined){
+						switch (authButtonState){
+							case "disabled": 
+								$("#authModal").modal("hide");
+							break;
 
+							case "enabled":
+							break;
+						}
+						clearInterval(timer);
+					}
+				}catch(e){}
+			}, 10);
+		});
+
+		var timer = setInterval(function(){
+			try{
+				if (authButtonState !== undefined){
+					switch (authButtonState){
+						case "disabled": 
+						break;
+
+						case "enabled":
+							$("#authModal").modal("show");
+						break;
+					}
+					clearInterval(timer);
+				}
+			}catch(e){}
+		}, 10);
 	});
 
 })(jQuery)

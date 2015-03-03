@@ -27,7 +27,7 @@
  * @namespace Realtime client utilities namespace.
  */
 var rtclient = rtclient || {}
-
+var authButtonState = undefined; 
 
 /**
  * OAuth 2.0 scope for installing Drive Apps.
@@ -139,9 +139,11 @@ rtclient.Authorizer.prototype.authorize = function(onAuthComplete) {
   var handleAuthResult = function(authResult) {
     if (authResult && !authResult.error) {
       _this.authButton.disabled = true;
+      authButtonState = "disabled";
       _this.fetchUserId(onAuthComplete);
     } else {
       _this.authButton.disabled = false;
+      authButtonState = "enabled";
       _this.authButton.onclick = authorizeWithPopup;
     }
   };
@@ -192,6 +194,7 @@ rtclient.Authorizer.prototype.fetchUserId = function(callback) {
     });
   });
 };
+
 
 /**
  * Creates a new Realtime file.

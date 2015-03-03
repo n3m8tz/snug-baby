@@ -1,14 +1,19 @@
+	var listDemo;
+	var initialAppStart = false;
+
 	var realtimeOptions = {
 
 		/**
 		* Client ID from the console.
 		*/
-		clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
-
+		clientId: '777750276820-30pop6psr99unjqt34ubmrq50fi5ao76.apps.googleusercontent.com',
+ 
 		/**
 		* The ID of the button to click to authorize. Must be a DOM element ID.
 		*/
 		authButtonElementId: 'authorizeButton',
+
+		appId: '500599261050',
 
 		/**
 		* Function to be called when a Realtime model is first created.
@@ -28,22 +33,67 @@
 		/**
 		* Function to be called every time a Realtime file is loaded.
 		*/
-		onFileLoaded: onFileLoaded
+		onFileLoaded: onFileLoaded,
+
+		/**
+		* The MIME type of newly created Drive Files. By default the application
+		* specific MIME type will be used:
+		*     application/vnd.google-apps.drive-sdk.
+		*/
+      	newFileMimeType: null, // Using default.
+
+		/**
+		* Function to be called to inityalize custom Collaborative Objects types.
+		*/
+		registerTypes: null, // No action.
+
+		/**
+		* Function to be called after authorization and before loading files.
+		*/
+		afterAuth: null // No action.
 	}
 
+	/*retrieveAllFiles(function(response){
+		console.log(response.toString());
+	});*/
+	
 	function initializeModel(model){
-		
-		var collaborativeList = model.createList();
-		collaborativeList.pushAll([
-			'Andrew&&&&&March 11, 1996&&&&&type2&&&&&yellow',
-			'Julia&&&&&May 23, 1996&&&&&type2&&&&&light-green'
-		]);
-		model.getRoot().set('data_list', collaborativeList);
+		//if( gapi.drive.realtime.Model.isInitialized()){
+			var collaborativeList = model.createList();
+			model.getRoot().set("data_list", collaborativeList);
+		//}
 	}
 
-	function onFileLoaded(doc) {
+	/**
+	* Retrieve a list of File resources.
+	* 
+	* @param {Function} callback Function to call when the request is complete.
+	*/
+
+	function retrieveAllFiles(callback) {
+
+		var retrievePageOfFiles = function(request, result) {
+			request.execute(function(resp) {
+		  		result = result.concat(resp.items);
+				var nextPageToken = resp.nextPageToken;
+				if (nextPageToken) {
+					request = gapi.client.drive.files.list({
+					  'pageToken': nextPageToken
+					});
+					retrievePageOfFiles(request, result);
+				} else {
+					callback(result);
+				}
+			});
+		}
+
+		var initialRequest = gapi.client.drive.files.list();
+		retrievePageOfFiles(initialRequest, []);
+	}
+
+	function onFileLoaded(doc){
 		var model = doc.getModel();
-		var listDemo = model.getRoot().get("data_list");
+		listDemo = model.getRoot().get("data_list");
 		var array = listDemo.asArray();
 		var length = listDemo.length;
 
@@ -54,28 +104,13 @@
 		var textarea = $("#textarea")[0];
 		textarea.value = array;
 
-		$("#submitButton").click(function(event){
-			event.preventDefault();
-			if(typeof current_baby === "undefined")
-				return false;
-			/*var nickname = current_baby.nickname;
-			var birthday = current_baby.birthday;
-			var avatarType = current_baby.avatarType;
-			var color = current_baby.color;*/
-
-			console.log("Submited button was pressed");
-			console.log("Saving information --> " + current_baby.toString());
-			listDemo.push(current_baby.toString());
-		});	
-
 		var onListChange = function(event){
 			textarea.setAttribute('value', array);
-			console.log("TextArea value is "+textarea.value);
+			console.log("TextArea value is " + textarea.value);
 		}
 
 		listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, onListChange);
 		listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, onListChange);
-		listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_SET, onListChange);
 		
 		onListChange();
 	}
