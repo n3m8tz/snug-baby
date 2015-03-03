@@ -613,11 +613,8 @@
 		info['birthday'] = current_baby.birthday;
 		info['avatarType'] = current_baby.avatarType;
 		info['color'] = current_baby.color;
-<<<<<<< HEAD
-=======
 		info['date'] = $(".datepicker").val();
 		info['time'] = date.time;
->>>>>>> origin/master
 
 		if (typeof listDemo === undefined) 
 			return false;
@@ -1028,9 +1025,6 @@
 			    
 	    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
 
-<<<<<<< HEAD
-
-=======
 		$("#authorizeButton").click(function(){
 			clearInterval(timer);
 			authButtonState = undefined;
@@ -1066,7 +1060,6 @@
 				}
 			}catch(e){}
 		}, 10);
->>>>>>> origin/master
 	});
 
 })(jQuery)
