@@ -13,8 +13,6 @@
 		*/
 		authButtonElementId: 'authorizeButton',
 
-		appId: '500599261050',
-
 		/**
 		* Function to be called when a Realtime model is first created.
 		*/
@@ -97,9 +95,11 @@
 		var array = listDemo.asArray();
 		var length = listDemo.length;
 
-		console.log("ListDemo object: " + listDemo);
 		console.log("array: " + array);
-		console.log("length: " + length);
+		
+		retrieveAllFiles(function(result){
+			console.log(results);
+		});
 
 		var textarea = $("#textarea")[0];
 		textarea.value = array;
