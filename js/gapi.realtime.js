@@ -1,5 +1,6 @@
 	var listDemo;
 	var initialAppStart = false;
+  var realtimeLoader;
 
 	var realtimeOptions = {
 
@@ -7,7 +8,7 @@
 		* Client ID from the console.
 		*/
 		clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
- 
+
 		/**
 		* The ID of the button to click to authorize. Must be a DOM element ID.
 		*/
@@ -23,7 +24,7 @@
 		/**
 		* Autocreate files right after auth automatically.
 		*/
-		autoCreate: true,
+		autoCreate: false,
 
 		/**
 		* The name of newly created Drive files.
@@ -50,13 +51,13 @@
 		/**
 		* Function to be called after authorization and before loading files.
 		*/
-		afterAuth: null // No action.
+		afterAuth: afterAuth // No action.
 	}
 
 	/*retrieveAllFiles(function(response){
 		console.log(response.toString());
 	});*/
-	
+
 	function initializeModel(model){
 		//if( gapi.drive.realtime.Model.isInitialized()){
 			var collaborativeList = model.createList();
@@ -66,7 +67,7 @@
 
 	/**
 	* Retrieve a list of File resources.
-	* 
+	*
 	* @param {Function} callback Function to call when the request is complete.
 	*/
 
@@ -111,11 +112,31 @@
 
 		listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, onListChange);
 		listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, onListChange);
-		
+
 		onListChange();
 	}
 
-	function startGoogleDriveRealtime(){
-		var realtimeLoader = new rtclient.RealtimeLoader(realtimeOptions);
-      	realtimeLoader.start();
+  function afterAuth () {
+    // only create/load files when no files were loaded initialy
+    gapi.client.load('drive', 'v2', function () {
+      if (rtclient.params.fileIds && rtclient.params.fileIds.length) {
+        return;
+      }
+      retrieveAllFiles(function (files) {
+        if (files.length === 0) {
+          // create new file
+          realtimeLoader.createNewFileAndRedirect();
+        } else {
+          // get last file and use it
+          // TODO: add dialog to select files
+          var file = files[files.length - 1];
+          realtimeLoader.redirectTo([file.id], realtimeLoader.authorizer.userId);
+        }
+      });
+    });
+  }
+
+	function startGoogleDriveRealtime() {
+		realtimeLoader = new rtclient.RealtimeLoader(realtimeOptions);
+    realtimeLoader.start()
 	}
