@@ -6,7 +6,6 @@
 		-moz-user-select: none;
 		-ms-user-select: none;
 		user-select: none;
-
 	}
 	
 	body{
@@ -183,8 +182,8 @@
 
 	#bt_header{
 		background-color: #00C8F8;
-		height: 45px;
-		width: calc(600px - 4px);			/*	bt_header-width = (bt_header - 2 * border-width)*/
+		height: calc(45px - 4px);			/*	full-bt_header-height = (parent-height - 2 * border-height)	*/
+		width: calc(600px - 4px);			/*	full-bt_header-width = (parent-width - 2 * border-width)	*/
 		position:relative;
 		border-top-left-radius: 7px;
 		border-top-right-radius: 7px;
@@ -198,15 +197,15 @@
 		border: 2px solid #61939F;
 		border-bottom-left-radius: 5px;
 		border-bottom-right-radius: 5px;
-		width: calc(600px - 4px);			/*	bt_body-width = (bt_body-width - 2 * border-width)*/
+		width: calc(600px - 4px);			/*	full-#bt_body-width = (parent-width - 2 * border-width)*/
 		z-index: 5;
 
 	}
 
 	#bt_header > div:first-of-type{
 		float:left;
-		width: 91.3%;
-		height:45px;
+		width:	calc(596px - 45px);			/*	full-#bt_header > div:first-of-type = (parent-content-width - bt_person_profile-width)	*/
+		height:	45px;
 		left:0;
 		top:0;
 	}
@@ -216,15 +215,17 @@
 		background: url("../images/profile avatars/Ilia.png") no-repeat 0 0;
 		background-size: cover;
 		border: 1px solid #61939F;
-		border-radius: 4px;
+		border-top-left-radius: 4px;
+		border-top-right-radius: 4px;
 		cursor: pointer;
 		float:left;
-		width: 46px;
-		height:46px;
+		width: calc(45px - 4px);			/*	full-bt_person_profile-width = (parent-height - 2 * border-width) */
+		height:	calc(45px - 4px);			/*	full-bt_person_profile-height = (parent-height - 2 * border-height) */
 		z-index: 4;
 		padding-right: 0;
 		margin-top: 1px;
-		right:100px;
+		margin-left: 1px;
+  		margin-right: 1px;
 	}
 
 
