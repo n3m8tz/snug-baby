@@ -1,15 +1,23 @@
 	var listDemo;
 	var initialAppStart = false;
+<<<<<<< HEAD
 	var realtimeLoader;
 	var DEBUG_MODE = true;
 
+=======
+  var realtimeLoader;
+>>>>>>> origin/gh-pages
 
 	var realtimeOptions = {
 
 		/**
 		* Client ID from the console.
 		*/
+<<<<<<< HEAD
 		clientId: '777750276820-30pop6psr99unjqt34ubmrq50fi5ao76.apps.googleusercontent.com',
+=======
+		clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
+>>>>>>> origin/gh-pages
 
 		/**
 		* The ID of the button to click to authorize. Must be a DOM element ID.
@@ -56,7 +64,14 @@
 		afterAuth: afterAuth // No action.
 	}
 
+<<<<<<< HEAD
 	//
+=======
+	/*retrieveAllFiles(function(response){
+		console.log(response.toString());
+	});*/
+
+>>>>>>> origin/gh-pages
 	function initializeModel(model){
 			var collaborativeList = model.createList();
 			model.getRoot().set("data_list", collaborativeList);
@@ -119,6 +134,7 @@
 		onListChange();
 	}
 
+<<<<<<< HEAD
 	function afterAuth () {
 		// only create/load files when no files were loaded initialy
 		gapi.client.load('drive', 'v2', function () {
@@ -143,3 +159,29 @@
 		realtimeLoader = new rtclient.RealtimeLoader(realtimeOptions);
 		realtimeLoader.start();
 	}
+=======
+  function afterAuth () {
+    // only create/load files when no files were loaded initialy
+    gapi.client.load('drive', 'v2', function () {
+      if (rtclient.params.fileIds && rtclient.params.fileIds.length) {
+        return;
+      }
+      retrieveAllFiles(function (files) {
+        if (files.length === 0) {
+          // create new file
+          realtimeLoader.createNewFileAndRedirect();
+        } else {
+          // get last file and use it
+          // TODO: add dialog to select files
+          var file = files[files.length - 1];
+          realtimeLoader.redirectTo([file.id], realtimeLoader.authorizer.userId);
+        }
+      });
+    });
+  }
+
+	function startGoogleDriveRealtime() {
+		realtimeLoader = new rtclient.RealtimeLoader(realtimeOptions);
+    realtimeLoader.start()
+	}
+>>>>>>> origin/gh-pages
