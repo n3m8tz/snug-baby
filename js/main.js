@@ -1180,10 +1180,10 @@
 		//The timer exists until a list of Baby's Information is found
 		var timer_initPage = setInterval(function(){
 			if(typeof listDemo !== 'undefined'){
-				 
+
 				Snug_Babies = listDemo.asArray();
 				initialPage = $.isEmptyObject(Snug_Babies) ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
-				setInitialPage(initialPage, {effect: "fadeIn"}, false);
+				setInitialPage(initialPage, {effect: "fadeIn", speed: 800}, false);
 				normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
 				normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
 				clearInterval(timer_initPage);
