@@ -2,7 +2,6 @@
 		max-height: 700px;
 		max-width: 1500px;
 	}
-	
 	*{
 		-webkit-touch-callout: none;
 		-webkit-user-select: none;
@@ -11,7 +10,6 @@
 		-ms-user-select: none;
 		user-select: none;
 	}
-	
 	body{
 		background-color: #65DCF7;
 		overflow: auto;
@@ -302,10 +300,10 @@
 	#bt_container{
 		/*border: 1px solid #61939F;
 		background-color: white;*/
-		position: absolute;
 		width:80%;
 		height: 78%;
-		top:6%;							
+		top:5%;
+		position:absolute;								
 		margin: auto 9%;
 	}
 
@@ -765,7 +763,7 @@
 
 
 	#posted_results_table{
-		
+		position: relative;
 		display: none;
 		cursor: default;
 		border-radius: 3px;
@@ -783,15 +781,6 @@
 	    border-spacing: 0px 4px;
 	    border: 1px solid #787;
 		border-radius:5px;
-	}
-
-	#posted_results_table   table  tbody{
-		display: block;
-		height: 275px;
-	    overflow-y: auto;
-	    overflow-x: hidden;
-	    border:0;
-	    outline: 0;
 	}
 
 	#posted_results_table tr{
