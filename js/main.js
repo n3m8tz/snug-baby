@@ -1,5 +1,3 @@
-	var Snug_Babies = {};
-
 	var BabyTrackInitialPage = {
 		NONE: 0,
 		WELCOME_POST: 1,
@@ -29,7 +27,7 @@
 	}
 
 	var mode = BabyTrackMode.NONE;
-	var initialPage;
+	var initialPage = BabyTrackInitialPage.WELCOME_POST;
 	var previousWindow = BabyTrackWindows.NONE;
 	//var currentWindow; // DOM object
 
@@ -42,12 +40,11 @@
 
 (function($, undefined){
 
-	function SnugBabyPerson(nickname, birthday, avatarType, color, avatarImg){
+	function SnugBabyPerson(nickname, birthday, avatarType, color){
 		this.nickname = nickname;
 		this.birthday = birthday;
 		this.avatarType = avatarType;
 		this.color = color;
-		this.avatarImg = avatarImg;
 	}
 
 	SnugBabyPerson.prototype.toString = function() {
@@ -57,114 +54,21 @@
 			 "', color: '" + this.color + "'}";
 	};
 
-	SnugBabyPerson.prototype.submit = function(){
-
-		if (typeof listDemo === 'undefined')
-			return false;
-
-		listDemo.push(this);
-		Snug_Babies = listDemo.asArray();
-	}
-
-	SnugBabyPerson.prototype.addToTable = function(table){
-		var self = this;
-			var selector = "#posted_results_table";
-					var babyData = '<tr class="table_row_baby_data">' +
-										'<td class="table_avatar"></td>' +
-										'<td class="table_baby_name">Name</td>' +
-										'<td class="table_baby_activity">Activity</td>' +
-										'<td class="table_feed_time">Time</td>' +
-										'<td class="table_notes">Notes</td>' +
-									'</tr>';
-
-					$(selector).find("table > tbody").append(babyData);
-
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_avatar")
-						.html(self.avatarImg);
-
-					//making the border around the default avatar
-					if (self.avatarType == "type1")
-						$(selector)
-							.find("tr.table_row_baby_data")
-							.last()
-							.find("td.table_avatar *")
-							.css("border", "thin solid #E93578");
-
-					if (self.avatarType == "type2")
-						$(selector)
-							.find("tr.table_row_baby_data")
-							.last()
-							.find("td.table_avatar *")
-							.css("border", "thin solid #3B1D8F");
-
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_baby_name")
-						.text(self.nickname);
-
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_baby_activity")
-						.html( self.activityImg );
-
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_feed_time")
-						.text(self.submitTime);
-
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_notes")
-						.text( self.notes );
-
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.css({ "border-color": self.color})
-						.hover(
-							function(){
-								$(this).css({
-									"background-color": $(this).css("border-color"),
-									"color": "#FFFFFF"
-								});
-							},
-							function(){
-								$(this).css({
-									"background-color": "#FFFFFF",
-									"color": "inherit"
-								});
-							}
-						);
-	
-					/*
-					$(selector)
-						.find( "caption" )
-						.text( "Today, " + $(".datepicker").val() );
-					*/
-	}
-
 
 	function handleFiles(files) {
-
+	  
 	    var file = files[0];
 	    var imageType = /image.*/;
-
+	    
 	    if (!file.type.match(imageType) || files.length != 1) {
 	      return;
 	    }
-
+	    
 	    var img = document.createElement("img");
 	    img.classList.add("obj");
 	    img.file = file;
 	    $("#create_person_block").find("div[data-avatar-type='type3']").append(img); // Assuming that "preview" is a the div output where the content will be displayed.
-
+	    
 	    var reader = new FileReader();
 	    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
 	    reader.readAsDataURL(file);
@@ -180,6 +84,7 @@
 		}
 	}
 
+
 	function setInitialPage(page, custom_appear, preventPersonAppending){
 
 		//setting the default value for the element if it's undefined
@@ -189,10 +94,10 @@
 		mode = BabyTrackMode.NONE;
 
 		switch(page){
-
+			
 			case BabyTrackInitialPage.WELCOME_POST:
 
-				//Welcome Message appears only when a user got started on using
+				//Welcome Message appears only when a user got started on using 
 				//an app for the 1st time and hadn't posted any notes yet
 
 				//handaling an arrow appearing
@@ -201,7 +106,7 @@
 
 					switch(event.type){
 
-						case "mouseover":
+						case "mouseover": 
 
 							$("#welcome_guide_block > section > p ~ img")
 								.stop()
@@ -225,14 +130,96 @@
 
 			break;
 
+
 			case BabyTrackInitialPage.POSTED_RESULTS_TABLE:
-				selector = "#posted_results_table";
 
 				var $checked_activity = $("#wizard_new_activity   input[type='radio']:checked");
 				var $data_diaper_type = $checked_activity.parent().prev().attr("data-activity-type");
-				
+				selector = "#posted_results_table";
+
+				if(!preventPersonAppending){
+
+					var babyData = '<tr class="table_row_baby_data">' +
+										'<td class="table_avatar"></td>' +
+										'<td class="table_baby_name">Name</td>' +
+										'<td class="table_baby_activity">Activity</td>' +
+										'<td class="table_feed_time">Time</td>' +
+										'<td class="table_notes">Notes</td>' +
+									'</tr>';
+
+					$(selector).find("table > tbody").append(babyData);
+
+					$(selector)
+						.find( "table caption" )
+						.text( "Today, " + $(".datepicker").val() );
+
+					$(selector)
+						.find("table tr.table_row_baby_data")
+						.last()
+						.find("td.table_avatar")
+						.html( $("section[data-type='avatar']").find("div.avatar.selected").html() );
+
+					//making the border around the default avatar
+					if (current_baby.avatarType == "type1")
+						$(selector)
+							.find("table tr.table_row_baby_data")
+							.last()
+							.find("td.table_avatar *")
+							.css("border", "thin solid #E93578");
+
+					if (current_baby.avatarType == "type2")
+						$(selector)
+							.find("table tr.table_row_baby_data")
+							.last()
+							.find("td.table_avatar *")
+							.css("border", "thin solid #3B1D8F");
+
+					$(selector)
+						.find("table tr.table_row_baby_data")
+						.last()
+						.find("td.table_baby_name")
+						.text(current_baby.nickname);
+
+					$(selector)
+						.find("table tr.table_row_baby_data")
+						.last()
+						.find("td.table_baby_activity")
+						.html(  current_baby.activityImg );
+
+					$(selector)
+						.find("table tr.table_row_baby_data")
+						.last()
+						.find("td.table_feed_time")
+						.text($(".timepicker").val());
+
+					$(selector)
+						.find("table tr.table_row_baby_data")
+						.last()
+						.find("td.table_notes")
+						.text( current_baby.notes );
+
+					$(selector)
+						.find("table tr.table_row_baby_data")
+						.last()
+						.css({ "border-color": current_baby.color})
+						.hover(
+							function(){
+								$(this).css({
+									"background-color": $(this).css("border-color"),
+									"color": "#FFFFFF"
+								});
+							},
+							function(){
+								$(this).css({
+									"background-color": "#FFFFFF",
+									"color": "inherit"
+								});
+							});
+
+				}
 			break;
 		}
+
 
 
 		switch(custom_appear.effect){
@@ -266,7 +253,7 @@
 		$("#food_content > section > div > section[data-type='subactivity_food']")
 			.click(function(){
 
-				unselectOthers({window: "ADD_FOOD_EVENT"});
+				unselectOthers({window: "ADD_FOOD_EVENT"}); 
 				$(this).find("div.subactivity_food").toggleClass("selected unselected");
 				$(this).find("input[type=radio]").prop("checked", true);
 			});
@@ -287,7 +274,7 @@
 		        // Allow: backspace, delete, tab, escape, enter and .
 		        if ($.inArray(event.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
 		             // Allow: Ctrl+A
-		            (event.keyCode == 65 && event.ctrlKey === true) ||
+		            (event.keyCode == 65 && event.ctrlKey === true) || 
 		             // Allow: home, end, left, right, down, up
 		            (event.keyCode >= 35 && event.keyCode <= 40)) {
 		                 // let it happen, don't do anything
@@ -300,186 +287,13 @@
 		    });
 	}
 
-	function normalize(obj){
-		switch(obj.window){
-			case BabyTrackWindows.CREATE_NEW_PERSON:
-			break;
-
-			case BabyTrackWindows.POSTED_RESULTS_TABLE:
-				if(!$.isEmptyObject(Snug_Babies)){		//if there any information about baby's in the database
-					//openChoosePersonWindow();
-					Snug_Babies.forEach(function(baby){
-
-						var selector = "#posted_results_table";
-						var babyData = '<tr class="table_row_baby_data">' +
-											'<td class="table_avatar"></td>' +
-											'<td class="table_baby_name">Name</td>' +
-											'<td class="table_baby_activity">Activity</td>' +
-											'<td class="table_feed_time">Time</td>' +
-											'<td class="table_notes">Notes</td>' +
-										'</tr>';
-
-						$(selector).find("table > tbody").append(babyData);
-
-						$(selector)
-							.find("table tr.table_row_baby_data")
-							.last()
-							.find("td.table_avatar")
-							.html(baby.avatarImg);
-
-						//making the border around the default avatar
-						if (baby.avatarType == "type1")
-							$(selector)
-								.find("table tr.table_row_baby_data")
-								.last()
-								.find("td.table_avatar *")
-								.css("border", "thin solid #E93578");
-
-						if (baby.avatarType == "type2")
-							$(selector)
-								.find("table tr.table_row_baby_data")
-								.last()
-								.find("td.table_avatar *")
-								.css("border", "thin solid #3B1D8F");
-
-						$(selector)
-							.find("table tr.table_row_baby_data")
-							.last()
-							.find("td.table_baby_name")
-							.text(baby.nickname);
-
-						$(selector)
-							.find("table tr.table_row_baby_data")
-							.last()
-							.find("td.table_baby_activity")
-							.html(baby.activityImg );
-
-						$(selector)
-							.find("table tr.table_row_baby_data")
-							.last()
-							.find("td.table_feed_time")
-							.text(baby.submitTime);
-
-						$(selector)
-							.find("table tr.table_row_baby_data")
-							.last()
-							.find("td.table_notes")
-							.text(baby.notes );
-
-						$(selector)
-							.find("table tr.table_row_baby_data")
-							.last()
-							.css({ "border-color": baby.color})
-							.hover(
-								function(){
-									$(this).css({
-										"background-color": $(this).css("border-color"),
-										"color": "#FFFFFF"
-									});
-								},
-								function(){
-									$(this).css({
-										"background-color": "#FFFFFF",
-										"color": "inherit"
-									});
-								}
-							);
-					});
-				}
-			break;
-
-			case BabyTrackWindows.ADD_EVENT_WIZARD_NEW_PERSON:
-			break;
-
-			case BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY:
-			break;
-
-			case BabyTrackWindows.CHOOSE_EXISTED_PERSON:
-					if(!$.isEmptyObject(Snug_Babies)){		//if there any information about baby's in the database
-						//openChoosePersonWindow();
-						$("#choose_person").find(".add_person_button").prevAll().empty();
-						Snug_Babies.forEach(function(_current_baby){
-							current_baby = _current_baby;
-
-							var newPersonAvatar = 	"<section data-type='avatar'>"+
-								"<div>"+
-									"<div class = 'avatar selected' data-avatar-type="+ current_baby.avatarType +">"+
-										current_baby.avatarImg+
-									"</div>"+
-									
-									"<label>"+
-										"<input type='radio' name='avatar_radio'/>"+
-										current_baby.nickname +
-									"</label>"+
-								"</div>"+
-							"</section>";
-							var pageAvatarCount = $("#choose_person > section > div > section").length;
-							if( pageAvatarCount == MAX_PAGE_AMOUNT_COUNT)
-								$("#choose_person > section > div").css({"overflow-y": "scroll"});
-							
-							$("#choose_person > section > div").find(".add_person_button").before( newPersonAvatar );
-
-							var $lastAvatarInList = $("#choose_person").find("section[data-type='avatar']").last();
-
-							$lastAvatarInList
-								.click(function(){
-
-									unselectOthers({window: "CHOOSE_EXISTED_PERSON"}); 
-									$(this).find("div.avatar").toggleClass("selected unselected");
-									$(this).find("input[type=radio]").prop("checked", true);
-								})
-								.dblclick(function(event){
-									$(this).hide(500,function(){																	
-										if( !$.isEmptyObject( $(this).prev()[0] )){														//if previous exists
-											if( $(this).find("label > input[type=radio]").is(":checked")){
-												$(this).prev().find("div > div[data-avatar-type]").toggleClass("selected unselected");
-												$(this).prev().find("label > input[type=radio]").prop("checked", true);
-											}
-										}else{
-											if( $(this).find("label > input[type=radio]").is(":checked")){
-												var $nextSibling = $("#choose_person > section > div > .add_person_button").prev();
-												if( !$.isEmptyObject( $(this).next()[0]) ){
-													$(this).next().find("div > div[data-avatar-type]").toggleClass("selected unselected");
-													$(this).next().find("label > input[type=radio]").prop("checked", true);
-												}
-											}
-										}
-										$(this).remove();
-									});
-								})
-								.find("input[type=radio]").prop("checked", true);
-						});
-
-						$("#choose_person").find("section[data-type='avatar']").each(function(index){
-							$avatarImg = $(this).find("div[data-avatar-type]");
-							if($avatarImg.data("avatar-type") == "type3"){
-								$avatarImg.addClass("uploaded");
-							}
-						});
-
-						unselectOthers({window: "CHOOSE_EXISTED_PERSON"}); 
-						$("#choose_person").find("section[data-type='avatar']").first().find("div.avatar").toggleClass("selected unselected");
-						$("#choose_person").find("section[data-type='avatar']").first().find("input[type=radio]").prop("checked", true);
-					}
-					
-
-					
-			break;
-
-			case BabyTrackWindows.ADD_FOOD_EVENT:
-			break;
-
-			case BabyTrackWindows.ADD_DIAPER_EVENT:
-			break;
-		}
-	}
 
 	function diaperWindowLogic(){
-
+		
 		mode = BabyTrackMode.ADD_DIAPER_EVENT;
 		previousWindow = BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY;
 
-
+		
 		//setting the default value for the element if it's undefined
 		var nickname = (current_baby.nickname !== '') ?  current_baby.nickname : "a baby";
 
@@ -488,7 +302,7 @@
 		$("#diaper_content > section > div > section[data-type='subactivity_diaper']")
 					.click(function(){
 
-						unselectOthers({window: "ADD_DIAPER_EVENT"});
+						unselectOthers({window: "ADD_DIAPER_EVENT"}); 
 						$(this).find("div.subactivity_diaper").toggleClass("selected unselected");
 						$(this).find("input[type=radio]").prop("checked", true);
 					});
@@ -504,7 +318,7 @@
 
 	function openChoosePersonWindow(){
 		try{
-			checkCorrectInputAndSubmit({window: "CREATE_NEW_PERSON"});
+			checkCorrectInputAndSubmit({window: "CREATE_NEW_PERSON"});	
 		}
 		catch(e){
 			alert(e.toString());
@@ -519,8 +333,6 @@
 			var avatarType =  $("#create_person_block  .avatar.selected").attr("data-avatar-type");
 			var color = $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");
 
-		
-			
 			var $prevSibling = $("#choose_person > section > div > .add_person_button").prev();
 			if( $.isEmptyObject($prevSibling[0]) ||
 				!needToCorrectInputs ){
@@ -533,7 +345,7 @@
 												"<div class = 'avatar selected' data-avatar-type="+ avatarType +">"+
 													"<img src='"+( avatarType == "type1" ? "images/avatar-type1.png":"images/avatar-type2.png" )+"' />"+
 												"</div>"+
-
+												
 												"<label>"+
 													"<input type='radio' name='avatar_radio'/>"+
 													nickname +
@@ -555,18 +367,16 @@
 						.html(	$("#create_person_block").find("div.avatar[data-avatar-type='type3']").html() )
 						.addClass("uploaded");
 
-				unselectOthers({window: "CHOOSE_EXISTED_PERSON"});
-
-				$("#choose_person").find("section[data-type='avatar']")
+				$("#choose_person > section > div > section[data-type='avatar']")
 					.last()
 					.click(function(){
 
-						unselectOthers({window: "CHOOSE_EXISTED_PERSON"});
+						unselectOthers({window: "CHOOSE_EXISTED_PERSON"}); 
 						$(this).find("div.avatar").toggleClass("selected unselected");
 						$(this).find("input[type=radio]").prop("checked", true);
 					})
 					.dblclick(function(event){
-						$(this).hide(500,function(){
+						$(this).hide(500,function(){																	
 							if( !$.isEmptyObject( $(this).prev()[0] )){														//if previous exists
 								if( $(this).find("label > input[type=radio]").is(":checked")){
 									$(this).prev().find("div > div[data-avatar-type]").toggleClass("selected unselected");
@@ -585,14 +395,9 @@
 						});
 					})
 					.find("label > input[type=radio]")
-					.prop("checked", true)
-					
-					$("#choose_person").find("section[data-type='avatar']")
-					.last()
-					.find("div.avatar")
-					.toggleClass("selected unselected");
+					.prop("checked", true);
 
-			}else{
+			}else{								
 				//if recently created
 
 				needToCorrectInputs = false;
@@ -647,7 +452,7 @@
 			$("#wizard_new_activity > section > div > section[data-type='activity']")
 						.click(function(){
 
-							unselectOthers({window: "ADD_EVENT_WIZARD_NEW_ACTIVITY"});
+							unselectOthers({window: "ADD_EVENT_WIZARD_NEW_ACTIVITY"}); 
 							$(this).find("div.activity").toggleClass("selected unselected");
 							$(this).find("input[type=radio]").prop("checked", true);
 						});
@@ -674,7 +479,7 @@
 
 			var $checked_activity = $("#wizard_new_activity   input[type='radio']:checked");
 			var $data_diaper_type = $checked_activity.parent().prev().attr("data-activity-type");
-
+			
 			date = new SnugBabyDayTime();
 
 			$("#diaper_content, #food_content")
@@ -738,7 +543,7 @@
 			if(windowsAnimationOver){
 				setInitialPage(initialPage, {effect: "drop", speed: 500});
 				clearInterval(timer);
-
+				
 				//clear all the fields in Create New Person Window
 				clearResults({window: "CREATE_NEW_PERSON"});
 
@@ -751,24 +556,15 @@
 		var nickname =	$("#choose_person input[type='radio']:checked").parent().text();								//should be loaded from a server
 		var birthday = $("#create_person_block  input#person_birthday").val();											//should be loaded from a server
 		var avatarType =  $("#choose_person  .avatar.selected").attr("data-avatar-type");								//should be loaded from a server
-<<<<<<< HEAD
 		var color =  $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");			//should be loaded from a server. 
-	 	var avatarImg = $("section[data-type='avatar']").find("div.avatar.selected").html();
-		current_baby = new SnugBabyPerson(nickname, birthday, avatarType, color, avatarImg);
-<<<<<<< HEAD
-=======
-=======
-		var color =  $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");			//should be loaded from a server.
-
+	 
 		current_baby = new SnugBabyPerson(nickname, birthday, avatarType, color);
->>>>>>> origin/gh-pages
->>>>>>> origin/gh-pages
 	}
 
 	function checkCorrectInputAndSubmit( object ){
 		switch( object.window ){
-
-			case "CREATE_NEW_PERSON":
+			
+			case "CREATE_NEW_PERSON":	
 				var nickname = $("#create_person_block  input#person_nickname").val();
 				var birthday = $("#create_person_block  input#person_birthday").val();
 				var $avatar =  $("#create_person_block  .avatar.selected");
@@ -809,14 +605,6 @@
 		}
 	}
 
-<<<<<<< HEAD
-	//The function is used to get rid of major (not popup and dropdown!!!) 
-	//windows as only one major (not popup and dropdown!!!) window may be 
-=======
-<<<<<<< HEAD
-	//The function is used to get rid of major (not popup and dropdown!!!) 
-	//windows as only one major (not popup and dropdown!!!) window may be 
-=======
 	function submitChangesToGoogleDrive(){
 
 		var info = {};
@@ -828,16 +616,14 @@
 		info['date'] = $(".datepicker").val();
 		info['time'] = date.time;
 
-		if (typeof listDemo === undefined)
+		if (typeof listDemo === undefined) 
 			return false;
 
 		listDemo.push(info);
 	}
 
-	//The function is used to get rid of major (not popup and dropdown!!!)
-	//windows as only one major (not popup and dropdown!!!) window may be
->>>>>>> origin/gh-pages
->>>>>>> origin/gh-pages
+	//The function is used to get rid of major (not popup and dropdown!!!) 
+	//windows as only one major (not popup and dropdown!!!) window may be 
 	//displayed on the app screen at the same time
 
 	function clearWindows(custom_appear){
@@ -917,7 +703,7 @@
 		$(document).on("click", ".button.next", function(){
 
 			switch(mode){
-
+				
 				case BabyTrackMode.CREATE_NEW_PERSON:
 					openChoosePersonWindow();
 					break;
@@ -934,12 +720,7 @@
 					current_baby.activityImg = "<img src = 'images/bottle.png' />";
 					current_baby.activity = "food";
 					current_baby.notes  = getDefaultNotes("food");
-
-					current_baby.submitDate = $(".datepicker").val();
-					current_baby.submitTime = $(".timepicker").val();
-					current_baby.addToTable( $("#posted_results_table").find("table").html() );
-					current_baby.submit();
-
+					submitChangesToGoogleDrive();
 					openPostedResultsWindowLogic();
 					break;
 
@@ -947,12 +728,7 @@
 					current_baby.activityImg = $("#diaper_content").find(".subactivity_diaper.selected[data-diaper-type]").html();
 					current_baby.activity = "diaper";
 					current_baby.notes = getDefaultNotes("diaper");
-					
-					current_baby.submitDate = $(".datepicker").val();
-					current_baby.submitTime = $(".timepicker").val();
-					current_baby.addToTable( $("#posted_results_table").find("table").html() );
-					current_baby.submit();
-
+					submitChangesToGoogleDrive();
 					openPostedResultsWindowLogic();
 					break;
 
@@ -985,7 +761,7 @@
 						if(windowsAnimationOver){
 							setInitialPage(initialPage, {effect: "drop", speed: 500});
 							clearInterval(timer);
-
+							
 							//clear all the fields in Create New Person Window
 							clearResults({window: "CREATE_NEW_PERSON"});
 						}
@@ -1012,13 +788,13 @@
 						if(windowsAnimationOver){
 							setInitialPage(initialPage, {effect: "drop", speed: 500}, true);
 							clearInterval(timer);
-
+							
 							//clear all the fields in Create New Person Window
 							clearResults({window: "CREATE_NEW_PERSON"});
 						}
 					}, 10);
 				break;
-
+				
 				case BabyTrackWindows.CREATE_NEW_PERSON:
 					needToCorrectInputs = true;
 					previousWindow = BabyTrackWindows.WELCOME_POST;
@@ -1033,9 +809,9 @@
 					}, 10);
 
 				break;
-
+				
 				case BabyTrackWindows.CHOOSE_EXISTED_PERSON:
-
+					
 					mode = BabyTrackMode.CHOOSE_EXISTED_PERSON;
 					previousWindow = BabyTrackWindows.CREATE_NEW_PERSON;
 
@@ -1051,7 +827,7 @@
 
 				case BabyTrackWindows.ADD_EVENT_WIZARD_NEW_PERSON:
 				break;
-
+				
 				case BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY:
 
 					mode = BabyTrackMode.ADD_EVENT_WIZARD_NEW_ACTIVITY;
@@ -1108,84 +884,59 @@
 		$(selector).find(".avatar, .activity, .subactivity_diaper").each(function(index){
 				if($(this).hasClass("selected"))
 					$(this).toggleClass("selected unselected");
-		});
+		}); 
 	}
 
-	
-	function authButtonClickEvent(){
-			//authButtonState is situated in "js/realtime-client-utils.js".
-			//its undefined by default so we r
-			//awaiting until 'rtclient.Authorizer.prototype.authorize' runs out of time ?
 
-			authButtonState = undefined;	
-			var timer = setInterval(function(){
-				try{
-					if (typeof authButtonState !== 'undefined' && typeof listDemo !== 'undefined'){
-						clearInterval(timer);
-						switch (authButtonState){
-							case "disabled": 
-								$("#authModal").modal("hide");
-								//enabling add event button
-								$("#add_event_button").show(1000);
-							break;
+	$(function(){
 
-							case "enabled":
-								
-							break;
-						}
-					}
-				}catch(e){}
-			}, 10);
-	} 
+		startGoogleDriveRealtime();
 
+		current_baby = new SnugBabyPerson();
 
+		setInitialPage(initialPage);
+		setNextBackButtonsLogic();
+		$("#add_event_button").hide();
 
-	function addEventButtonClickEvent(){
+		//establishing default values for radio boxes
+		$("#wizard_new_activity    section[data-type='activity']:first-child   input[type=radio]").prop("checked", true);
+		$("#diaper_content    section[data-type='subactivity_diaper']:first-child   input[type=radio]").prop("checked", true);
 
-		$("#add_event_button").hide(1000);
+		//handling an avatar selection
+		//by means of increasing/descreasing an opacity value
+		$("#create_person_block").find(".avatar").each(function(index){
 
-		//return back buttons NEXT and BACK
-		$("#bt_body > div").last().show(600);
+			$(this).bind({
 
-<<<<<<< HEAD
-		if(mode === BabyTrackMode.NONE){
-				switch(initialPage){
-=======
-<<<<<<< HEAD
-		if(mode === BabyTrackMode.NONE){
-				switch(initialPage){
-=======
+				mouseover: function(){
+					if( $(this).hasClass("unselected"))
+						$(this)
+							.stop()
+							.animate(200, 0.6);
+				},
+
+				mouseout: function(){
+
+					if( $(this).hasClass("unselected"))
+						$(this)
+							.stop()
+							.animate(200, 0.6);
+				},
+
 				click: function(){
-					unselectOthers({window: "CREATE_NEW_PERSON"});
+					unselectOthers({window: "CREATE_NEW_PERSON"}); 
 					$(this).toggleClass("selected unselected");
 				}
->>>>>>> origin/gh-pages
->>>>>>> origin/gh-pages
 
-					case BabyTrackInitialPage.WELCOME_POST:
-						previousWindow = BabyTrackWindows.WELCOME_POST;
+			});
+		});
 
-						//toggling CREATE_NEW_PERSON mode
-						mode = BabyTrackMode.CREATE_NEW_PERSON;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/gh-pages
-						var $welcome_guide_block = $("#welcome_guide_block");
-						
-						$welcome_guide_block.fadeOut(500, function(){	
-						   		$("#create_person_block").fadeIn(400);
-						});
-						//--
-<<<<<<< HEAD
-=======
-=======
 		$("#create_person_block")
           .find("div[data-avatar-type='type3']")
           .click(function (e) {
              $(this)
-				.next()
+				.next()				
 				.click();
 				e.preventDefault(); // prevent navigation to "#"
           });
@@ -1206,137 +957,73 @@
 					.find("input[name=search_field]")
 					.val("");
 		});
->>>>>>> origin/gh-pages
->>>>>>> origin/gh-pages
 
-						break;
+		var addEventBtnClickEvent = function(){
 
-					case BabyTrackInitialPage.POSTED_RESULTS_TABLE:
-						previousWindow = BabyTrackWindows.POSTED_RESULTS_TABLE;
+			$("#add_event_button").hide(1000);
 
-						//toggling CREATE_NEW_PERSON mode
-						mode = BabyTrackMode.CHOOSE_EXISTED_PERSON;
+			//return back buttons NEXT and BACK
+			$("#bt_body > div").last().show(600);
 
-						var $welcome_guide_block = $("#posted_results_table");
-						
-						$welcome_guide_block.fadeOut(500, function(){
-						   		$("#choose_person").fadeIn(400);
-						});
-						//--
+			if(mode === BabyTrackMode.NONE){
+					switch(initialPage){
 
-						break;
-				}
-		}
-	}
+						case BabyTrackInitialPage.WELCOME_POST:
+							previousWindow = BabyTrackWindows.WELCOME_POST;
 
+							//toggling CREATE_NEW_PERSON mode
+							mode = BabyTrackMode.CREATE_NEW_PERSON;
 
-<<<<<<< HEAD
-	function addPersonButtonClickEvent(){
-=======
-<<<<<<< HEAD
-	function addPersonButtonClickEvent(){
-=======
 							var $welcome_guide_block = $("#welcome_guide_block");
-
-							$welcome_guide_block.fadeOut(500, function(){
+							
+							$welcome_guide_block.fadeOut(500, function(){	
 							   		$("#create_person_block").fadeIn(400);
 							});
 							//--
->>>>>>> origin/gh-pages
->>>>>>> origin/gh-pages
 
-		addPersonButtonPressed = true;
+							break;
 
-		previousWindow = BabyTrackWindows.CHOOSE_EXISTED_PERSON;
-		mode = BabyTrackMode.CREATE_NEW_PERSON;
+						case BabyTrackInitialPage.POSTED_RESULTS_TABLE:
+							previousWindow = BabyTrackWindows.POSTED_RESULTS_TABLE;
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/gh-pages
-		clearWindows({effect: "fadeOut", speed: 500});
-		var timer = setInterval(function(){
-			if(windowsAnimationOver){
-				$("#create_person_block").fadeIn(400);
-				clearInterval(timer);
-<<<<<<< HEAD
-=======
-=======
 							//toggling CREATE_NEW_PERSON mode
 							mode = BabyTrackMode.CHOOSE_EXISTED_PERSON;
 
 							var $welcome_guide_block = $("#posted_results_table");
-
-							$welcome_guide_block.fadeOut(500, function(){
+							
+							$welcome_guide_block.fadeOut(500, function(){	
 							   		$("#choose_person").fadeIn(400);
 							});
 							//--
->>>>>>> origin/gh-pages
->>>>>>> origin/gh-pages
 
-				//clear all the fields in Create New Person Window
-				clearResults({window: "CREATE_NEW_PERSON"});
+							break;
+					}
 			}
-		}, 10);
-	}
-<<<<<<< HEAD
+		}
 
-=======
+		$("#add_event_button").click(addEventBtnClickEvent);
 
+		$("#choose_person").find(".add_person_button").click(function(){
 
+					addPersonButtonPressed = true;
 
+					previousWindow = BabyTrackWindows.CHOOSE_EXISTED_PERSON;
+					mode = BabyTrackMode.CREATE_NEW_PERSON;
 
-<<<<<<< HEAD
-	$(function(){
+					clearWindows({effect: "fadeOut", speed: 500});
+					var timer = setInterval(function(){
+						if(windowsAnimationOver){
+							$("#create_person_block").fadeIn(400);
+							clearInterval(timer);
 
-		startGoogleDriveRealtime();
-		current_baby = new SnugBabyPerson();
-		setNextBackButtonsLogic();
-		otherEventsLogic();
-
-		//The timer exists until a list of Baby's Information is found
-		var timer_initPage = setInterval(function(){
-			if(typeof listDemo !== 'undefined'){
-				
-				Snug_Babies = listDemo.asArray();
-				initialPage = $.isEmptyObject(Snug_Babies) ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
-				setInitialPage(initialPage, {effect: "fadeIn"}, false);
-				normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
-				normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
-				clearInterval(timer_initPage);
-			}
-		}, 10);
-=======
 							//clear all the fields in Create New Person Window
 							clearResults({window: "CREATE_NEW_PERSON"});
 						}
 					}, 10);
->>>>>>> origin/gh-pages
 
+		});
 
-<<<<<<< HEAD
-
-	$(function(){
-
-		startGoogleDriveRealtime();
-		current_baby = new SnugBabyPerson();
-		setNextBackButtonsLogic();
-		otherEventsLogic();
-
-		//The timer exists until a list of Baby's Information is found
-		var timer_initPage = setInterval(function(){
-			if(typeof listDemo !== 'undefined'){
-				 
-				Snug_Babies = listDemo.asArray();
-				initialPage = $.isEmptyObject(Snug_Babies) ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
-				setInitialPage(initialPage, {effect: "fadeIn"}, false);
-				normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
-				normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
-				clearInterval(timer_initPage);
-			}
-		}, 10);
-=======
-
+			    
 	    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
 
 		$("#authorizeButton").click(function(){
@@ -1346,14 +1033,14 @@
 				try{
 					if (authButtonState !== undefined){
 						switch (authButtonState){
-							case "disabled":
+							case "disabled": 
 								$("#authModal").modal("hide");
 								//enabling add event button
 								$("#add_event_button").show(1000);
 							break;
 
 							case "enabled":
-
+								
 							break;
 						}
 						clearInterval(timer);
@@ -1361,109 +1048,26 @@
 				}catch(e){}
 			}, 10);
 		});
->>>>>>> origin/gh-pages
->>>>>>> origin/gh-pages
 
-		//The timer exists until a 
-		var timer_auth = setInterval(function(){
+		var timer = setInterval(function(){
 			try{
-				if (typeof authButtonState !== 'undefined'){
-					clearInterval(timer_auth);
+				if (authButtonState !== undefined){
 					switch (authButtonState){
-						case "disabled":
+						case "disabled": 
 							//enabling add event button
-							$("#add_event_button").show(1000);	
-														
+							$("#add_event_button").show(1000);
+
 						break;
 
 						case "enabled":
 							$("#authModal").modal("show");
 						break;
 					}
+					clearInterval(timer);
 				}
 			}catch(e){}
 		}, 10);
-
-		
 	});
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/gh-pages
-	function otherEventsLogic(){
-
-			$("#add_event_button").hide();
-
-			//establishing default values for radio boxes
-			$("#wizard_new_activity    section[data-type='activity']:first-child   input[type=radio]").prop("checked", true);
-			$("#diaper_content    section[data-type='subactivity_diaper']:first-child   input[type=radio]").prop("checked", true);
-
-			//handling an avatar selection
-			//by means of increasing/descreasing an opacity value
-			$("#create_person_block").find(".avatar").each(function(index){
-
-				$(this).bind({
-
-					mouseover: function(){
-						if( $(this).hasClass("unselected"))
-							$(this)
-								.stop()
-								.animate(200, 0.6);
-					},
-
-					mouseout: function(){
-
-						if( $(this).hasClass("unselected"))
-							$(this)
-								.stop()
-								.animate(200, 0.6);
-					},
-
-					click: function(){
-						unselectOthers({window: "CREATE_NEW_PERSON"}); 
-						$(this).toggleClass("selected unselected");
-					}
-
-				});
-			});
-
-
-			$("#create_person_block")
-				.find("div[data-avatar-type='type3']")
-				.click(function (event) {
-					$(this).next().click();
-					event.preventDefault(); // prevent navigation to "#"
-				});
-
-	        $("#create_person_block")
-				.find("input[type=file]")
-				.change(function (){
-					if( $(this).prev().hasClass("unuploaded") )
-						$(this).prev().toggleClass("uploaded unuploaded");
-					else
-						$(this).prev().empty();
-					handleFiles(this.files);
-				});
-
-			$("#bt_search_engine_area > span").last().click(function(){
-					$(this).prev().find("input[name=search_field]").val("");
-			});
-			
-
-			$("#add_event_button").click(addEventButtonClickEvent);
-			$("#choose_person").find(".add_person_button").click(addPersonButtonClickEvent);
-			$("#authorizeButton").click(authButtonClickEvent);
-				    
-		    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
-
-	}
 
 })(jQuery)
-
-<<<<<<< HEAD
-=======
-=======
-})(jQuery)
->>>>>>> origin/gh-pages
->>>>>>> origin/gh-pages
