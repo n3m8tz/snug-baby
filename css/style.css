@@ -9,7 +9,7 @@
 	}
 	
 	body{
-		background-color: #65DCF7;
+		background-color: #FFFFFF;
 		overflow: auto;
 		margin:0;
 		padding:0;
@@ -37,16 +37,18 @@
 	div[data-activity-type = "food"],
 	div[data-activity-type = "diaper"],
 	div[data-activity-type = "weight"]{
-		background: url("../images/activities.png") no-repeat 0 0;
+		/* background: url("../images/activities.png") no-repeat 0 0;  */
 		width: 65px;
 		height: 65px;
 	}
 
 	div[data-activity-type = "food"]{
 		background-position: 0 0;
+		background: url("../images/bottle.png") no-repeat 0 0;
 	}
 
-	div[data-activity-type = "diaper"]{
+	div[data-activity-type = "diaper"]{	
+		background: url("../images/pee.png") no-repeat 0 0;
 		background-position: -65px 0;
 	}
 
@@ -181,7 +183,7 @@
 
 
 	#bt_header{
-		background-color: #00C8F8;
+		background-color: #13BDD4;
 		height: calc(45px - 4px);			/*	full-bt_header-height = (parent-height - 2 * border-height)	*/
 		width: calc(600px - 4px);			/*	full-bt_header-width = (parent-width - 2 * border-width)	*/
 		position:relative;
@@ -191,7 +193,7 @@
 	}
 
 	#bt_body{
-		background-color: #EBEBEB;
+		background-color: #FFFFFF;
 		position:relative;
 		height:400px;
 		border: 2px solid #61939F;
