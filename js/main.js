@@ -13,7 +13,9 @@
 		ADD_EVENT_WIZARD_NEW_ACTIVITY: 3,
 		CHOOSE_EXISTED_PERSON: 4,
 		ADD_FOOD_EVENT: 5,
-		ADD_DIAPER_EVENT: 6
+		ADD_DIAPER_EVENT: 6,
+		ADD_VITAMINS_EVENT: 7,
+		ADD_WEIGHT_EVENT: 8
 	}
 
 	var BabyTrackWindows = {
@@ -25,7 +27,9 @@
 		ADD_EVENT_WIZARD_NEW_ACTIVITY: 5,
 		CHOOSE_EXISTED_PERSON: 6,
 		ADD_FOOD_EVENT: 7,
-		ADD_DIAPER_EVENT: 8
+		ADD_DIAPER_EVENT: 8,
+		ADD_VITAMINS_EVENT: 9,
+		ADD_WEIGHT_EVENT: 10
 	}
 
 	var mode = BabyTrackMode.NONE;
@@ -254,52 +258,6 @@
 
 	}
 
-	function foodWindowLogic(){
-
-		mode = BabyTrackMode.ADD_FOOD_EVENT;
-		previousWindow = BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY;
-
-		var nickname = (current_baby.nickname !== '') ?  current_baby.nickname : "a baby";
-
-		$("#food_content").find("h1").replaceWith("<h1>What and how much did "+ nickname +" eat?</h1>");
-
-		$("#food_content > section > div > section[data-type='subactivity_food']")
-			.click(function(){
-
-				unselectOthers({window: "ADD_FOOD_EVENT"}); 
-				$(this).find("div.subactivity_food").toggleClass("selected unselected");
-				$(this).find("input[type=radio]").prop("checked", true);
-			});
-
-		clearWindows({effect: "drop", speed: 500, direction: "left"});
-		var timer = setInterval(function(){
-			if(windowsAnimationOver){
-				clearResults({window: "ADD_FOOD_EVENT"});
-				$("#food_content").show("drop", {direction: "right"}, 400);
-				clearInterval(timer);
-			}
-		}, 10);
-
-
-		//Allowing to input only numbers into textboxes
-		$( "#food_content" ).find( "input[name=food_amount], input[name=food_duration]" )
-			.keydown(function (event) {
-		        // Allow: backspace, delete, tab, escape, enter and .
-		        if ($.inArray(event.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
-		             // Allow: Ctrl+A
-		            (event.keyCode == 65 && event.ctrlKey === true) || 
-		             // Allow: home, end, left, right, down, up
-		            (event.keyCode >= 35 && event.keyCode <= 40)) {
-		                 // let it happen, don't do anything
-		                 return;
-		        }
-		        // Ensure that it is a number and stop the keypress
-		        if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105)) {
-		            event.preventDefault();
-		        }
-		    });
-	}
-
 	function normalize(obj){
 		switch(obj.window){
 			case BabyTrackWindows.CREATE_NEW_PERSON:
@@ -474,6 +432,54 @@
 		}
 	}
 
+	//The following function are responsible for Activity Logic
+
+	function foodWindowLogic(){
+
+		mode = BabyTrackMode.ADD_FOOD_EVENT;
+		previousWindow = BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY;
+
+		var nickname = (current_baby.nickname !== '') ?  current_baby.nickname : "a baby";
+
+		$("#food_content").find("h1").replaceWith("<h1>What and how much did "+ nickname +" eat?</h1>");
+
+		$("#food_content > section > div > section[data-type='subactivity_food']")
+			.click(function(){
+
+				unselectOthers({window: "ADD_FOOD_EVENT"}); 
+				$(this).find("div.subactivity_food").toggleClass("selected unselected");
+				$(this).find("input[type=radio]").prop("checked", true);
+			});
+
+		clearWindows({effect: "drop", speed: 500, direction: "left"});
+		var timer = setInterval(function(){
+			if(windowsAnimationOver){
+				clearResults({window: "ADD_FOOD_EVENT"});
+				$("#food_content").show("drop", {direction: "right"}, 400);
+				clearInterval(timer);
+			}
+		}, 10);
+
+
+		//Allowing to input only numbers into textboxes
+		$( "#food_content" ).find( "input[name=food_amount], input[name=food_duration]" )
+			.keydown(function (event) {
+		        // Allow: backspace, delete, tab, escape, enter and .
+		        if ($.inArray(event.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+		             // Allow: Ctrl+A
+		            (event.keyCode == 65 && event.ctrlKey === true) || 
+		             // Allow: home, end, left, right, down, up
+		            (event.keyCode >= 35 && event.keyCode <= 40)) {
+		                 // let it happen, don't do anything
+		                 return;
+		        }
+		        // Ensure that it is a number and stop the keypress
+		        if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105)) {
+		            event.preventDefault();
+		        }
+		    });
+	}
+
 	function diaperWindowLogic(){
 		
 		mode = BabyTrackMode.ADD_DIAPER_EVENT;
@@ -496,11 +502,110 @@
 		clearWindows({effect: "drop", speed: 500, direction: "left"});
 		var timer = setInterval(function(){
 			if(windowsAnimationOver){
+				clearResults({window: "ADD_DIAPER_EVENT"});
 				$("#diaper_content").show("drop", {direction: "right"}, 400);
 				clearInterval(timer);
 			}
 		}, 10);
 	}
+
+	function vitaminsWindowLogic(){
+		
+		mode = BabyTrackMode.ADD_VITAMINS_EVENT;
+		previousWindow = BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY;
+
+		
+		//setting the default value for the element if it's undefined
+		var nickname = (current_baby.nickname !== '') ?  current_baby.nickname : "a baby";
+
+		$("#vitamins_content").find("h1").replaceWith("<h1>"+ nickname +"'Vitamins type!</h1>");
+
+		$("#vitamins_content > section > div > section[data-type='subactivity_vitamin']")
+					.click(function(){
+
+						unselectOthers({window: "ADD_VITAMIN_EVENT"}); 
+						$(this).find("div.subactivity_diaper").toggleClass("selected unselected");
+						$(this).find("input[type=radio]").prop("checked", true);
+					});
+
+		clearWindows({effect: "drop", speed: 500, direction: "left"});
+		var timer = setInterval(function(){
+			if(windowsAnimationOver){
+				clearResults({window: "ADD_VITAMIN_EVENT"});
+				$("#vitamin_content").show("drop", {direction: "right"}, 400);
+				clearInterval(timer);
+			}
+		}, 10);
+
+
+		//Allowing to input only numbers into textboxes
+		$( "#vitamin_content" ).find( "input[name=vitamin_type], input[name=vitamin_type2" )
+			.keydown(function (event) {
+		        // Allow: backspace, delete, tab, escape, enter and .
+		        if ($.inArray(event.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+		             // Allow: Ctrl+A
+		            (event.keyCode == 65 && event.ctrlKey === true) || 
+		             // Allow: home, end, left, right, down, up
+		            (event.keyCode >= 35 && event.keyCode <= 40)) {
+		                 // let it happen, don't do anything
+		                 return;
+		        }
+		        // Ensure that it is a number and stop the keypress
+		        if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105)) {
+		            event.preventDefault();
+		        }
+		    });
+	}
+
+	function wieghtWindowLogic(){
+		
+		mode = BabyTrackMode.ADD_VITAMINS_EVENT;
+		previousWindow = BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY;
+
+		
+		//setting the default value for the element if it's undefined
+		var nickname = (current_baby.nickname !== '') ?  current_baby.nickname : "a baby";
+
+		$("#vitamins_content").find("h1").replaceWith("<h1>"+ nickname +"'Vitamins type!</h1>");
+
+		$("#vitamins_content > section > div > section[data-type='subactivity_vitamin']")
+					.click(function(){
+
+						unselectOthers({window: "ADD_VITAMIN_EVENT"}); 
+						$(this).find("div.subactivity_diaper").toggleClass("selected unselected");
+						$(this).find("input[type=radio]").prop("checked", true);
+					});
+
+		clearWindows({effect: "drop", speed: 500, direction: "left"});
+		var timer = setInterval(function(){
+			if(windowsAnimationOver){
+				clearResults({window: "ADD_VITAMIN_EVENT"});
+				$("#vitamin_content").show("drop", {direction: "right"}, 400);
+				clearInterval(timer);
+			}
+		}, 10);
+
+
+		//Allowing to input only numbers into textboxes
+		$( "#vitamin_content" ).find( "input[name=vitamin_type], input[name=vitamin_type2" )
+			.keydown(function (event) {
+		        // Allow: backspace, delete, tab, escape, enter and .
+		        if ($.inArray(event.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+		             // Allow: Ctrl+A
+		            (event.keyCode == 65 && event.ctrlKey === true) || 
+		             // Allow: home, end, left, right, down, up
+		            (event.keyCode >= 35 && event.keyCode <= 40)) {
+		                 // let it happen, don't do anything
+		                 return;
+		        }
+		        // Ensure that it is a number and stop the keypress
+		        if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105)) {
+		            event.preventDefault();
+		        }
+		    });
+	}
+
+
 
 	function openChoosePersonWindow(){
 		try{
@@ -616,7 +721,6 @@
 			mode = BabyTrackMode.CHOOSE_EXISTED_PERSON;
 			previousWindow = BabyTrackWindows.CREATE_NEW_PERSON;
 		//////
-
 	}
 
 
@@ -662,7 +766,6 @@
 	}
 
 
-
 	function openSelectedActivity(){
 
 			try{
@@ -677,11 +780,11 @@
 			
 			date = new SnugBabyDayTime();
 
-			$("#diaper_content, #food_content")
+			$("#diaper_content, #food_content, #weight_content, $vitamins_content")
 				.find("input.datepicker")
 				.val(date.shortMonth + ", " + date.year);
 
-			$("#diaper_content, #food_content")
+			$("#diaper_content, #food_content, #weight_content, $vitamins_content")
 				.find("input.timepicker")
 				.val(date.time);
 
@@ -696,6 +799,10 @@
 
 				case "weight":
 					break;
+
+				case "vitamins":
+					break;
+
 			}
 	}
 
@@ -869,6 +976,21 @@
 				var diaperType = $("#diaper_content").find(".subactivity_diaper.selected").attr("data-diaper-type");
 				notes = (diaperType == "peed") ?  "Peed" : "Pooped" ;
 				break;
+			
+			case "vitamins":
+				var vitamins_type1 = $("#vitamins_type1").find("input[name=vitamins_type1]").val();
+				var vitamins_type2 = $("#vitamins_type2").find("input[name=vitamins_type1]").val();
+
+				if (vitamins_type1 !== ""	&&	vitamins_type2 !== "")
+					notes = vitamins_type1 + "ml in " + food_duration + " ml";
+
+				if (vitamins_type1 !== ""	&& 	vitamins_type2 === "")
+					notes = vitamins_type1 + "ml";
+
+				if (food_amount === ""	&& 	vitamins_type2 !== "")
+					notes = vitamins_type2 + " ml";
+				break;
+
 		}
 
 		return notes;
@@ -919,6 +1041,19 @@
 
 					openPostedResultsWindowLogic();
 					break;
+
+				case BabyTrackMode.ADD_VITAMIN_EVENT:
+					current_baby.activityImg = $("#vitamins_content").find(".subactivity_vitamins.selected[data-vitamins-type]").html();
+					current_baby.activity = "vitamins";
+					current_baby.notes = getDefaultNotes("vitamins");
+					
+					current_baby.submitDate = $(".datepicker").val();
+					current_baby.submitTime = $(".timepicker").val();
+					current_baby.addToTable( $("#posted_results_table").find("table").html() );
+					current_baby.submit();
+
+					openPostedResultsWindowLogic();
+					break;	
 
 			}
 		});
