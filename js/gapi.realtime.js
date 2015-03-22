@@ -38,6 +38,7 @@
 		*/
 		onFileLoaded: onFileLoaded,
 
+
 		/**
 		* The MIME type of newly created Drive Files. By default the application
 		* specific MIME type will be used:
@@ -104,6 +105,23 @@
 		for(var i=0; i< 5; i++){
 			console.log("");
 		}
+
+		console.log('Retrieve Collaborators START');
+		var collaborators = doc.getCollaborators();
+	    var collaboratorCount = collaborators.length;
+	    console.log(collaboratorCount + ' collaborators:');
+	    var photoUrl = "";
+	    for (var i = 0; i < collaboratorCount; i++) {
+		    var user = collaborators[i];
+		    console.log('Name: ' + user.displayName);
+		    console.log('Is me:' + user.isMe);
+		    console.log('photo url:' + user.photoUrl);
+		    if (user.isMe) {
+		    	photoUrl = user.photoUrl;
+		    	document.getElementById("bt_person_profile").style.background = 'url(' + photoUrl + ')';
+		    }
+	  	}
+	  	console.log('Retrieve Collaborators STOP');
 
 		var textarea = $("#textarea")[0];
 		textarea.value = array;

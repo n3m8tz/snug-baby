@@ -780,11 +780,11 @@
 			
 			date = new SnugBabyDayTime();
 
-			$("#diaper_content, #food_content, #weight_content, $vitamins_content")
+			$("#diaper_content, #food_content, #weight_content, #vitamins_content")
 				.find("input.datepicker")
 				.val(date.shortMonth + ", " + date.year);
 
-			$("#diaper_content, #food_content, #weight_content, $vitamins_content")
+			$("#diaper_content, #food_content, #weight_content, #vitamins_content")
 				.find("input.timepicker")
 				.val(date.time);
 
