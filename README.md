@@ -1,7 +1,7 @@
 # Snug-Baby
 
 
-*Synopsis
+Synopsis
 
 Snug-baby is an application that tracks your everyday activities. 
 
