@@ -1,0 +1,150 @@
+	
+	.user-select(@selection){
+		-webkit-touch-callout: @selection;
+		-webkit-user-select: @selection;
+		-khtml-user-select: @selection;
+		-moz-user-select: @selection;
+		-ms-user-select: @selection;
+		user-select: @selection;
+	}
+
+	.box-shadow(@arguments){
+		-webkit-box-shadow: @arguments;
+		-moz-box-shadow: @arguments;
+		box-shadow: @arguments;
+	}
+
+	.transform(@arguments){
+		-webkit-transform: @arguments;
+		-moz-transform: @arguments;
+		-ms-transform: @arguments;
+		-o-transform: @arguments;
+		transform: @arguments;
+	}
+
+	.transition(@property: all, @duration: 0.2s, @ease: ease-out){
+		-webkit-transition: @arguments;
+		-moz-transition: @arguments;
+		-ms-transition: @arguments;
+		-o-transition: @arguments;
+		transition: @arguments;
+	}
+
+	.border-radius(@radius: 0){
+		-webkit-border-radius: @radius;
+		-moz-border-radius:    @radius;
+		border-radius:         @radius;
+
+		-moz-background-clip:    padding-box;
+		-webkit-background-clip: padding-box;
+		background-clip:         padding-box;
+	}
+
+	.border-radiuses(@topright: 0, @bottomright: 0, @bottomleft: 0, @topleft: 0) {
+		-webkit-border-top-right-radius:    @topright;
+		-moz-border-radius-topright:        @topright;
+		border-top-right-radius:            @topright;
+
+		-webkit-border-bottom-right-radius: @bottomright;
+		-moz-border-radius-bottomright:     @bottomright;
+		border-bottom-right-radius:         @bottomright;
+
+		-webkit-border-top-left-radius:     @topleft;
+		-moz-border-radius-topleft:         @topleft;
+		border-top-left-radius:             @topleft;
+
+		-webkit-border-bottom-left-radius:  @bottomleft;
+		-moz-border-radius-bottomleft:      @bottomleft;
+		border-bottom-left-radius:          @bottomleft;
+		
+		-moz-background-clip:    padding-box; 
+		-webkit-background-clip: padding-box; 
+		background-clip:         padding-box; 
+	}
+
+	.gradient(@default-color: #65DCF7, @colors ){
+
+		@length: length( @colors );
+
+		@two-colors: `@{length} == 2`;
+		@three-colors: `@{length} == 3`;
+
+		& when (@two-colors){
+			@param-start: 5;
+			@param-stop: 100;
+
+			@start: extract(@colors, 1);
+			@stop: extract(@colors, 2);
+			
+			background:	@default-color;
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(@param-start/100, @start), color-stop(@param-start/100, @stop));
+			background: -moz-linear-gradient(top, @start percentage(@param-start), @stop percentage(@param-stop));
+			background: -webkit-linear-gradient(top, @start percentage(@param-start), @stop percentage(@param-stop));
+			background: -o-linear-gradient(top, @start percentage(@param-start), @stop percentage(@param-stop));
+			background: -ms-linear-gradient(top, @start percentage(@param-start), @stop percentage(@param-stop));
+			background: linear-gradient(to bottom, @start percentage(@param-start), @stop percentage(@param-stop));
+			filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@stop, @start));
+		}
+
+		& when (@three-colors){
+			@color-stop1: extract(@colors, 1);
+			@color-stop2: extract(@colors, 2);
+			@color-stop3: extract(@colors, 3);
+			
+			background: -webkit-linear-gradient(top, @color-stop1, @color-stop2, @color-stop3);
+			background: -moz-linear-gradient(top, @color-stop1, @color-stop2, @color-stop3);
+			background: -o-linear-gradient(top, @color-stop1, @color-stop2, @color-stop3);
+			background: -ms-linear-gradient(top,  @color-stop1, @color-stop2, @color-stop3);
+			background: linear-gradient(top, @color-stop1, @color-stop2, @color-stop3);
+		}	
+		
+	}
+
+	.display-flex{
+		display: flex;
+		display: -ms-flex;
+		display: -moz-flex;
+		display: -webkit-flex;
+	}
+
+	.centrify(@orientation, @width, @height){
+		
+		@horisontal: `@{orientation} == 'horisontal'`;
+		@vertical: `@{orientation} == 'vertical'`;
+		@both: `@{orientation} == 'both'`;
+
+			& when (@horisontal){
+				/* ... */
+			}
+
+			& when (@vertical){
+				/* ... */
+			}
+
+			& when (@both){
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-top: -(@height/2);
+				margin-left: -(@width/2);
+			}
+	}
+
+	.background-size(@value){
+		-moz-background-size:@value; 
+        -webkit-background-size:@value;
+        -o-background-size:@value; 
+        background-size:@value;
+
+        @isCover: `@{value} == cover`;
+        & when (@isCover) {
+			max-height: 100%;
+			max-width: 100%;
+        }
+	}
+
+
+
+
+
+

@@ -1,0 +1,34 @@
+	@import url("../mixins/mixins.less");
+	@import url("../vars/variables.less");
+
+	.authBtn {
+		border:1px solid #4e6096;
+		display:inline-block;
+		cursor:pointer;
+		color:#ffffff;
+		font-family:arial;
+		font-size:17px;
+		margin-bottom: 5px;
+		padding:5px 20px;
+		text-decoration:none;
+		text-shadow:0px 1px 0px #283966;
+		.gradient(#b6cdf5; #b6cdf5, #5893db);
+		.border-radius(10px);
+		.box-shadow(0px 0px 0px 2px #9fb4f2);
+	}
+
+	.authBtn:hover {  .gradient(#5893db; #5893db, #b6cdf5); }
+
+	.authBtn:focus{
+		outline: none;
+	}
+
+	.authBtn:active {
+		position:relative;
+		top:1px;
+	}
+
+	.authBtn:disabled {
+		background: gray;
+		cursor: default;
+	}

@@ -1,15 +1,14 @@
-	var listDemo;
+
 	var initialAppStart = false;
 	var realtimeLoader;
 	var DEBUG_MODE = true;
-
 
 	var realtimeOptions = {
 
 		/**
 		* Client ID from the console.
 		*/
-		clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
+		clientId: '132706467209-v9q1nahcan7gdbsmv069opc87eh9td78.apps.googleusercontent.com',
 
 		/**
 		* The ID of the button to click to authorize. Must be a DOM element ID.
@@ -56,11 +55,6 @@
 		afterAuth: afterAuth // No action.
 	}
 
-	//
-	function initializeModel(model){
-			var collaborativeList = model.createList();
-			model.getRoot().set("data_list", collaborativeList);
-	}
 
 	/**
 	* Retrieve a list of File resources.
@@ -88,38 +82,62 @@
 	}
 
 
-	function onFileLoaded(doc){
-		var model = doc.getModel();
-		listDemo = model.getRoot().get("data_list");
-		var array = listDemo.asArray();
-		var length = listDemo.length;
+	function initializeModel(model){
 
-		for(var i=0; i< 5; i++){
-			console.log("");
-		}
-		console.log("-----------------------------------------------");
-		console.log("-------------- FULL INFORMATION ---------------");
-		console.log("-----------------------------------------------");
-		console.log("\t" + array);
-		for(var i=0; i< 5; i++){
-			console.log("");
-		}
+			model.getRoot().set("events", model.createMap());
+			model.getRoot().set("babies", model.createMap());
+			model.getRoot().set("activity", model.createMap());
 
-		var textarea = $("#textarea")[0];
-		textarea.value = array;
-
-		var onListChange = function(event){
-			textarea.setAttribute('value', array);
-			console.log("TextArea value is " + textarea.value);
-		}
-
-		listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, onListChange);
-		listDemo.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, onListChange);
-
-		onListChange();
+			model.getRoot().set("time", model.createMap()); 
+			model.getRoot().set("day", model.createMap());
+			model.getRoot().set("month", model.createMap());
+			model.getRoot().set("year", model.createMap());
+			model.getRoot().set("persons", model.createMap());
+			model.getRoot().set("listOfPersons", model.createList());
 	}
 
-	function afterAuth () {
+	
+
+	function onFileLoaded(doc) {
+		var model = doc.getModel();
+		SnugActivities = model.getRoot().get("activity");
+		SnugBabies = model.getRoot().get("babies");
+		SnugEvents = model.getRoot().get("events");
+
+		var sbTime = model.getRoot().get("time");
+		var sbYear = model.getRoot().get("year");
+		var sbMonth = model.getRoot().get("month");
+		var sbDay = model.getRoot().get("day");
+		sbPersons = model.getRoot().get("persons");
+		var listOfPersons = model.getRoot().get("listOfPersons");
+
+		SnugBabies.set("ANDREW", {
+			"NAME" : "Andrew",
+			"GENDER": "Male",
+			"BIRTHDAY": "March 11, 1996",
+			"AVATAR": "image1.png",
+			"COLOR_SCHEME": "red"
+		});
+		
+		SnugActivities.set("FOOD",{
+				"TYPE": "BF",
+				"AMOUNT": "20ml",
+				"DURATION": "10min"
+		});		
+
+		SnugEvents.set( "2015", sbMonth);
+			sbMonth.set( "MARCH,28", sbDay);
+			sbDay.set( "SATURDAY", sbTime);
+			sbTime.set( "1,05,PM", sbPersons);
+			sbPersons.set( "Persons", listOfPersons);
+
+			listOfPersons.push({
+				"Person": SnugBabies.get("ANDREW"), 	
+				"Activity": SnugActivities.get("FOOD")
+			});
+	}
+
+	function afterAuth (){
 		// only create/load files when no files were loaded initialy
 		gapi.client.load('drive', 'v2', function () {
 			if (rtclient.params.fileIds && rtclient.params.fileIds.length) {
