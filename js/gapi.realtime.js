@@ -55,7 +55,6 @@
 		afterAuth: afterAuth // No action.
 	}
 
-
 	/**
 	* Retrieve a list of File resources.
 	*
@@ -88,54 +87,28 @@
 			model.getRoot().set("babies", model.createMap());
 			model.getRoot().set("activity", model.createMap());
 
-			model.getRoot().set("time", model.createMap()); 
-			model.getRoot().set("day", model.createMap());
-			model.getRoot().set("month", model.createMap());
-			model.getRoot().set("year", model.createMap());
-			model.getRoot().set("persons", model.createMap());
-			model.getRoot().set("listOfPersons", model.createList());
+			SnugActivities = model.getRoot().get("activity");
+				
+			/**** setting defaults for Activities ****/
+				SnugActivities.set("FOOD", {
+					"TYPE": "BF",
+					"AMOUNT": "20ml",
+					"DURATION": "10min"
+				});	
+
+				SnugActivities.set("DIAPER", {
+					"STOOL": ["Dry", "Poop", "Pee"]
+				});	
+			/****************************************/
 	}
 
-	
-
-	function onFileLoaded(doc) {
-		var model = doc.getModel();
-		SnugActivities = model.getRoot().get("activity");
+	function onFileLoaded(doc){
+		var model = doc.getModel();		
 		SnugBabies = model.getRoot().get("babies");
 		SnugEvents = model.getRoot().get("events");
-
-		var sbTime = model.getRoot().get("time");
-		var sbYear = model.getRoot().get("year");
-		var sbMonth = model.getRoot().get("month");
-		var sbDay = model.getRoot().get("day");
-		sbPersons = model.getRoot().get("persons");
-		var listOfPersons = model.getRoot().get("listOfPersons");
-
-		SnugBabies.set("ANDREW", {
-			"NAME" : "Andrew",
-			"GENDER": "Male",
-			"BIRTHDAY": "March 11, 1996",
-			"AVATAR": "image1.png",
-			"COLOR_SCHEME": "red"
-		});
-		
-		SnugActivities.set("FOOD",{
-				"TYPE": "BF",
-				"AMOUNT": "20ml",
-				"DURATION": "10min"
-		});		
-
-		SnugEvents.set( "2015", sbMonth);
-			sbMonth.set( "MARCH,28", sbDay);
-			sbDay.set( "SATURDAY", sbTime);
-			sbTime.set( "1,05,PM", sbPersons);
-			sbPersons.set( "Persons", listOfPersons);
-
-			listOfPersons.push({
-				"Person": SnugBabies.get("ANDREW"), 	
-				"Activity": SnugActivities.get("FOOD")
-			});
+		SnugActivities = model.getRoot().get("activity");
 	}
+
 
 	function afterAuth (){
 		// only create/load files when no files were loaded initialy

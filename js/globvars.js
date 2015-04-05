@@ -1,5 +1,13 @@
-	
-	var SnugActivities, SnugBabies, SnugEvents, sbPersons;
+
+	var SnugActivities, SnugBabies, SnugEvents;
+
+	//var currentWindow; // DOM object
+
+	var windowsAnimationOver = false;
+
+	var MAX_PAGE_AMOUNT_COUNT = 8;
+	var current_baby;
+	var needToCorrectInputs = false;
 
 	var BabyTrackInitialPage = {
 		NONE: 0,
@@ -32,11 +40,3 @@
 	var mode = BabyTrackMode.NONE;
 	var initialPage;
 	var previousWindow = BabyTrackWindows.NONE;
-	//var currentWindow; // DOM object
-
-	var windowsAnimationOver = false;
-
-	var MAX_PAGE_AMOUNT_COUNT = 8;
-	var current_baby;
-	var date;
-	var needToCorrectInputs = false;

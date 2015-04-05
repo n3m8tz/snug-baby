@@ -1,170 +1,260 @@
+
 (function($, undefined){
 
-	function SnugBabyPerson(nickname, birthday, avatarType, color, avatarImg){
-		this.nickname = nickname;
-		this.birthday = birthday;
-		this.avatarType = avatarType;
-		this.color = color;
-		this.avatarImg = avatarImg;
-		this.gender = "FEMALE";				//disabled for now, set to "FEMALE" by default
-		
-	}
+	var SnugBabyPerson = (function(){
+		// *****************************************************
+		// PRIVATE FUNCTIONS
+		// *****************************************************
+		var normalize = function(basic, submitX, type){
+			var _basic = basic;														//Eg: "Fri Apr 03 2015 06:52:20 GMT-0700 (Pacific Daylight Time)"
+			var _submitX = submitX;													//Eg: case time - "06:52 AM" or 
+																					//	  case date - "Saturday, April 4, 2015" 
+			var date = new SnugBabyDayTime();
+			switch(type.toUpperCase()){
+				case "TIME":
+					var patternTime = /\b(\d+):(\d+)\b/; 
+					_submitX = _submitX.match(patternTime)[0].replace(/(\d+)(?=:)/, function(match, hours){
+						return date.hoursAMPMtoUsial(hours, _submitX.match(/(?:AM|PM)/)[0]);
+					});				
+					_basic = _basic.toString().replace(patternTime, _submitX);
+				break;
 
-	SnugBabyPerson.prototype.toString = function() {
-		return "{nickname: '" + this.nickname +
-			 "', birthday: '" + this.birthday +
-			 "', avatarType: '" + this.avatarType +
-			 "', color: '" + this.color + "'}";
-	};
+				case "DATE":
+					//var patternMonth = /\b(\d+):(\d+)\b/;							 //
+					var dateArr = _submitX.split(/(?:,\ )+/);						 //Eg: ["Saturday", "April 4", "2015"] 
+					
+					var _basicArr = _basic.toString().split(/\ /);							
+					_basicArr[0] = date.dayFullToShort(dateArr[0]);					 //Eg: "Friday" --> "Fri"
+					_basicArr[1] = date.monthFullToShort(dateArr[1].split(" ")[0]);	 //Eg: "April" --> "Apr"
+					_basicArr[2] = dateArr[1].split(" ")[1];	 
+					_basicArr[3] = dateArr[2];
 
-	SnugBabyPerson.prototype.submit = function(){
+					var output = "";
+					for(var i in _basicArr)
+						output += _basicArr[i] + " ";
 
-		SnugBabies.set(this.nickname.toUpperCase(),{
-			"NAME" : this.nickname,
-			"GENDER": this.gender,
-			"BIRTHDAY": this.birthday,
-			"AVATAR": this.avatarImg,
-			"COLOR_SCHEME": this.color
-		});
-		
-		switch(this.activity.toUpperCase()){
-			case "FOOD":
-				SnugActivities.set("FOOD",{
-					"TYPE": this.activityType,
-					"AMOUNT": this.notes,
-					"DURATION": this.notes
-				});
-			break;
-			case "DIAPER":
-				SnugActivities.set("DIAPER",{
-					"STOOL": this.notes
-				});
-			break;
-		}
-		
-		var obj = {
-			"Person": SnugBabies.get(this.nickname.toUpperCase()), 	
-			"Activity": SnugActivities.get(this.activity.toUpperCase())
+					_basic = output;
+
+				break;
+			}
+
+			return _basic;
 		}
 
-		var newday = this.submitDate.split(/,\s?/g)[0].replace(/\s/g,"").toUpperCase();		//Has to be eg: "MONDAY"
-		var newmonth = this.submitDate.split(/,\s?/g)[1].replace(/\s/g,",").toUpperCase();	//Has to be eg: "MARCH,11"
-		var newyear = this.submitDate.split(/,\s?/g)[2].replace(/\s/g,"").toUpperCase();	//Has to be eg: "2015"	
-		var newtime = this.submitTime.replace(/[\s\:]/g,",").toUpperCase();					//Has to be eg: "12,40,PM"
+		//CONSTRUCTOR
+		function SnugBabyPerson(nickname, birthday, color, avatarType, avatarImg){
+			// *****************************************************
+			// PRIVATE VARIABLES 
+			// ***************************************************** 
+			var _submitTime = new String();
+			var _submitDate = new String();
+			var _notes = new Object();
 
-		var year = SnugEvents.get(newyear);
-		if (year){
-			var month = year.get(newmonth);
+			// *****************************************************
+			// PUBLIC PROPERTIES
+			// ***************************************************** 
+			this.sbDayTime = new SnugBabyDayTime();
+			this.nickname = nickname;
+			this.birthday = birthday;
+			this.color = color;
+			this.avatarType = avatarType;
+			this.avatarImg = avatarImg;
+			this.gender = "Female";	 									//disabled for now, set to "Female" by default
+			this.activity = undefined;
+			this.activityImg = undefined;
 
-			if (month){
-				var day = month.get(newday);
+			// *****************************************************
+			// PRIVILEGED METHODS.
+			// MAY BE INVOKED PUBLICLY AND MAY ACCESS PRIVATE ITEMS 
+			// *****************************************************
+			this.getSubmitTime = function(){
+				return _submitTime;
+			}
+			this.setSubmitTime = function(submitTime){					//Eg: "9:45 AM"
+				_submitTime = submitTime;							
+				var time = normalize(this.sbDayTime.basic, _submitTime, "time");
+				this.sbDayTime = new SnugBabyDayTime(new Date(time));
+			}
 
-				if (day){
+			this.getSubmitDate = function(){
+				return _submitTime;
+			}
+			this.setSubmitDate = function(submitDate){					//Eg: "Saturday, April 4, 2015"
+				_submitDate = submitDate;
+				var date = normalize(this.sbDayTime.basic, _submitDate, "date");
+				this.sbDayTime = new SnugBabyDayTime(new Date(date));
+			}
 
-					var time = day.get(newtime);
-					if (time){
-						var persons = time.get("Persons");
-						persons.push(obj);
-					}else{
-						//day.set(newtime, sbPersons);
-						//day.get(newtime).get("Persons").clear();
-						//day.get(newtime).get("Persons").push(obj);
-					}
-				}else{
-				
+			this.getNotes = function(){
+				return _notes;
+			}
+
+			this.setNotes = function(notes){ 
+				if (typeof this.activity === "undefined")
+					return;
+
+				_notes = notes;
+				switch(this.activity.toUpperCase()){
+					case "FOOD":					 	
+						var amount = _notes.AMOUNT;
+						var duration = _notes.DURATION;
+						var type = _notes.TYPE;
+						_notes.HUMANVIEW = (amount !== undefined && duration === undefined) ? amount + "ml via " + type:
+											(amount === undefined && duration !== undefined) ? duration + "min via " + type:
+											(amount !== undefined && duration !== undefined) ? amount + "ml for " +duration + "min via " + type:
+											"Oops, no notes!";
+					break;
+
+					case "DIAPER":
+						_notes.HUMANVIEW = _notes.STOOL;
+					break;
 				}
-			}else{
-
 			}
 		}
-		else{
 
+		SnugBabyPerson.prototype.toString = function() {
+			var output = "{";
+			for(var prop in this)
+			    if(obj.hasOwnProperty(prop))
+					output += prop + ":" + obj[prop] + ",";
+			if (output.charAt(output[length-1]) === ",")
+				output[length-1] = "";
+			output += "}";
+			return output;
+		};
+
+		SnugBabyPerson.prototype.submit = function(){
+
+			SnugBabies.set(this.nickname.toUpperCase(), {
+				"NAME": this.nickname,
+				"GENDER": this.gender,
+				"BIRTHDAY": this.birthday,
+				"AVATAR": this.avatarImg,
+				"COLOR_SCHEME": this.color
+			});
+
+			var current = new Object();
+			var notes = this.getNotes();
+			var activityImg = this.activityImg;
+			current.activity = (function(type){
+
+				var _ = $.extend(true, {}, SnugActivities.get(type));		//deep copying of a Google Drive CollaborativeMap object
+				switch(type){
+					case "FOOD":
+						_.TYPE = notes.TYPE;
+						_.AMOUNT = notes.AMOUNT;
+						_.DURATION = notes.DURATION; 
+						break;
+
+					case "DIAPER":
+						_.STOOL = notes.STOOL;
+						break;
+				}
+				_.HUMANVIEW = notes.HUMANVIEW;
+				_.IMAGE = activityImg;
+				return _;
+			})(this.activity.toUpperCase());
+
+			current.person = {
+				"Person" : this.nickname.toUpperCase(),
+				"Activity" : current.activity
+			};
+
+			var ID = (new SnugBabyDayTime(new Date(this.sbDayTime.basic.toString()))).HumanToUTC();
+			SnugEvents.set( ID.toString(), current.person);
 		}
-	}
 
-	SnugBabyPerson.prototype.addToTable = function(table){
-		var self = this;
-			var selector = "#posted_results_table";
-					var babyData = '<tr class="table_row_baby_data">' +
-										'<td class="table_avatar"></td>' +
-										'<td class="table_baby_name">Name</td>' +
-										'<td class="table_baby_activity">Activity</td>' +
-										'<td class="table_feed_time">Time</td>' +
-										'<td class="table_notes">Notes</td>' +
-									'</tr>';
+		// Code "SnugBabyPerson.prototype.addToTable" 
+		// below has to be retrofitted and refactored!!!
 
-					$(selector).find("table > tbody").append(babyData);
+		SnugBabyPerson.prototype.addToTable = function(table){
+			var self = this;
+				var selector = "#posted_results_table";
+						var babyData = '<tr class="table_row_baby_data">' +
+											'<td class="table_avatar"></td>' +
+											'<td class="table_baby_name">Name</td>' +
+											'<td class="table_baby_activity">Activity</td>' +
+											'<td class="table_feed_time">Time</td>' +
+											'<td class="table_notes">Notes</td>' +
+										'</tr>';
 
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_avatar")
-						.html("<img src='" + self.avatarImg + "' />");
+						$(selector).find("table > tbody").append(babyData);
 
-					//making the border around the default avatar
-					if (self.avatarType == "type1")
 						$(selector)
 							.find("tr.table_row_baby_data")
 							.last()
-							.find("td.table_avatar *")
-							.css("border", "thin solid #E93578");
+							.find("td.table_avatar")
+							.html("<img src='" + self.avatarImg + "' />");
 
-					if (self.avatarType == "type2")
+						//making the border around the default avatar
+						if (self.avatarType == "type1")
+							$(selector)
+								.find("tr.table_row_baby_data")
+								.last()
+								.find("td.table_avatar *")
+								.css("border", "thin solid #E93578");
+
+						if (self.avatarType == "type2")
+							$(selector)
+								.find("tr.table_row_baby_data")
+								.last()
+								.find("td.table_avatar *")
+								.css("border", "thin solid #3B1D8F");
+
 						$(selector)
 							.find("tr.table_row_baby_data")
 							.last()
-							.find("td.table_avatar *")
-							.css("border", "thin solid #3B1D8F");
+							.find("td.table_baby_name")
+							.text(self.nickname);
 
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_baby_name")
-						.text(self.nickname);
+						$(selector)
+							.find("tr.table_row_baby_data")
+							.last()
+							.find("td.table_baby_activity")
+							.html( "<img src='" + self.activityImg + "' />");
 
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_baby_activity")
-						.html( "<img src='" + self.activityImg + "' />");
+						$(selector)
+							.find("tr.table_row_baby_data")
+							.last()
+							.find("td.table_feed_time")
+							.text(self.getSubmitTime());
 
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_feed_time")
-						.text(self.submitTime);
+						$(selector)
+							.find("tr.table_row_baby_data")
+							.last()
+							.find("td.table_notes")
+							.text( self.getNotes().HUMANVIEW );
 
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.find("td.table_notes")
-						.text( self.notes );
+						$(selector)
+							.find("tr.table_row_baby_data")
+							.last()
+							.css({ "border-color": self.color})
+							.hover(
+								function(){
+									$(this).css({
+										"background-color": $(this).css("border-color"),
+										"color": "#FFFFFF"
+									});
+								},
+								function(){
+									$(this).css({
+										"background-color": "#FFFFFF",
+										"color": "inherit"
+									});
+								}
+							);
+		
+						/*
+						$(selector)
+							.find( "caption" )
+							.text( "Today, " + $(".datepicker").val() );
+						*/
+		}
 
-					$(selector)
-						.find("tr.table_row_baby_data")
-						.last()
-						.css({ "border-color": self.color})
-						.hover(
-							function(){
-								$(this).css({
-									"background-color": $(this).css("border-color"),
-									"color": "#FFFFFF"
-								});
-							},
-							function(){
-								$(this).css({
-									"background-color": "#FFFFFF",
-									"color": "inherit"
-								});
-							}
-						);
-	
-					/*
-					$(selector)
-						.find( "caption" )
-						.text( "Today, " + $(".datepicker").val() );
-					*/
-	}
+		return SnugBabyPerson;
+	})();
+/*************************************************************************/
+
 
 
 	function handleFiles(files) {
@@ -186,16 +276,6 @@
 	    var reader = new FileReader();
 	    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
 	    reader.readAsDataURL(file);
-	}
-
-
-	function IncorrectInputException(message){
-		this.message = message;
-		this.name = "Incorrect Input Exception";
-
-		this.toString = function(){
-			return this.name + ": " + this.message;
-		}
 	}
 
 	function setInitialPage(page, custom_appear, preventPersonAppending){
@@ -352,7 +432,7 @@
 			break;
 
 			case BabyTrackWindows.POSTED_RESULTS_TABLE:
-				if(!SnugBabies.isEmpty()){		//if there any information about baby's in the database
+				if(!SnugEvents.isEmpty()){				//if there any information about babys in the database
 					//openChoosePersonWindow();
 					var selector = "#posted_results_table";
 					var babyData = '<tr class="table_row_baby_data">' +
@@ -362,9 +442,8 @@
 						'<td class="table_feed_time">Time</td>' +
 						'<td class="table_notes">Notes</td>' +
 					'</tr>';
-					Snug_Babies.forEach(function(baby){
 
-						
+					SnugEvents.items().forEach(function(baby){
 
 						$(selector).find("table > tbody").append(babyData);
 
@@ -372,17 +451,17 @@
 							.find("table tr.table_row_baby_data")
 							.last()
 							.find("td.table_avatar")
-							.html("<img src='" + baby.avatarImg + "' />");
+							.html("<img src='" + SnugBabies.get(baby[1].Person).AVATAR + "' />");
 
 						//making the border around the default avatar
-						if (baby.avatarType == "type1")
+						/*if (baby.avatarType == "type1")
 							$(selector)
 								.find("table tr.table_row_baby_data")
 								.last()
 								.find("td.table_avatar *")
 								.css("border", "thin solid #E93578");
 
-						if (baby.avatarType == "type2")
+						if (baby.avatarType == "type2")*/
 							$(selector)
 								.find("table tr.table_row_baby_data")
 								.last()
@@ -393,31 +472,41 @@
 							.find("table tr.table_row_baby_data")
 							.last()
 							.find("td.table_baby_name")
-							.text(baby.nickname);
+							.text( SnugBabies.get(baby[1].Person).NAME);
 
 						$(selector)
 							.find("table tr.table_row_baby_data")
 							.last()
 							.find("td.table_baby_activity")
-							.html( "<img src='" + baby.activityImg + "' />" );
+							.html("<img src='" +  baby[1].Activity.IMAGE + "' />" );
+						
+						var submitTime = (function(timestamp){
+							var daytime = new SnugBabyDayTime();
+							daytime.setTimestamp(parseInt(timestamp, 10));
+							var view = daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
+							var hh = view.match(/\b(\d+):(\d+)\b/)[0].split(":")[0];
+							var mm = view.match(/\b(\d+):(\d+)\b/)[0].split(":")[1];
+							return daytime.formatTimeAMPM(hh, mm);
+						})(baby[0]);
 
+						//var submitDate = "";
 
 						$(selector)
 							.find("table tr.table_row_baby_data")
 							.last()
 							.find("td.table_feed_time")
-							.text(baby.submitTime);
+							.text(submitTime);
 
 						$(selector)
 							.find("table tr.table_row_baby_data")
 							.last()
 							.find("td.table_notes")
-							.text(baby.notes );
+							.text( baby[1].Activity.HUMANVIEW );
 
 						$(selector)
 							.find("table tr.table_row_baby_data")
 							.last()
-							.css({ "border-color": baby.color})
+							.css({ "border-color": SnugBabies.get(baby[1].Person).COLOR_SCHEME})
 							.hover(
 								function(){
 									$(this).css({
@@ -683,7 +772,6 @@
 	}
 
 
-
 	function openSelectedActivity(){
 
 			try{
@@ -696,15 +784,15 @@
 			var $checked_activity = $("#wizard_new_activity   input[type='radio']:checked");
 			var $data_diaper_type = $checked_activity.parent().prev().attr("data-activity-type");
 			
-			date = new SnugBabyDayTime();
+			current_baby.sbDayTime = new SnugBabyDayTime();
 
 			$("#diaper_content, #food_content")
 				.find("input.datepicker")
-				.val(date.fullDay +", "+ date.fullMonth + ", " + date.year);
+				.val(current_baby.sbDayTime.fullDay +", "+ current_baby.sbDayTime.fullMonth + ", " + current_baby.sbDayTime.year);
 
 			$("#diaper_content, #food_content")
 				.find("input.timepicker")
-				.val(date.time);
+				.val(current_baby.sbDayTime.time);
 
 			switch($data_diaper_type){
 				case "food":
@@ -722,24 +810,6 @@
 
 
 	function openPostedResultsWindowLogic(){
-
-		try{
-
-			switch(mode){
-
-				case BabyTrackMode.ADD_FOOD_EVENT:
-					checkCorrectInputAndSubmit({window: "ADD_FOOD_EVENT"});
-					break;
-
-				case BabyTrackMode.ADD_DIAPER_EVENT:
-					checkCorrectInputAndSubmit({window: "ADD_DIAPER_EVENT"});
-					break;
-			}
-
-		}catch(e){
-			alert(e.toString());
-			return;
-		}
 
 		$("#add_event_button").show(1000);
 
@@ -774,7 +844,7 @@
 		var avatarType =  $("#choose_person  .avatar.selected").attr("data-avatar-type");								//should be loaded from a server
 		var color =  $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");			//should be loaded from a server. 
 	 	var avatarImg = $("section[data-type='avatar']").find("div.avatar.selected img").attr("src");
-		current_baby = new SnugBabyPerson(nickname, birthday, avatarType, color, avatarImg);
+		current_baby = new SnugBabyPerson(nickname, birthday, color, avatarType, avatarImg);
 	}
 
 	function checkCorrectInputAndSubmit( object ){
@@ -871,24 +941,36 @@
 	function getDefaultNotes(activity){
 		var notes = '';
 		switch(activity){
-			case "food":
+			case "FOOD":
 				var food_amount = $("#food_content").find("input[name=food_amount]").val();
 				var food_duration = $("#food_content").find("input[name=food_duration]").val();
 
 				if (food_amount !== ""	&&	food_duration !== "")
-					notes = food_amount + "ml in " + food_duration + " minutes";
-
+					notes = {
+						"AMOUNT": food_amount,
+						"DURATION": food_duration,
+						"TYPE": "Bottle"				//disabled for now, set to "Bottle" by default
+					}
 				if (food_amount !== ""	&& 	food_duration === "")
-					notes = food_amount + "ml";
+					notes = {
+						"AMOUNT": food_amount,
+						"DURATION": undefined,
+						"TYPE": "Bottle"				//disabled for now, set to "Bottle" by default
+					}
 
 				if (food_amount === ""	&& 	food_duration !== "")
-					notes = food_duration + " minutes";
+					notes = {
+						"AMOUNT": undefined,
+						"DURATION": food_duration,
+						"TYPE": "Bottle"				//disabled for now, set to "Bottle" by default
+					};
 				break;
 
-
-			case "diaper":
+			case "DIAPER":
 				var diaperType = $("#diaper_content").find(".subactivity_diaper.selected").attr("data-diaper-type");
-				notes = (diaperType == "peed") ?  "Peed" : "Pooped" ;
+				notes = {
+					"STOOL": (diaperType === "peed") ?  "Peed" : "Pooped" 
+				};
 				break;
 		}
 
@@ -916,12 +998,20 @@
 					break;
 
 				case BabyTrackMode.ADD_FOOD_EVENT:
-					current_baby.activityImg = 'images/bottle.png';
-					current_baby.activity = "food";
-					current_baby.notes  = getDefaultNotes("food");
 
-					current_baby.submitDate = $(".datepicker").val();
-					current_baby.submitTime = $(".timepicker").val();
+					try{
+						checkCorrectInputAndSubmit({window: "ADD_FOOD_EVENT"});
+					}catch(e){
+						alert(e.toString());
+						return;
+					}
+
+					current_baby.activityImg = 'images/bottle.png';
+					current_baby.activity = "FOOD";
+					current_baby.setNotes( getDefaultNotes("FOOD") );
+					current_baby.setSubmitDate( $(".datepicker").val());
+					current_baby.setSubmitTime( $(".timepicker").val());
+
 					current_baby.addToTable( $("#posted_results_table").find("table").html() );
 					current_baby.submit();
 
@@ -929,12 +1019,20 @@
 					break;
 
 				case BabyTrackMode.ADD_DIAPER_EVENT:
+
+					try{
+						checkCorrectInputAndSubmit({window: "ADD_DIAPER_EVENT"});
+					}catch(e){
+						alert(e.toString());
+						return;
+					}
+
 					current_baby.activityImg = $("#diaper_content").find(".subactivity_diaper.selected[data-diaper-type] img").attr("src");
-					current_baby.activity = "diaper";
-					current_baby.notes = getDefaultNotes("diaper");
-					
-					current_baby.submitDate = $(".datepicker").val();
-					current_baby.submitTime = $(".timepicker").val();
+					current_baby.activity = "DIAPER";
+					current_baby.setNotes( getDefaultNotes("DIAPER") );
+					current_baby.setSubmitDate( $(".datepicker").val());
+					current_baby.setSubmitTime( $(".timepicker").val());
+
 					current_baby.addToTable( $("#posted_results_table").find("table").html() );
 					current_baby.submit();
 
@@ -1188,6 +1286,15 @@
 		}, 10);
 	}
 
+	function IncorrectInputException(message){
+		this.message = message;
+		this.name = "Incorrect Input Exception";
+
+		this.toString = function(){
+			return this.name + ": " + this.message;
+		}
+	}
+
 	function otherEventsLogic(){
 
 			$("#add_event_button").hide();
@@ -1254,52 +1361,52 @@
 				    
 		    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
 
+		   // $(".datepicker").onch
+
 	}
 
 
 	//Activates once a tab had been loaded. Its just like document.onload()
-	$(function(){
+	$(document).ready(function(){
 
-		//startGoogleDriveRealtime();
+		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
 		setNextBackButtonsLogic();
 		otherEventsLogic();
 
-		//The timer exists until a list of Baby's Information is found
-		var timer_initPage = setInterval(function(){
-			//if(typeof(SnugActivities || SnugBabies || SnugEvents) !== 'undefined'){
-
-				//initialPage = SnugBabies.isEmpty() ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
-				initialPage = BabyTrackInitialPage.WELCOME_POST;	
-				
-				setInitialPage(initialPage, {effect: "fadeIn", speed: 1000}, false);
-				//normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
-				//normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
-				clearInterval(timer_initPage);
-			//}
-		}, 10);
 
 		//The timer exists until a 
-		/*var timer_auth = setInterval(function(){
+		var timer_auth = setInterval(function(){
 			try{
 				if (typeof authButtonState !== 'undefined'){
 					clearInterval(timer_auth);
 					switch (authButtonState){
-						case "disabled": 
-							//enabling add event button
-							$("#add_event_button").show(1000);	
+						case "disabled":
 														
 						break;
 
 						case "enabled":
 							$("#authModal").modal("show");
-						break;
-					}
+							//The timer exists until a list of Baby's Information is found
+							var timer_initPage = setInterval(function(){
+								if(typeof(SnugActivities && SnugBabies && SnugEvents) !== 'undefined'){
+
+									initialPage = SnugBabies.isEmpty() ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
+									//initialPage = BabyTrackInitialPage.WELCOME_POST;	
+									
+									setInitialPage(initialPage, {effect: "fadeIn", speed: 1000}, false);
+									//enabling add event button
+												$("#add_event_button").show(1000);	
+									normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
+									//normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
+									clearInterval(timer_initPage);
+								}
+							}, 10);
+								break;
+							}
 				}
 			}catch(e){}
-		}, 10);*/
-
-	$("#add_event_button").show(1000);	
+		}, 10);
 
 	});
 

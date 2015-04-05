@@ -6,11 +6,11 @@ var scripts = [
 	"js/libraries/snugbaby-daytime.js",
 	"js/libraries/jquery.simplecolorpicker.js",
 	"js/libraries/bootstrap.js",
-	//"https://apis.google.com/js/api.js",		// Load the Realtime libraries.
-	//"js/libraries/realtime-client-utils.js",	// Load the utility library. 
+	"https://apis.google.com/js/api.js",		// Load the Realtime libraries.
+	"js/libraries/realtime-client-utils.js",	// Load the utility library. 
 
 	/***	Custom files	***/
-	//"js/gapi.realtime.js", 						//Load Snug Baby Google Drive Realtime QuickStart
+	"js/gapi.realtime.js", 						//Load Snug Baby Google Drive Realtime QuickStart
 	"js/globvars.js",							//Global Variables
 	"js/main.js"								//Main Apps Logic
 ];
