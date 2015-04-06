@@ -1372,7 +1372,7 @@
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
 		setNextBackButtonsLogic();
-		otherEventsLogic();
+		otherEventsLogic();  
 
 		//The timer exists until a list of Baby's Information is found
 		var timer_initPage = setInterval(function(){
@@ -1391,7 +1391,7 @@
 		}, 10);
 			break;
 		}
-							
+
 		//The timer exists until a 
 		var timer_auth = setInterval(function(){
 			try{

@@ -21,7 +21,7 @@
 		/**
 		* Function to be called when a Realtime model is first created.
 		*/
-		initializeModel: initializeModel,
+		initializeModel: initializeModel, 
 
 		/**
 		* Autocreate files right after auth automatically.
