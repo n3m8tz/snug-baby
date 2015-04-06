@@ -1374,7 +1374,24 @@
 		setNextBackButtonsLogic();
 		otherEventsLogic();
 
+		//The timer exists until a list of Baby's Information is found
+		var timer_initPage = setInterval(function(){
+			if(typeof(SnugActivities && SnugBabies && SnugEvents) !== 'undefined'){
 
+				initialPage = SnugBabies.isEmpty() ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
+				//initialPage = BabyTrackInitialPage.WELCOME_POST;	
+				
+				setInitialPage(initialPage, {effect: "fadeIn", speed: 1000}, false);
+				//enabling add event button
+							$("#add_event_button").show(1000);	
+				normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
+				//normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
+				clearInterval(timer_initPage);
+			}
+		}, 10);
+			break;
+		}
+							
 		//The timer exists until a 
 		var timer_auth = setInterval(function(){
 			try{
@@ -1387,23 +1404,6 @@
 
 						case "enabled":
 							$("#authModal").modal("show");
-							//The timer exists until a list of Baby's Information is found
-							var timer_initPage = setInterval(function(){
-								if(typeof(SnugActivities && SnugBabies && SnugEvents) !== 'undefined'){
-
-									initialPage = SnugBabies.isEmpty() ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
-									//initialPage = BabyTrackInitialPage.WELCOME_POST;	
-									
-									setInitialPage(initialPage, {effect: "fadeIn", speed: 1000}, false);
-									//enabling add event button
-												$("#add_event_button").show(1000);	
-									normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
-									//normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
-									clearInterval(timer_initPage);
-								}
-							}, 10);
-								break;
-							}
 				}
 			}catch(e){}
 		}, 10);
