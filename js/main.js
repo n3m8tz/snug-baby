@@ -1389,8 +1389,7 @@
 				clearInterval(timer_initPage);
 			}
 		}, 10);
-			break;
-		}
+			
 
 		//The timer exists until a 
 		var timer_auth = setInterval(function(){
@@ -1404,6 +1403,8 @@
 
 						case "enabled":
 							$("#authModal").modal("show");
+						break;
+					}
 				}
 			}catch(e){}
 		}, 10);
