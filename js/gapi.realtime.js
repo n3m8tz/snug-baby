@@ -7,7 +7,6 @@
 
 		/**
 		* Client ID from the console.
-		* clientId: '132706467209-v9q1nahcan7gdbsmv069opc87eh9td78.apps.googleusercontent.com',
 		*/
 		clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
 
@@ -21,7 +20,7 @@
 		/**
 		* Function to be called when a Realtime model is first created.
 		*/
-		initializeModel: initializeModel, 
+		initializeModel: initializeModel,
 
 		/**
 		* Autocreate files right after auth automatically.
@@ -94,11 +93,15 @@
 				SnugActivities.set("FOOD", {
 					"TYPE": "BF",
 					"AMOUNT": "20ml",
-					"DURATION": "10min"
+					"DURATION": "10min",
+					"IMAGE": "activityImg1.png",
+					"NOTES": "20ml 10min via BF"
 				});	
 
 				SnugActivities.set("DIAPER", {
-					"STOOL": ["Dry", "Poop", "Pee"]
+					"STOOL": ["Dry", "Poop", "Pee"],
+					"IMAGE": "activityImg1.png",
+					"NOTES": "Pooped"
 				});	
 			/****************************************/
 	}

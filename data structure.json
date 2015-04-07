@@ -4,7 +4,10 @@
 
 	"MILA": {
 		"NAME": "Mila",
-		"AVATAR": "avatar1.png",
+		"AVATAR": {
+			"VALUE": "activityImg2.png",
+			"TYPE": 1
+		},
 		"BIRTHDAY": "January 1, 2015",
 		"COLOR_SCHEME": "red",
 		"GENDER": "Female"
@@ -12,7 +15,10 @@
 
 	"ALEX": {
 		"NAME": "Alex",
-		"AVATAR": "image3.jpeg",
+		"AVATAR": {
+			"VALUE": "activityImg1.png",
+			"TYPE": 1
+		},
 		"BIRTHDAY": "January 1, 2015",
 		"COLOR_SCHEME": "blue",
 		"GENDER": "Male"

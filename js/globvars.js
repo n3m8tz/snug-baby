@@ -1,7 +1,7 @@
-
 	var SnugActivities, SnugBabies, SnugEvents;
 
-	//var currentWindow; // DOM object
+	var glSubmitTime = "";   //gl == global
+	var glSubmitDate = "";   
 
 	var windowsAnimationOver = false;
 

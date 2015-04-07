@@ -72,8 +72,8 @@ var SnugBabyDayTime = (function(){
 			hours = this.basic.getHours();
 			minutes = this.basic.getMinutes();
 		}else{
-			hours = hh;
-			minutes = mm;
+			hours = parseInt(hh, 10);
+			minutes = parseInt(mm, 10);
 		}
 
 		var ampm = hours >= 12 ? 'PM' : 'AM';

@@ -282,7 +282,7 @@
 				cursor: pointer;
 				width: 65px;
 				height: 65px;
-				&[data-avatar-type = "type3"].uploaded > img{
+				&[data-avatar-type = "2"].uploaded > img{
 						.border-radius(6px);
 						background-size: cover;
 						height: 100%;
@@ -490,103 +490,6 @@
 	/*************************************************************/
 
 
-	#posted_results_table{
-		display: none;
-		cursor: default;
-		padding: 10px 5px;
-		width: 100%;
-		left: -5px;
-		top: 8%;
-		.border-radius(3px);
-	}
-
-	#posted_results_table   table {
-		width: 100%;
-		text-align: center;
-		font-size: 15px;
-	    border-collapse: collapse;
-	    border-spacing: 0px 4px;
-		.border-radius(5px);
-	}
-
-	#posted_results_table   table  tbody{
-		display: block;
-		height: 275px;
-	    overflow-y: auto;
-	    overflow-x: hidden;
-	    border: 0;
-	    outline: 0;
-	}
-
-	#posted_results_table tr{
-		height: 20px;
-	}
-
-	
-	#posted_results_table   table caption{
-		text-align: left;
-		margin-bottom: 5px;
-	}
-
-	#posted_results_table   table tr.table_row_baby_data{
-		background: #FFF;
-		border: @border-width solid #dadada;
-		cursor: pointer;
-		.border-radius(5px);
-		.transition(all, 0.30s, ease-in-out);
-	}
-
-	#posted_results_table   table tr.table_row_baby_data:hover{
-		color: #FFF;
-		font-weight: bold;
-	}
-
-	#posted_results_table   table td.table_avatar,
-	#posted_results_table   table td.table_baby_name,
-	#posted_results_table   table td.table_baby_activity,
-	#posted_results_table   table td.table_feed_time,
-	#posted_results_table   table td.table_notes{
-		vertical-align: middle;
-	}
-	
-	#posted_results_table   table td.table_avatar{
-		width: 10%;
-		padding: 10px 5px 5px 5px;
-	}
-
-	#posted_results_table   table td.table_avatar *{
-		border: @border-width solid #FFFFFF;
-		width: 30px;
-		height: 30px;
-		.border-radius(50%);
-	}
-
-	#posted_results_table   table td.table_baby_name{
-		width: 18.3%;
-		text-align: justify;
-		padding-left: 10px;
-	}
-
-	#posted_results_table   table td.table_baby_activity{
-		width: 18.3%;
-		text-align: right;
-	}
-
-	#posted_results_table   table td.table_baby_activity *{
-		width: 35px;
-		height: 35px;
-	}
-
-	#posted_results_table   table td.table_feed_time{
-		width: 18.3%;
-	}
-
-	#posted_results_table   table td.table_notes{
-		width: 35%;
-		text-align: left;
-		padding-left: 5px;
-		font-size: 12px;
-	}
 
 	.modal-body > div:first-of-type{
 		width: 25%; 
