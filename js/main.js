@@ -782,6 +782,9 @@
 				.find("input.timepicker")
 				.val(current_baby.sbDayTime.time);
 
+			glSubmitDate = $(".datepicker").val();
+			glSubmitTime = $(".timepicker").val();
+
 			switch($data_diaper_type){
 				case "food":
 					foodWindowLogic();
@@ -1290,6 +1293,14 @@
 
 			$("#add_event_button").hide();
 
+			$('.timepicker').bind("input change", function() {
+				glSubmitTime = $(this).val(); 
+			});
+
+			$('.datepicker').bind("input change", function() {
+				glSubmitDate = $(this).val(); 
+			});
+
 			//establishing default values for radio boxes
 			$("#wizard_new_activity    section[data-type='activity']:first-child   input[type=radio]").prop("checked", true);
 			$("#diaper_content    section[data-type='subactivity_diaper']:first-child   input[type=radio]").prop("checked", true);
@@ -1360,6 +1371,8 @@
 	//Activates once a tab had been loaded. Its just like document.onload()
 	$(document).ready(function(){
 
+		$("#loading_sign").fadeIn();
+
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
 		setNextBackButtonsLogic();
@@ -1374,6 +1387,8 @@
 				
 				setInitialPage(initialPage, {effect: "fadeIn", speed: 1000}, false);
 				
+				$("#loading_sign").hide();
+
 				//enabling add event button
 				$("#add_event_button").show(1000);	
 				
@@ -1400,15 +1415,6 @@
 				}
 			}catch(e){}
 		}, 10);
-
-
-		$('.timepicker').bind("input change", function() {
-			glSubmitTime = $(this).val(); 
-		});
-
-		$('.datepicker').bind("input change", function() {
-			glSubmitDate = $(this).val(); 
-		});
 
 	});
 
