@@ -6,6 +6,7 @@ var scripts = [
 	"js/libraries/snugbaby-daytime.js",
 	"js/libraries/jquery.simplecolorpicker.js",
 	"js/libraries/bootstrap.js",
+	"js/libraries/TableClass.js",
 	"https://apis.google.com/js/api.js",		// Load the Realtime libraries.
 	"js/libraries/realtime-client-utils.js",	// Load the utility library. 
 

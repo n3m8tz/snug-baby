@@ -6,7 +6,12 @@
 		left: -5px;
 		top: 8%;
 		.border-radius(3px);
-
+		
+		>section{
+			height: 324px;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
 
 		table {
 			width: 100%;
@@ -18,7 +23,6 @@
 			
 			tbody{
 				display: block;
-				height: 275px;
 				overflow-y: auto;
 				overflow-x: hidden;
 				border: 0;
@@ -27,7 +31,11 @@
 
 			caption{
 				text-align: left;
+				font-size: 13px;
+				color: #7F8082;
+				margin-left: 5px;
 				margin-bottom: 5px;
+				margin-top: 5px;
 			}
 
 			tr{
@@ -35,7 +43,7 @@
 
 				&.table_row_baby_data{
 					background: #FFF;
-					border: @border-width solid #dadada;
+					border: @border-width/2 solid #dadada;
 					cursor: pointer;
 					.border-radius(5px);
 					.transition(all, 0.30s, ease-in-out);

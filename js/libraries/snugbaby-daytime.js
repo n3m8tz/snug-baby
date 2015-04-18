@@ -48,21 +48,25 @@ var SnugBabyDayTime = (function(){
 							this.basic.getHours(),
 							this.basic.getMinutes(),
 							this.basic.getSeconds());
-		_timestamp = Math.round(_timestamp/1000.0); 			//translate from milliseconds to seconds 
+		_timestamp = Math.round(_timestamp/1000.0); 			   	//translate from milliseconds to seconds 
 		return _timestamp;
 	};
 
-	SnugBabyDayTime.prototype.UTCtoHuman = function(){  	//Eg: "Sat, 04 Apr 2015 03:18:11 GMT"
-		var timestamp =  _timestamp;
-		if (typeof timestamp !== "undefined"){
-				//if(timestamp.toString().charAt(timestamp.length-1)=="L")
-				//	timestamp = timestamp.slice(0,-1);
-				timestamp *= 1000;									//translate from seconds to milliseconds 
-				//if(isValidDate(timestamp))
-					return (new Date(timestamp)).toUTCString();
-				//else
-				//	return false;
-		}
+	SnugBabyDayTime.prototype.UTCtoHuman = function(pTimestamp){  	//Eg: "Sat, 04 Apr 2015 03:18:11 GMT"
+		var timestamp;
+
+		if (typeof pTimetamp !== "undefined")
+			timestamp =  pTimestamp;
+		else if (typeof _timestamp !== "undefined")
+			timestamp =  _timestamp;
+
+		//if(timestamp.toString().charAt(timestamp.length-1)=="L")
+		//	timestamp = timestamp.slice(0,-1);
+		timestamp *= 1000;											//translate from seconds to milliseconds 
+		//if(isValidDate(timestamp))
+			return (new Date(timestamp)).toUTCString();
+		//else
+		//	return false;
 	};
 
 	SnugBabyDayTime.prototype.formatTimeAMPM = function(hh, mm){	//Eg:   "07:36 AM"
