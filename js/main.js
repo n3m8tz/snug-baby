@@ -453,10 +453,10 @@
 			break;
 
 			case BabyTrackWindows.POSTED_RESULTS_TABLE:
-
+			var prSelector = "#posted_results_table > section";
 				if(!SnugEvents.isEmpty()){													//if there any information about babys in the database
 					
-					var prSelector = "#posted_results_table > section";
+					
 
 					//timestamp, time, notes, avatar, name and activity, dom
 					var dom = document.querySelector(prSelector);
@@ -607,6 +607,7 @@
 						
 					});
 				}
+				
 			break;
 
 			case BabyTrackWindows.ADD_EVENT_WIZARD_NEW_PERSON:
@@ -1471,6 +1472,8 @@
 	//Activates once a tab had been loaded. Its just like document.onload()
 	$(document).ready(function(){
 
+		
+
 		$("#loading_sign").fadeIn();
 
 		startGoogleDriveRealtime();
@@ -1485,7 +1488,7 @@
 				initialPage = SnugBabies.isEmpty() ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
 				//initialPage = BabyTrackInitialPage.WELCOME_POST;	
 				
-				setInitialPage(initialPage, {effect: "fadeIn", speed: 1000}, false);
+				setInitialPage(initialPage, {effect: "fadeIn", speed: 2000}, false);
 				
 				$("#loading_sign").hide();
 
@@ -1494,6 +1497,7 @@
 				
 				normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
 				normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
+
 				clearInterval(timer_initPage);
 			}
 		}, 10);

@@ -9,6 +9,7 @@
 		
 		>section{
 			height: 324px;
+			width: 100%;
 			overflow-y: auto;
 			overflow-x: hidden;
 		}
@@ -17,33 +18,46 @@
 			width: 100%;
 			text-align: center;
 			font-size: 15px;
-			border-collapse: collapse;
-			border-spacing: 0px 4px;
+			//border-collapse: collapse;
+			border-spacing: 0;
+			position: relative;
 			.border-radius(5px);
-			
+
+			caption{
+				background-color: #EBEBEB;
+				text-align: left;
+				font-family: Arial;
+  				font-size: 12px;
+				color: #7F8082;
+				margin-left: 25px;
+				margin-bottom: 5px;
+				margin-top: 13px;
+			}
+
 			tbody{
 				display: block;
 				overflow-y: auto;
 				overflow-x: hidden;
+				width: 96.74556148%;			//445.909px
+				margin-right: 1.62721925%;
+				margin-left: 1.62721925%;
+				box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.24), 0 1.5px 6px rgba(0, 0, 0, 0.12);
 				border: 0;
+				border-radius: 2px;
 				outline: 0;
-			}
-
-			caption{
-				text-align: left;
-				font-size: 13px;
-				color: #7F8082;
-				margin-left: 5px;
-				margin-bottom: 5px;
-				margin-top: 5px;
 			}
 
 			tr{
 				height: 20px;
+				
+				*{
+					padding:0;
+					margin:0;
+				}
 
 				&.table_row_baby_data{
+					width: 100%;
 					background: #FFF;
-					border: @border-width/2 solid #dadada;
 					cursor: pointer;
 					.border-radius(5px);
 					.transition(all, 0.30s, ease-in-out);
@@ -64,9 +78,10 @@
 			}
 
 			td.table_avatar{
-				width: 10%;
+				width: 8.77552165%;	//considering padding!
 				padding: 10px 5px 5px 5px;
-				*{
+
+				img{
 					border: @border-width solid #FFFFFF;
 					width: 30px;
 					height: 30px;
@@ -75,13 +90,13 @@
 			}
 
 			td.table_baby_name{
-				width: 18.3%;
+				width: 24.48979133%;
 				text-align: justify;
 				padding-left: 10px;
 			}
 
 			td.table_baby_activity{
-				width: 18.3%;
+				width: 11.02041732%;
 				text-align: right;
 				*{
 					width: 35px;
@@ -90,11 +105,11 @@
 			}
 
 			td.table_feed_time{
-				width: 18.3%;
+				width: 15.51020866%;
 			}
 
 			td.table_notes{
-				width: 35%;
+				width: 34.59182184%;
 				text-align: left;
 				padding-left: 5px;
 				font-size: 12px;
