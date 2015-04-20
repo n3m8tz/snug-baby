@@ -33,8 +33,8 @@
 		width: @app-width;
 		height: @app-height;
 		.centrify('both', @app-width, @app-height);
-		.border-radius(7px);
-		.box-shadow(1px 1px 1px 0px #61939f);
+		.border-radius(@app-border-radius);
+		.box-shadow(0 2px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23));
 	}
 
 	hr { 
@@ -67,36 +67,36 @@
 
 	#bt_header{
 		background-color: #00C8F8;
-		height:  45px - 2*@border-width;				/*	full-bt_header-height = (parent-height - 2 * border-height)	*/
-		width: 	@app-width - 2*@border-width;			/*	full-bt_header-width = (parent-width - 2 * border-width)	*/
+		height:   9.77777778%;				
+		width: 	@app-width;			/*	full-bt_header-width = (parent-width - 2 * border-width)	*/
 		position: relative;
-		border-top-left-radius: 7px;
-		border-top-right-radius: 7px;
-		border: @border-width solid #61939F;
+		border-top-left-radius: @app-border-radius;
+		border-top-right-radius: @app-border-radius;
+		border-bottom: 1px solid #61939F;
 	}
 
 	#bt_body{
 		position: relative;
 		background-color: #EBEBEB;
-		height: 400px;
-		border: @border-width solid #61939F;
-		border-bottom-left-radius: 5px;
-		border-bottom-right-radius: 5px;
-		width: @app-width - 2 * @border-width;			
+		height: 90.22222222%;
+		border-top: 1px solid #61939F;
+		border-bottom-left-radius: @app-border-radius;
+		border-bottom-right-radius: @app-border-radius;
+		width: @app-width;			
 		z-index: 5;
 
 	}
 
 	#bt_header > div:first-of-type{
 		float: left;
-		width:	596px - 45px;							/*	full-#bt_header > div:first-of-type = (parent-content-width - bt_person_profile-width)	*/
+		width:	@app-width - 45px;							/*	full-#bt_header > div:first-of-type = (parent-content-width - bt_person_profile-width)	*/
 		height: 45px;
 		left: 0;
 		top: 0;
 	}
 
 	#bt_person_profile{
-		.box-shadow(0 0 4px 1px rgba(0, 0, 0, 0.7));
+		.box-shadow(0 0 2px 0.6px rgba(0, 0, 0, 0.7));
 		.border-radiuses(4px, 0, 0, 4px);
 		background: url("../images/profile avatars/Ilia.png") no-repeat 0 0;
 		background-size: cover;
@@ -107,62 +107,82 @@
 		height:	45px - 2*@border-width;			/*	full-bt_person_profile-height = (parent-height - 2 * border-height) */
 		z-index: 4;
 		padding-right: 0;
-		margin-top: 1px;
+		margin-top: 2px;
 		margin-left: 1px;
   		margin-right: 1px;
 	}
 
+	//@header-width: @app-width - 45px;
+	//@title-main-width: 155px;
 
 	#bt_title_main{
-		position: absolute;
-		margin: 12px;
 		color: #FFFFFF;
+		float: left;
 		font-weight: bold;
 		font-size: 16px;
+		width: 27.92792793%; 						/* (@title-main-width / @header-width)*100%; */
+		height: 100%;
+		line-height: 45px;
+		text-align: center;
 	}
-
-	#bt_search_engine >  input[name="search_field"]{
-		position: relative;
-		font-style: italic;
-		font-size: 17px;
-		left: 27px;
-		width: 82%;
-		border: 0;
-	}
-
-	#bt_search_engine >  input[name="search_field"]:focus{
-		outline: 0;
-	}
+	
 
 	#bt_search_engine_area{
-		position: relative;
-		margin: 13px;
-		left: 140px;
-		width: 65%;
+		@margin: 11px;
+		float: left;
+		margin: @margin 2.34234234%;				/* ( @margin / @header-title ) * 100%;	 */
+		width: 67.38738739%;						/* ((@header-width - @title-main-width - 2*@margin) / @header-width) * 100% ; */
+		height: 45px - 2*11px;
 		background-color: #FFFFFF;
 		.border-radius(4px);
-	}
 
-	#bt_search_engine_area > span:first-child{
-		position: absolute;			
-		width: 17px;
-		height: 17px;
-		left: 4px;			
-		top:50%;								/* center align */
-		.transform(translate(0, -50%));			/* vertically   */
-		cursor: pointer;
-		background: url("../images/search_icon.png") no-repeat 0 0;
-	}
+	  	> div{
+	  		float: left;
+	  		height: 23px;
+	  		&#bt_search_engine{
+	  			width: 85.56149733%;
+	  			> input[name="search_field"]{
+					font-style: italic;
+					padding: 0;
+					font-size: 17px;
+					margin-top: 1px;
+					margin-bottom: 1px;
+					width: 100%;
+					height: 21px;
+					border: 0;
+				}
 
-	#bt_search_engine_area > span:last-child{
-		position: absolute;	
-		width: 17px;
-		height: 17px;
-		right: 4px;			
-		top:50%;								/* center align */
-		.transform(translate(0, -50%));			/* vertically   */
-		cursor: pointer;
-		background: url("../images/search_close_icon.png") no-repeat 0 0;
+				> input[name="search_field"]:focus{
+					outline: 0;
+				}
+			}
+
+			&:first-child,
+			&:last-child{
+				margin: 3px 1.33689839%;
+				width: 4.54545455%;
+				height: 23px;
+			}
+
+	  		&:first-child div, 
+	  		&:last-child div{
+				width: 17px;
+				height: 17px;
+				cursor: pointer;
+			}
+
+			&:last-child:after{
+				clear:both;
+			}
+
+			&:first-child div{
+				background: url("../images/search_icon.png") no-repeat 0 0;
+			}
+
+			&:last-child div{
+				background: url("../images/search_close_icon.png") no-repeat 0 0;
+			}
+		}
 	}
 
 	#add_event_button{

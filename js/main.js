@@ -1066,7 +1066,7 @@
 		return notes;
 	}
 
-	/****** Main Logic for buttons Next and Back in Back Traker *******/
+	/****** Main Logic for buttons Next and Back  *******/
 
 	function setNextBackButtonsLogic(){
 

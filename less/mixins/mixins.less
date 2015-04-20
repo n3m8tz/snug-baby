@@ -14,6 +14,12 @@
 		box-shadow: @arguments;
 	}
 
+	.box-shadow(@arguments1, @arguments2){
+		-webkit-box-shadow: @arguments1, @arguments2;
+		-moz-box-shadow: @arguments1, @arguments2;
+		box-shadow: @arguments1, @arguments2;
+	}
+
 	.transform(@arguments){
 		-webkit-transform: @arguments;
 		-moz-transform: @arguments;
