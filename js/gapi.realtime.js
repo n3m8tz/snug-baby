@@ -18,7 +18,7 @@
 		*/
 		authButtonElementId: 'authorizeButton',
 
-		appId: '500599261050',
+		appId: '488687976561',
 
 		/**
 		* Function to be called when a Realtime model is first created.
@@ -39,18 +39,6 @@
 		* Function to be called every time a Realtime file is loaded.
 		*/
 		onFileLoaded: onFileLoaded,
-
-		/**
-		* The MIME type of newly created Drive Files. By default the application
-		* specific MIME type will be used:
-		*     application/vnd.google-apps.drive-sdk.
-		*/
-      	newFileMimeType: null, // Using default.
-
-		/**
-		* Function to be called to inityalize custom Collaborative Objects types.
-		*/
-		registerTypes: null, // No action.
 
 		/**
 		* Function to be called after authorization and before loading files.
@@ -114,6 +102,8 @@
 		SnugBabies = model.getRoot().get("babies");
 		SnugEvents = model.getRoot().get("events");
 		SnugActivities = model.getRoot().get("activity");
+
+		gapi.drive.realtime.addEventListener(COLLABORATOR_JOINED);
 	}
 
 
@@ -135,6 +125,12 @@
 				}
 			});
 		});
+	}
+
+	function showShareDialog() {
+		var shareClient = new gapi.drive.share.ShareClient(realtimeOptions.appId);
+		shareClient.setItemIds(rtclient.params['fileIds']);
+		shareClient.showSettingsDialog();
 	}
 
 	function startGoogleDriveRealtime() {
