@@ -2,6 +2,7 @@
 	var initialAppStart = false;
 	var realtimeLoader;
 	var DEBUG_MODE = true;
+	var collabdoc;
 
 	var realtimeOptions = {
 
@@ -98,12 +99,49 @@
 	}
 
 	function onFileLoaded(doc){
+
+		collabdoc = doc;
+
 		var model = doc.getModel();		
+
 		SnugBabies = model.getRoot().get("babies");
 		SnugEvents = model.getRoot().get("events");
-		SnugActivities = model.getRoot().get("activity");
+		SnugActivities = model.getRoot().get("activity");	
 
-		gapi.drive.realtime.addEventListener(COLLABORATOR_JOINED);
+		setupCollaborativeEvents();
+	}
+
+	function setupCollaborativeEvents(){
+
+		var onCollaboratorsChanged = function(e){
+			if (e.type.toUpperCase() === "COLLABORATOR_JOINED")
+				console.log("Collaborator joined!");
+			else if (e.type.toUpperCase() === "COLLABORATOR_LEFT")
+				console.log("Collaborator left!");
+		}
+		
+		var onMapValueChanged = function(e){
+			var property = e.property;	//Which property(key) changed
+			var oldValue = e.oldValue;	//Previous map value for this property(key)
+			var newValue = e.newValue;	//New map value for this property(key)
+
+			if (newValue === null && oldValue !== null)
+				console.log("Property " + property + " was successfully removed!");
+
+			if (newValue !== null && oldValue === null)
+				console.log("Property " + property + " was successfully added!");
+
+
+			if (newValue !== null && oldValue !== null)
+				console.log("Property " + property + " changed value from "+ oldValue + " to "+newValue);
+		}
+
+		collabdoc.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_JOINED, onCollaboratorsChanged);
+		collabdoc.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_LEFT, onCollaboratorsChanged);
+
+		SnugBabies.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onMapValueChanged);
+		SnugEvents.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onMapValueChanged);
+		SnugActivities.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onMapValueChanged);
 	}
 
 

@@ -62,6 +62,7 @@
 			this.gender = "Female";	 									//disabled for now, set to "Female" by default
 			this.activity = undefined;
 			this.activityImg = undefined;
+			this.oldNickname = undefined;
 
 			// *****************************************************
 			// PRIVILEGED METHODS.
@@ -321,7 +322,10 @@
 
 			case BabyTrackInitialPage.POSTED_RESULTS_TABLE:
 				selector = "#posted_results_table";
-
+				$("#posted_results_table").on("click", "tr", function(event){
+					event.preventDefault();
+					onEntryClick(this);
+				});
 				var $checked_activity = $("#wizard_new_activity").find(":radio:checked");
 				var $data_diaper_type = $checked_activity.parent().prev().attr("data-activity-type");
 				
@@ -1085,6 +1089,38 @@
 					openSelectedActivity();
 					break;
 
+				case BabyTrackMode.MODIFY_PERSON:
+					var obj = $.extend(true, {}, SnugBabies.get(current_baby.nickname.toUpperCase()));
+					
+					obj.NAME = $("#create_person_block").find("input#person_nickname").val();	
+					obj.BIRTHDAY = $("#create_person_block").find("input#person_birthday").val();	
+					var $avatar = $("#create_person_block").find(".avatar.selected");
+					obj.AVATAR.VALUE = $avatar.find("img").attr("src");
+					obj.AVATAR.TYPE = parseInt( $avatar.data("avatar-type"), 10);
+					obj.COLOR_SCHEME = $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");
+					obj.GENDER = current_baby.gender;
+					current_baby.nickname = obj.NAME;
+
+					SnugBabies.delete( current_baby.oldNickname.toUpperCase() );
+					SnugBabies.set(	current_baby.nickname.toUpperCase(), obj );
+
+					
+					if (current_baby.oldNickname !== current_baby.nickname){
+
+						SnugEvents.items().forEach(function(event){
+							if(event[1].Person === current_baby.oldNickname.toUpperCase()){
+								var newobj = $.extend(true, {}, event[1]);
+								newobj.Person = current_baby.nickname.toUpperCase();
+								SnugEvents.set(event[0], newobj);
+							}
+						});
+					}
+
+
+					normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
+					openPostedResultsWindowLogic();
+					break;
+
 				case BabyTrackMode.ADD_FOOD_EVENT:
 
 					try{
@@ -1192,7 +1228,7 @@
 				
 				case BabyTrackWindows.CREATE_NEW_PERSON:
 					needToCorrectInputs = true;
-					previousWindow = BabyTrackWindows.WELCOME_POST;
+					previousWindow = BabyTrackWindows.POSTED_RESULTS_TABLE;
 					mode = BabyTrackMode.CREATE_NEW_PERSON;
 
 					clearWindows({effect: "drop", speed: 500, direction: "right"});
@@ -1389,6 +1425,55 @@
 		}
 	}
 
+	function onEntryClick(self){
+		//needToCorrectInputs = true;
+
+		$("#add_event_button").hide(1000);
+		dropNextBackBtns("show");
+
+		previousWindow = BabyTrackWindows.POSTED_RESULTS_TABLE;
+		mode = BabyTrackMode.MODIFY_PERSON;	
+
+		clearResults({window: "CREATE_NEW_PERSON"});
+
+		var nickname = $(self).find(".table_baby_name").text();
+		var birthday = SnugBabies.get(nickname.toUpperCase()).BIRTHDAY;
+		var avatarType = SnugBabies.get(nickname.toUpperCase()).AVATAR.TYPE;
+		var color = SnugBabies.get(nickname.toUpperCase()).COLOR_SCHEME; 		//???
+		var avatarImg = SnugBabies.get(nickname.toUpperCase()).AVATAR.VALUE;
+
+		$("#create_person_block").find("input#person_nickname").val( nickname );
+		$("#create_person_block").find("input#person_birthday").val( birthday );
+		$("#create_person_block").find("div[data-avatar-type]").data("avatar-type", avatarType.toString());
+
+
+		//$('select[name="colorpicker-regularfont"] + span').find("span[data-selected]").attr("data-color", color);
+		//var selector = 'select[name="colorpicker-regularfont"] + span';
+		//document.querySelector(selector).toString().replace()
+
+		if(avatarType == 1)
+			$("#create_person_block").find("div[data-avatar-type='1']")
+				.toggleClass("selected unselected");
+
+		if(avatarType == 2)
+			$("#create_person_block").find("div[data-avatar-type='2']")
+				.toggleClass("uploaded unuploaded")
+				.toggleClass("selected unselected")
+				.html("<img src='" + avatarImg + "' />");
+
+
+		current_baby = new SnugBabyPerson(nickname, birthday, color, avatarType, avatarImg);
+		current_baby.oldNickname = current_baby.nickname;
+
+		clearWindows({effect: "fadeOut", speed: 500});
+		var timer = setInterval(function(){
+			if(windowsAnimationOver){
+				$("#create_person_block").fadeIn(400);
+				clearInterval(timer);
+			}
+		}, 10);
+	}
+
 	function otherEventsLogic(){
 
 			$("#add_event_button").hide();
@@ -1472,6 +1557,8 @@
 	$(document).ready(function(){
 
 		$("#loading_sign").fadeIn();
+
+
 
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
