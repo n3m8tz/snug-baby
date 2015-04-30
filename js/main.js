@@ -1594,7 +1594,7 @@
 
 		$("#loading_sign").fadeIn();
 
-		TableNormalize = normalize;
+		NormalizeWindow = normalize;
 
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
