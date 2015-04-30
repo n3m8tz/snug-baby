@@ -41,18 +41,12 @@ var SnugBabyDayTime = (function(){
 	};
 
 	SnugBabyDayTime.prototype.HumanToUTC = function(){
-		_timestamp = Date.UTC(
-							this.basic.getFullYear(),
-							this.basic.getMonth(),
-							this.basic.getDate(),
-							this.basic.getHours(),
-							this.basic.getMinutes(),
-							this.basic.getSeconds());
+		_timestamp = this.basic.getTime();
 		_timestamp = Math.round(_timestamp/1000.0); 			   	//translate from milliseconds to seconds 
 		return _timestamp;
 	};
 
-	SnugBabyDayTime.prototype.UTCtoHuman = function(pTimestamp){  	//Eg: "Sat, 04 Apr 2015 03:18:11 GMT"
+	SnugBabyDayTime.prototype.UTCtoLocal = function(pTimestamp){  	//Eg: "Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)"
 		var timestamp;
 
 		if (typeof pTimetamp !== "undefined")
@@ -60,13 +54,9 @@ var SnugBabyDayTime = (function(){
 		else if (typeof _timestamp !== "undefined")
 			timestamp =  _timestamp;
 
-		//if(timestamp.toString().charAt(timestamp.length-1)=="L")
-		//	timestamp = timestamp.slice(0,-1);
 		timestamp *= 1000;											//translate from seconds to milliseconds 
-		//if(isValidDate(timestamp))
-			return (new Date(timestamp)).toUTCString();
-		//else
-		//	return false;
+		return (new Date(timestamp)).toString();
+
 	};
 
 	SnugBabyDayTime.prototype.formatTimeAMPM = function(hh, mm){	//Eg:   "07:36 AM"
@@ -124,6 +114,7 @@ var SnugBabyDayTime = (function(){
 			return hours;
 		if(type === "PM")
 			switch(hours){
+				case "12": return "12"; break;
 				case "1": return "13"; break;
 				case "2": return "14"; break;
 				case "3": return "15"; break;
@@ -135,7 +126,6 @@ var SnugBabyDayTime = (function(){
 				case "9": return "21"; break;
 				case "10": return "22"; break;
 				case "11": return "23"; break;
-				case "12": return "00"; break;
 				default: return "";
 			}
 	};

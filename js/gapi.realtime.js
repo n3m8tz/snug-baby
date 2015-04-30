@@ -10,16 +10,16 @@
 		* Client ID from the console.
 		*
 		*/
-		//132706467209-v9q1nahcan7gdbsmv069opc87eh9td78.apps.googleusercontent.com
+		//488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com
 		
-		clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
+		clientId: '132706467209-v9q1nahcan7gdbsmv069opc87eh9td78.apps.googleusercontent.com',
 
 		/**
 		* The ID of the button to click to authorize. Must be a DOM element ID.
 		*/
 		authButtonElementId: 'authorizeButton',
 
-		appId: '488687976561',
+		appId: '132706467209',
 
 		/**
 		* Function to be called when a Realtime model is first created.
@@ -121,19 +121,24 @@
 		}
 		
 		var onMapValueChanged = function(e){
+			
 			var property = e.property;	//Which property(key) changed
 			var oldValue = e.oldValue;	//Previous map value for this property(key)
 			var newValue = e.newValue;	//New map value for this property(key)
 
 			try{
+
+				NormalizeWindow({ window: BabyTrackWindows.CHOOSE_EXISTED_PERSON });
+
 				//if property added to SnugEvents 
 				if(parseInt(property, 10)){
-					TableNormalize({
+					NormalizeWindow({ 
 						window: BabyTrackWindows.POSTED_RESULTS_TABLE, 
 						normalizeOneEntry: true, 
 						event: [property, newValue] 
 					});
 				}
+
 			}finally{
 			
 				if (newValue === null && oldValue !== null)

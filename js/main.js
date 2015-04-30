@@ -126,16 +126,17 @@
 
 		SnugBabyPerson.prototype.submit = function(){
 
-			SnugBabies.set(this.nickname.toUpperCase(), {
-				"NAME": this.nickname,
-				"GENDER": this.gender,
-				"BIRTHDAY": this.birthday,
-				"AVATAR": {
-					"VALUE": this.avatarImg,
-					"TYPE": this.avatarType
-				},
-				"COLOR_SCHEME": this.color
-			});
+			if (!SnugBabies.get(this.nickname.toUpperCase()))
+				SnugBabies.set(this.nickname.toUpperCase(), {
+					"NAME": this.nickname,
+					"GENDER": this.gender,
+					"BIRTHDAY": this.birthday,
+					"AVATAR": {
+						"VALUE": this.avatarImg,
+						"TYPE": this.avatarType
+					},
+					"COLOR_SCHEME": this.color
+				});
 
 			var current = new Object();
 			var notes = this.getNotes();
@@ -463,20 +464,22 @@
 		var time = (function(_timestamp){
 			var _daytime = new SnugBabyDayTime();
 			_daytime.setTimestamp(parseInt(_timestamp, 10));
-			var _view = _daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
+			var _view = _daytime.UTCtoLocal();							//Eg: "Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)"
 			var _hh = _view.match(/\b(\d+):(\d+)\b/)[0].split(":")[0];
-			var _mm = _view.match(/\b(\d+):(\d+)\b/)[0].split(":")[1];
-			return _daytime.formatTimeAMPM(_hh, _mm);					//return Eg: "07:36 AM"
+			var _mm = _view.match(/\b(\d+):(\d+)\b/)[0].split(":")[1];	
+			return _daytime.formatTimeAMPM(_hh, _mm);					//return Eg: "01:05 PM"
 		})(timestamp);
 
 		var tableId = (function(_timestamp){
 			var _daytime = new SnugBabyDayTime();	
 			_daytime.setTimestamp(parseInt(_timestamp, 10));
-			var _view = _daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
-			var date = _view.replace(/\s*\d+:\d+:\d+\s*/," ");			//Eg: "Sat, 04 Apr 2015 GMT"
-			var myDate = new Date(date); 
-			var id = "_" + myDate.getTime()/1000.0;
-			return id;													//return Eg: "_1439251520"
+			var _view = _daytime.UTCtoLocal();							//Eg: "Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)"
+			var _viewDate = new Date(_view);							//Eg: Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)
+			var timestampWithoutTime = _viewDate.setHours(0,0,0,0);		//returning a timestamp without hours, minutes, seconds and milliseconds
+			timestampWithoutTime = Math.round(timestampWithoutTime /1000.0);
+			var id = "_" + timestampWithoutTime.toString();					
+			return id;	
+															//return Eg: "_1439251520"
 		})(timestamp);													
 
 		var entryId = (function(time){									//entryId is a time retrofitted as "07:36 AM" --> "_00736" 
@@ -491,9 +494,9 @@
 		var tableCaption = (function(_timestamp){
 			var _daytime = new SnugBabyDayTime();	
 			_daytime.setTimestamp(parseInt(_timestamp, 10));
-			var _view = _daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
+			var _view = _daytime.UTCtoLocal();							//Eg: "Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)"
 			var caption = _view.match(/(.+)(?=\s+\d+:\d+:\d+)/)[0];		
-			return caption;												//Eg: "Sat, 04 Apr 2015"
+			return caption;												//Eg: "Thu Apr 30 2015
 		})(timestamp);											
 
 		var findTable = function(_tableId, dom){
@@ -1482,14 +1485,11 @@
 		$("#create_person_block").find("input#person_birthday").val( birthday );
 		$("#create_person_block").find("div[data-avatar-type]").data("avatar-type", avatarType.toString());
 
-
-		//$('select[name="colorpicker-regularfont"] + span').find("span[data-selected]").attr("data-color", color);
-		//var selector = 'select[name="colorpicker-regularfont"] + span';
-		//document.querySelector(selector).toString().replace()
-
-		if(avatarType == 1)
+		// 4 lines of code below have to be modified!!!
+		if(avatarType == 1){ 
 			$("#create_person_block").find("div[data-avatar-type='1']")
-				.toggleClass("selected unselected");
+				.toggleClass("unselected"); //.toggleClass("selected unselected");
+		}
 
 		if(avatarType == 2)
 			$("#create_person_block").find("div[data-avatar-type='2']")
@@ -1587,7 +1587,7 @@
 		   	$("#bt_person_profile").on("click", showShareDialog);
 
 	}
-
+ 
 
 	//Activates once a tab had been loaded. Its just like document.onload()
 	$(document).ready(function(){

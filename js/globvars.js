@@ -1,6 +1,6 @@
 	var SnugActivities, SnugBabies, SnugEvents;
 
-	var TableNormalize = function(){};
+	var NormalizeWindow = function(){};
 	
 	var glSubmitTime = "";   //gl == global
 	var glSubmitDate = "";   
