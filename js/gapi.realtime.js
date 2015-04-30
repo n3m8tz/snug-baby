@@ -19,7 +19,7 @@
 		*/
 		authButtonElementId: 'authorizeButton',
 
-		appId: '488687976561',
+		appId: '132706467209',
 
 		/**
 		* Function to be called when a Realtime model is first created.
@@ -125,15 +125,27 @@
 			var oldValue = e.oldValue;	//Previous map value for this property(key)
 			var newValue = e.newValue;	//New map value for this property(key)
 
-			if (newValue === null && oldValue !== null)
-				console.log("Property " + property + " was successfully removed!");
+			try{
+				//if property added to SnugEvents 
+				if(parseInt(property, 10)){
+					TableNormalize({
+						window: BabyTrackWindows.POSTED_RESULTS_TABLE, 
+						normalizeOneEntry: true, 
+						event: [property, newValue] 
+					});
+				}
+			}finally{
+			
+				if (newValue === null && oldValue !== null)
+					console.log("Property " + property + " was successfully removed!");
 
-			if (newValue !== null && oldValue === null)
-				console.log("Property " + property + " was successfully added!");
+				if (newValue !== null && oldValue === null)
+					console.log("Property " + property + " was successfully added!");
 
 
-			if (newValue !== null && oldValue !== null)
-				console.log("Property " + property + " changed value from "+ oldValue + " to "+newValue);
+				if (newValue !== null && oldValue !== null)
+					console.log("Property " + property + " changed value from "+ JSON.stringify(oldValue) + " to "+JSON.stringify(newValue));
+			}
 		}
 
 		collabdoc.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_JOINED, onCollaboratorsChanged);

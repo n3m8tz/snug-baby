@@ -1,5 +1,7 @@
 	var SnugActivities, SnugBabies, SnugEvents;
 
+	var TableNormalize = function(){};
+	
 	var glSubmitTime = "";   //gl == global
 	var glSubmitDate = "";   
 

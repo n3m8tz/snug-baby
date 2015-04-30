@@ -66,7 +66,7 @@ var Table = (function(){
 		// *****************************************************
 		this.getCurrentEntry = function(){
 			return currentEntry.value;
-		};
+		}; 
 
 		this.fillEntry = function(_entryValue, _avatar, _activity, _name, _notes, _time){
 			currentEntry.value = _entryValue;

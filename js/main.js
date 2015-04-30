@@ -167,6 +167,7 @@
 
 			var ID = (new SnugBabyDayTime(new Date(this.sbDayTime.basic.toString()))).HumanToUTC();
 			SnugEvents.set( ID.toString(), current.person);
+			return [ID.toString(), current.person];
 		}
 
 		// Code below "SnugBabyPerson.prototype.addToTable" 
@@ -451,164 +452,195 @@
 	//----------------------------------------------------------------------
 
 
+
+	function normalizeEntry(event, dom){
+		var timestamp = event[0];
+		var avatar = SnugBabies.get(event[1].Person).AVATAR.VALUE;
+		var activity = event[1].Activity.IMAGE;
+		var name = SnugBabies.get(event[1].Person).NAME;
+		var notes = event[1].Activity.NOTES;
+
+		var time = (function(_timestamp){
+			var _daytime = new SnugBabyDayTime();
+			_daytime.setTimestamp(parseInt(_timestamp, 10));
+			var _view = _daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
+			var _hh = _view.match(/\b(\d+):(\d+)\b/)[0].split(":")[0];
+			var _mm = _view.match(/\b(\d+):(\d+)\b/)[0].split(":")[1];
+			return _daytime.formatTimeAMPM(_hh, _mm);					//return Eg: "07:36 AM"
+		})(timestamp);
+
+		var tableId = (function(_timestamp){
+			var _daytime = new SnugBabyDayTime();	
+			_daytime.setTimestamp(parseInt(_timestamp, 10));
+			var _view = _daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
+			var date = _view.replace(/\s*\d+:\d+:\d+\s*/," ");			//Eg: "Sat, 04 Apr 2015 GMT"
+			var myDate = new Date(date); 
+			var id = "_" + myDate.getTime()/1000.0;
+			return id;													//return Eg: "_1439251520"
+		})(timestamp);													
+
+		var entryId = (function(time){									//entryId is a time retrofitted as "07:36 AM" --> "_00736" 
+			var _hh = time.match(/\b(\d+):(\d+)\b/)[0].split(":")[0];	
+			var _mm = time.match(/\b(\d+):(\d+)\b/)[0].split(":")[1];
+			var _ampm = /AM/i.test(time) ? "0" : "1";						//	where first 0 in ID means AM and 1 means PM
+			var id = _ampm + (_hh.length === 1 ? "0" + _hh : _hh) + _mm;									
+			id = "_"+id;
+			return id;
+		})(time);														//return Eg: "_00736"
+
+		var tableCaption = (function(_timestamp){
+			var _daytime = new SnugBabyDayTime();	
+			_daytime.setTimestamp(parseInt(_timestamp, 10));
+			var _view = _daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
+			var caption = _view.match(/(.+)(?=\s+\d+:\d+:\d+)/)[0];		
+			return caption;												//Eg: "Sat, 04 Apr 2015"
+		})(timestamp);											
+
+		var findTable = function(_tableId, dom){
+			return dom.querySelector("#"+_tableId);
+		};
+		
+		var anyTablesExistIn = function(dom){
+			var pattern = /<\s*table\s+id\s*=\s*(?:'|")_\d+(?:'|")\s*>/i;
+			return pattern.test(dom.innerHTML);
+		};
+
+		var insertTable = function(_location, table, dom){
+			//referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+			if(dom.getElementsByTagName("table").length > 0)
+				dom.insertBefore(table, dom.getElementsByTagName("table")[_location+1]);
+			else
+				dom.appendChild(table);
+			//insertAfter(dom.getElementsByTagName("table")[_location];
+		}
+
+		var table = new Table();
+		var entry = new TableRow();
+
+
+		var buildEntry = function(_entryId){
+			entry = new TableRow(_entryId);
+			var tableRows = table.value.rows;
+			var orderedEntriesIdList = new Array();
+			var _location = -1;
+
+			if(tableRows.length > 0){
+				for(var i=0; i<tableRows.length; i++){
+					var id = parseInt(tableRows[i].getAttribute("id").replace("_", ""), 10);
+					orderedEntriesIdList.push(id);
+				}
+				_location = locationOf(parseInt(_entryId.replace("_", ""), 10), orderedEntriesIdList);
+			}
+
+			table.insertEntry(_location + 1, entry.value, avatar, activity, name, notes, time);
+			
+			// normalize Table Entry
+			(function(_table){
+				var id = "#"+_entryId;
+
+				if ( SnugBabies.get(event[1].Person).AVATAR.TYPE === 1)
+					$(_table).find(id).find("td.table_avatar").children().css("border", "thin solid #3B1D8F");
+
+				$(_table)
+					.find(id)
+					.css({ "border-color": SnugBabies.get(event[1].Person).COLOR_SCHEME })
+					.hover(function(){
+								$(this).css({
+									"background-color": $(this).css("border-color"),
+									"color": "#FFFFFF"
+								});
+							},
+							function(){
+								$(this).css({
+									"background-color": "#FFFFFF",
+									"color": "inherit"
+								});
+							});
+			})(table.value);
+		};
+
+		var buildTable = function(_tableId, dom){
+			table = new Table(_tableId);										//create a new table specifing a certain ID to dom node object!
+			table.setCaption( tableCaption ); 
+			buildEntry(entryId);
+
+			var tables = dom.getElementsByTagName("table");
+			var orderedTablesIdList = new Array();
+			var _location = -1;
+
+			if(tables.length > 0){
+				for(var i=0; i<tables.length; i++){
+					var id = parseInt(tables[i].getAttribute("id").replace("_", ""), 10);
+					orderedTablesIdList.push(id);
+				}
+				_location = locationOf(parseInt(_tableId.replace("_", ""), 10), orderedTablesIdList);
+			}
+
+			insertTable(_location+1, table.value, dom);							//insert a table we came across into the dom!
+		};
+
+		if (anyTablesExistIn(dom)){															
+			table.value = findTable(tableId, dom);								
+			
+			if(table.value){													//if we didn't come up with a node with specified ID in dom, drop next step
+				entry = table.findEntry(entryId);
+				//if (entry)
+					buildEntry(entryId);								
+			}else
+				buildTable(tableId, dom);
+		}else
+			buildTable(tableId, dom);	
+
+	}
+
+
+
 	function normalize(obj){
+		var normalizeOneEntry = typeof obj.normalizeOneEntry !== "undefined" ? obj.normalizeOneEntry : false;
+		var single_event = (normalizeOneEntry && typeof obj.event !== "undefined") ? obj.event : undefined;
+
 		switch(obj.window){
 			case BabyTrackWindows.CREATE_NEW_PERSON:
 			break;
 
 			case BabyTrackWindows.POSTED_RESULTS_TABLE:
 			var prSelector = "#posted_results_table > section";
+
 				if(!SnugEvents.isEmpty()){													//if there any information about babys in the database
 					
-					
+					// if Welcome Post Dashboard is still opened, 
+					// lets exchange it for Posted Results Window.
+					// this situation may occur if no events have been added yet
+					// and in case one collaborator adds a new event
+					// but another still doesn't.. 
+					// from this point without page refrashing 
+					// the 1st one sees a Posted Results Window
+					// but the 2nd one still sees  Welcome Post Dashboard
+
+					if (initialPage === BabyTrackInitialPage.WELCOME_POST
+						&& mode === BabyTrackMode.NONE){
+						clearWindows({effect: "fadeOut", speed: 800});
+
+						var timer = setInterval(function(){
+							if(windowsAnimationOver){
+								setInitialPage(BabyTrackInitialPage.POSTED_RESULTS_TABLE, {effect: "drop", speed: 500});
+								clearInterval(timer);
+							}
+						}, 10);
+					}
 
 					//timestamp, time, notes, avatar, name and activity, dom
 					var dom = document.querySelector(prSelector);
-					//$(prSelector).empty();
 
-					SnugEvents.items().forEach(function(event){
+					
 
-						var timestamp = event[0];
-						var avatar = SnugBabies.get(event[1].Person).AVATAR.VALUE;
-						var activity = event[1].Activity.IMAGE;
-						var name = SnugBabies.get(event[1].Person).NAME;
-						var notes = event[1].Activity.NOTES;
-
-						var time = (function(_timestamp){
-							var _daytime = new SnugBabyDayTime();
-							_daytime.setTimestamp(parseInt(_timestamp, 10));
-							var _view = _daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
-							var _hh = _view.match(/\b(\d+):(\d+)\b/)[0].split(":")[0];
-							var _mm = _view.match(/\b(\d+):(\d+)\b/)[0].split(":")[1];
-							return _daytime.formatTimeAMPM(_hh, _mm);					//return Eg: "07:36 AM"
-						})(timestamp);
-
-						var tableId = (function(_timestamp){
-							var _daytime = new SnugBabyDayTime();	
-							_daytime.setTimestamp(parseInt(_timestamp, 10));
-							var _view = _daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
-							var date = _view.replace(/\s*\d+:\d+:\d+\s*/," ");			//Eg: "Sat, 04 Apr 2015 GMT"
-							var myDate = new Date(date); 
-							var id = "_" + myDate.getTime()/1000.0;
-							return id;													//return Eg: "_1439251520"
-						})(timestamp);													
-
-						var entryId = (function(time){									//entryId is a time retrofitted as "07:36 AM" --> "_00736" 
-							var _hh = time.match(/\b(\d+):(\d+)\b/)[0].split(":")[0];	
-							var _mm = time.match(/\b(\d+):(\d+)\b/)[0].split(":")[1];
-							var _ampm = /AM/i.test(time) ? "0" : "1";						//	where first 0 in ID means AM and 1 means PM
-							var id = _ampm + (_hh.length === 1 ? "0" + _hh : _hh) + _mm;									
-							id = "_"+id;
-							return id;
-						})(time);														//return Eg: "_00736"
-
-						var tableCaption = (function(_timestamp){
-							var _daytime = new SnugBabyDayTime();	
-							_daytime.setTimestamp(parseInt(_timestamp, 10));
-							var _view = _daytime.UTCtoHuman();							//Eg: "Sat, 04 Apr 2015 16:46:56 GMT"
-							var caption = _view.match(/(.+)(?=\s+\d+:\d+:\d+)/)[0];		
-							return caption;												//Eg: "Sat, 04 Apr 2015"
-						})(timestamp);											
-
-						var findTable = function(_tableId, dom){
-							return dom.querySelector("#"+_tableId);
-						};
-						
-						var anyTablesExistIn = function(dom){
-							var pattern = /<\s*table\s+id\s*=\s*(?:'|")_\d+(?:'|")\s*>/i;
-							return pattern.test(dom.innerHTML);
-						};
-
-						var insertTable = function(_location, table, dom){
-							//referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-							if(dom.getElementsByTagName("table").length > 0)
-								dom.insertBefore(table, dom.getElementsByTagName("table")[_location+1]);
-							else
-								dom.appendChild(table);
-							//insertAfter(dom.getElementsByTagName("table")[_location];
-						}
-
-						var table = new Table();
-						var entry = new TableRow();
-
-
-						var buildEntry = function(_entryId){
-							entry = new TableRow(_entryId);
-							var tableRows = table.value.rows;
-							var orderedEntriesIdList = new Array();
-							var _location = -1;
-
-							if(tableRows.length > 0){
-								for(var i=0; i<tableRows.length; i++){
-									var id = parseInt(tableRows[i].getAttribute("id").replace("_", ""), 10);
-									orderedEntriesIdList.push(id);
-								}
-								_location = locationOf(parseInt(_entryId.replace("_", ""), 10), orderedEntriesIdList);
-							}
-
-							table.insertEntry(_location + 1,entry.value, avatar, activity, name, notes, time);
-							var normalizeTableEntry = function(_table){
-								var id = "#"+_entryId;
-
-								if ( SnugBabies.get(event[1].Person).AVATAR.TYPE === 1)
-									$(table.value).find(id).find("td.table_avatar").children().css("border", "thin solid #3B1D8F");
-
-								$(table.value)
-									.find(id)
-									.css({ "border-color": SnugBabies.get(event[1].Person).COLOR_SCHEME })
-									.hover(function(){
-												$(this).css({
-													"background-color": $(this).css("border-color"),
-													"color": "#FFFFFF"
-												});
-											},
-											function(){
-												$(this).css({
-													"background-color": "#FFFFFF",
-													"color": "inherit"
-												});
-											});
-							}
-							normalizeTableEntry(table.value);
-						};
-
-						var buildTable = function(_tableId, dom){
-							table = new Table(_tableId);										//create a new table specifing a certain ID to dom node object!
-							table.setCaption( tableCaption ); 
-							buildEntry(entryId);
-
-							var tables = dom.getElementsByTagName("table");
-							var orderedTablesIdList = new Array();
-							var _location = -1;
-
-							if(tables.length > 0){
-								for(var i=0; i<tables.length; i++){
-									var id = parseInt(tables[i].getAttribute("id").replace("_", ""), 10);
-									orderedTablesIdList.push(id);
-								}
-								_location = locationOf(parseInt(_tableId.replace("_", ""), 10), orderedTablesIdList);
-							}
-
-							insertTable(_location+1, table.value, dom);							//insert a table we came across into the dom!
-						};
-
-						if (anyTablesExistIn(dom)){															
-							table.value = findTable(tableId, dom);								
-							
-							if(table.value){													//if we didn't come up with a node with specified ID in dom, drop next step
-								entry = table.findEntry(entryId);
-								if (entry)
-									table = table.fillEntry(entry, avatar, activity, name, notes, time); //filling a table with specified ID with data otherwise 
-								else
-									buildEntry(entryId);								
-							}else
-								buildTable(tableId, dom);
-						}else
-							buildTable(tableId, dom);
-
-						
-						
-					});
+					if (normalizeOneEntry)
+						normalizeEntry(single_event, dom);
+					else 
+						SnugEvents.items().forEach(function(event){
+							normalizeEntry(event, dom);
+						});
+					
 				}
 				
 			break;
@@ -1137,8 +1169,9 @@
 					current_baby.setSubmitTime( glSubmitTime );
 
 					//current_baby.addToTable( $("#posted_results_table").find("table").html() );
-					current_baby.submit();
-					normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
+					var single_event = current_baby.submit();
+
+					
 					
 					openPostedResultsWindowLogic();
 					break;
@@ -1159,8 +1192,8 @@
 					current_baby.setSubmitTime( glSubmitTime );
 
 					//current_baby.addToTable( $("#posted_results_table").find("table").html() );
-					current_baby.submit();
-					normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
+					var single_event = current_baby.submit();
+
 					
 					openPostedResultsWindowLogic();
 					break;
@@ -1357,7 +1390,7 @@
 	function addEventButtonClickEvent(){
 
 		$("#add_event_button").hide(1000);
-
+		normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
 		dropNextBackBtns("show");
 
 		if(mode === BabyTrackMode.NONE){
@@ -1558,7 +1591,7 @@
 
 		$("#loading_sign").fadeIn();
 
-
+		TableNormalize = normalize;
 
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
