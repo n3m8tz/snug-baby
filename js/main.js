@@ -619,6 +619,9 @@
 
 					if (initialPage === BabyTrackInitialPage.WELCOME_POST
 						&& mode === BabyTrackMode.NONE){
+
+						initialPage = BabyTrackInitialPage.POSTED_RESULTS_TABLE;
+
 						clearWindows({effect: "fadeOut", speed: 800});
 
 						var timer = setInterval(function(){
