@@ -654,7 +654,7 @@
 			case BabyTrackWindows.CHOOSE_EXISTED_PERSON:
 					if(!SnugBabies.isEmpty()){												 //if there any information about baby's in the database
 						
-						$("#choose_person").find(".add_person_button").prevAll().empty();
+						$("#choose_person").find(".add_person_button").prevAll().remove();
 						
 						SnugBabies.items().forEach(function(baby){
 
@@ -1171,7 +1171,7 @@
 					//current_baby.addToTable( $("#posted_results_table").find("table").html() );
 					var single_event = current_baby.submit();
 
-					
+					normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
 					
 					openPostedResultsWindowLogic();
 					break;
@@ -1194,7 +1194,7 @@
 					//current_baby.addToTable( $("#posted_results_table").find("table").html() );
 					var single_event = current_baby.submit();
 
-					
+					normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
 					openPostedResultsWindowLogic();
 					break;
 
@@ -1390,7 +1390,7 @@
 	function addEventButtonClickEvent(){
 
 		$("#add_event_button").hide(1000);
-		normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
+		
 		dropNextBackBtns("show");
 
 		if(mode === BabyTrackMode.NONE){
