@@ -111,7 +111,7 @@ var SnugBabyDayTime = (function(){
 
 	SnugBabyDayTime.prototype.hoursAMPMtoUsial = function(hours, type){
 		if(type === "AM")
-			return hours;
+			return hours == "12" ? "00": hours;
 		if(type === "PM")
 			switch(hours){
 				case "12": return "12"; break;
