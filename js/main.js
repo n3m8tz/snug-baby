@@ -633,6 +633,19 @@
 					// the 1st one sees a Posted Results Window
 					// but the 2nd one still sees  Welcome Post Dashboard
 
+
+					//timestamp, time, notes, avatar, name and activity, dom
+					var dom = document.querySelector(prSelector);
+
+					dom.innerHTML = null;
+
+					if (normalizeOneEntry)
+						normalizeEntry(single_event, dom);
+					else 
+						SnugEvents.items().forEach(function(event){
+							normalizeEntry(event, dom);
+						});
+
 					if (initialPage === BabyTrackInitialPage.WELCOME_POST
 						&& mode === BabyTrackMode.NONE){
 
@@ -647,18 +660,6 @@
 							}
 						}, 10);
 					}
-
-					//timestamp, time, notes, avatar, name and activity, dom
-					var dom = document.querySelector(prSelector);
-
-					
-
-					if (normalizeOneEntry)
-						normalizeEntry(single_event, dom);
-					else 
-						SnugEvents.items().forEach(function(event){
-							normalizeEntry(event, dom);
-						});
 					
 				}
 				
@@ -1510,10 +1511,10 @@
 		$(".colorpicker").simplecolorpicker('selectColor', color); 
 
 		// 4 lines of code below have to be modified!!!
-		if(avatarType == 1){ 
-			$("#create_person_block").find("div[data-avatar-type='1']").first()
-				.addClass("selected"); //.toggleClass("selected unselected");
-		}
+		//if(avatarType == 1){ 
+		//	$("#create_person_block").find("div[data-avatar-type='1']").first()
+		//		.addClass("selected"); //.toggleClass("selected unselected");
+		//}
 
 		if(avatarType == 2)
 			$("#create_person_block").find("div[data-avatar-type='2']")

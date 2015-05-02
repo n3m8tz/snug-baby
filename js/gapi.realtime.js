@@ -132,11 +132,7 @@
 
 				//if property added to SnugEvents 
 				if(parseInt(property, 10)){
-					NormalizeWindow({ 
-						window: BabyTrackWindows.POSTED_RESULTS_TABLE, 
-						normalizeOneEntry: true, 
-						event: [property, newValue] 
-					});
+					NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE});
 				}
 
 			}finally{
