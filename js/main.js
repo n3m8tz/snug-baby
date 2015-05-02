@@ -1,4 +1,3 @@
-
 (function($, undefined){
 
 	var SnugBabyPerson = (function(){
@@ -14,7 +13,7 @@
 				case "TIME":
 					var patternTime = /\b(\d+):(\d+)\b/; 
 					_submitX = _submitX.match(patternTime)[0].replace(/(\d+)(?=:)/, function(match, hours){
-						return date.hoursAMPMtoUsial(hours, _submitX.match(/(?:AM|PM)/)[0]);
+						return date.convert12To24hours(hours, _submitX.match(/(?:AM|PM)/)[0]);
 					});				
 					_basic = _basic.toString().replace(patternTime, _submitX);
 				break;
@@ -461,42 +460,59 @@
 		var name = SnugBabies.get(event[1].Person).NAME;
 		var notes = event[1].Activity.NOTES;
 
+
+		//Eg: { short : "01:05 PM", full : "01:05:40 PM" }
 		var time = (function(_timestamp){
 			var _daytime = new SnugBabyDayTime();
 			_daytime.setTimestamp(parseInt(_timestamp, 10));
 			var _view = _daytime.UTCtoLocal();							//Eg: "Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)"
-			var _hh = _view.match(/\b(\d+):(\d+)\b/)[0].split(":")[0];
-			var _mm = _view.match(/\b(\d+):(\d+)\b/)[0].split(":")[1];	
-			return _daytime.formatTimeAMPM(_hh, _mm);					//return Eg: "01:05 PM"
+			var _hh = _view.match(/\b(\d+):(\d+):(\d+)\b/)[0].split(":")[0];
+			var _mm = _view.match(/\b(\d+):(\d+):(\d+)\b/)[0].split(":")[1];	
+			var _ss = _view.match(/\b(\d+):(\d+):(\d+)\b/)[0].split(":")[2];
+
+			var timeStruct = new Object();
+			
+			timeStruct = {
+				"short" : _daytime.formatTimeAMPM(_hh, _mm),			//return Eg: "01:05 PM"
+				"full" : _daytime.formatTimeAMPM(_hh, _mm, _ss)			//return Eg: "01:05:40 PM"
+			}
+
+			return timeStruct;
+
 		})(timestamp);
 
+
+		//Eg: "_1439251520"
 		var tableId = (function(_timestamp){
 			var _daytime = new SnugBabyDayTime();	
 			_daytime.setTimestamp(parseInt(_timestamp, 10));
 			var _view = _daytime.UTCtoLocal();							//Eg: "Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)"
 			var _viewDate = new Date(_view);							//Eg: Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)
 			var timestampWithoutTime = _viewDate.setHours(0,0,0,0);		//returning a timestamp without hours, minutes, seconds and milliseconds
-			timestampWithoutTime = Math.round(timestampWithoutTime /1000.0);
+			timestampWithoutTime = Math.round(timestampWithoutTime / 1000.0);
 			var id = "_" + timestampWithoutTime.toString();					
-			return id;	
-															//return Eg: "_1439251520"
+			return id;													//return Eg: "_1439251520"
 		})(timestamp);													
 
-		var entryId = (function(time){									//entryId is a time retrofitted as "07:36 AM" --> "_00736" 
-			var _hh = time.match(/\b(\d+):(\d+)\b/)[0].split(":")[0];	
-			var _mm = time.match(/\b(\d+):(\d+)\b/)[0].split(":")[1];
-			var _ampm = /AM/i.test(time) ? "0" : "1";						//	where first 0 in ID means AM and 1 means PM
-			var id = _ampm + (_hh.length === 1 ? "0" + _hh : _hh) + _mm;									
-			id = "_"+id;
+		//entryId is the time retrofitted as "07:36:30 AM" --> "_0073630"
+		//Eg: "_0073630"
+		var entryId = (function(time){										 
+			var _hh = time.match(/\b(\d+):(\d+):(\d+)\b/)[0].split(":")[0];	
+			var _mm = time.match(/\b(\d+):(\d+):(\d+)\b/)[0].split(":")[1];
+			var _ss = time.match(/\b(\d+):(\d+):(\d+)\b/)[0].split(":")[2];
+			var _ampm = /AM/i.test(time) ? "0" : "1";						//	first 0  means AM and 1 means PM
+			var id = _ampm + (_hh.length === 1 ? "0" + _hh : _hh) + _mm + _ss;									
+			id = "_" + id;
 			return id;
-		})(time);														//return Eg: "_00736"
+		})(time["full"]);														//return Eg: "_0073630"
 
+		//Eg: "Thu Apr 30 2015"
 		var tableCaption = (function(_timestamp){
 			var _daytime = new SnugBabyDayTime();	
 			_daytime.setTimestamp(parseInt(_timestamp, 10));
 			var _view = _daytime.UTCtoLocal();							//Eg: "Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)"
 			var caption = _view.match(/(.+)(?=\s+\d+:\d+:\d+)/)[0];		
-			return caption;												//Eg: "Thu Apr 30 2015
+			return caption;												//Eg: "Thu Apr 30 2015"
 		})(timestamp);											
 
 		var findTable = function(_tableId, dom){
@@ -508,18 +524,15 @@
 			return pattern.test(dom.innerHTML);
 		};
 
-		var insertTable = function(_location, table, dom){
-			//referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+		var insertTable = function(_location, table, dom){	
 			if(dom.getElementsByTagName("table").length > 0)
 				dom.insertBefore(table, dom.getElementsByTagName("table")[_location+1]);
 			else
 				dom.appendChild(table);
-			//insertAfter(dom.getElementsByTagName("table")[_location];
 		}
 
 		var table = new Table();
 		var entry = new TableRow();
-
 
 		var buildEntry = function(_entryId){
 			entry = new TableRow(_entryId);
@@ -535,7 +548,7 @@
 				_location = locationOf(parseInt(_entryId.replace("_", ""), 10), orderedEntriesIdList);
 			}
 
-			table.insertEntry(_location + 1, entry.value, avatar, activity, name, notes, time);
+			table.insertEntry(_location + 1, entry.value, avatar, activity, name, notes, time["short"]);
 			
 			// normalize Table Entry
 			(function(_table){
@@ -717,7 +730,7 @@
 
 						$("#choose_person").find("section[data-type='avatar']").each(function(index){
 							$avatarImg = $(this).find("div[data-avatar-type]");
-							if($avatarImg.data("avatar-type") == "2"){
+							if($avatarImg.attr("data-avatar-type") == "2"){
 								$avatarImg.addClass("uploaded");
 							}
 						});
@@ -755,7 +768,7 @@
 			var birthday = $("#create_person_block").find("input#person_birthday").val();
 			var avatarType = parseInt( $("#create_person_block").find(".avatar.selected").attr("data-avatar-type"), 10);
 			var avatarImg = $("#create_person_block").find(".avatar.selected").html();	//"<img src='...' />"
-			var color = $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");
+			var color = $(".colorpicker").val();
 			
 			var $prevSibling = $("#choose_person").find(".add_person_button").prev();
 			if( $.isEmptyObject($prevSibling[0]) ||
@@ -919,7 +932,7 @@
 
 			$("#diaper_content, #food_content")
 				.find("input.timepicker")
-				.val(current_baby.sbDayTime.time);
+				.val(current_baby.sbDayTime.shortTime);
 
 			glSubmitDate = $(".datepicker").val();
 			glSubmitTime = $(".timepicker").val();
@@ -971,7 +984,7 @@
 		var nickname =	$("#choose_person").find(":radio:checked").parent().text();								//should be loaded from a server
 		var birthday = $("#create_person_block").find("input#person_birthday").val();							//should be loaded from a server
 		var avatarType =  parseInt( $("#choose_person").find(".avatar.selected").attr("data-avatar-type"), 10);	//should be loaded from a server
-		var color =  $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");	//should be loaded from a server. 
+		var color =  	$(".colorpicker").val();																//should be loaded from a server. 
 	 	var avatarImg = $("section[data-type='avatar']").find("div.avatar.selected img").attr("src");
 		
 		current_baby = new SnugBabyPerson(nickname, birthday, color, avatarType, avatarImg);
@@ -984,7 +997,7 @@
 				var nickname = $("#create_person_block").find("input#person_nickname").val();
 				var birthday = $("#create_person_block").find("input#person_birthday").val();
 				var $avatar =  $("#create_person_block").find(".avatar.selected");
-				var color = $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");
+				var color = $(".colorpicker").val();
 
 				if( nickname === "")
 					throw new IncorrectInputException( "Nickname is not specified!" );
@@ -1134,8 +1147,8 @@
 					obj.BIRTHDAY = $("#create_person_block").find("input#person_birthday").val();	
 					var $avatar = $("#create_person_block").find(".avatar.selected");
 					obj.AVATAR.VALUE = $avatar.find("img").attr("src");
-					obj.AVATAR.TYPE = parseInt( $avatar.data("avatar-type"), 10);
-					obj.COLOR_SCHEME = $('select[name="colorpicker-regularfont"] + span > span[data-selected]').data("color");
+					obj.AVATAR.TYPE = parseInt( $avatar.attr("data-avatar-type"), 10);
+					obj.COLOR_SCHEME = $(".colorpicker").val();
 					obj.GENDER = current_baby.gender;
 					current_baby.nickname = obj.NAME;
 
@@ -1154,8 +1167,9 @@
 						});
 					}
 
-
+					$("#posted_results_table > section").empty();
 					normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
+
 					openPostedResultsWindowLogic();
 					break;
 
@@ -1325,6 +1339,7 @@
 				$("#create_person_block").find("input#person_birthday").val("");
 				$("#create_person_block").find("div[data-avatar-type='2']").removeClass("uploaded").addClass("unuploaded").empty();
 				$("#create_person_block").find(".avatar.selected").toggleClass("selected unselected");
+				$(".colorpicker").simplecolorpicker('selectColor', '#7bd148');
 			break;
 
 			case "ADD_FOOD_EVENT":
@@ -1355,6 +1370,7 @@
 				if($(this).hasClass("selected"))
 					$(this).toggleClass("selected unselected");
 		}); 
+
 	}
 
 	
@@ -1443,14 +1459,14 @@
 		previousWindow = BabyTrackWindows.CHOOSE_EXISTED_PERSON;
 		mode = BabyTrackMode.CREATE_NEW_PERSON;
 
+		//clear all the fields in Create New Person Window
+		clearResults({window: "CREATE_NEW_PERSON"});
+
 		clearWindows({effect: "fadeOut", speed: 500});
 		var timer = setInterval(function(){
 			if(windowsAnimationOver){
 				$("#create_person_block").fadeIn(400);
-				clearInterval(timer);
-
-				//clear all the fields in Create New Person Window
-				clearResults({window: "CREATE_NEW_PERSON"});
+				clearInterval(timer);	
 			}
 		}, 10);
 	}
@@ -1483,12 +1499,20 @@
 
 		$("#create_person_block").find("input#person_nickname").val( nickname );
 		$("#create_person_block").find("input#person_birthday").val( birthday );
-		$("#create_person_block").find("div[data-avatar-type]").data("avatar-type", avatarType.toString());
+
+		//2 lines of code below have to be modified!!!
+		if (avatarType == 1)
+			$("#create_person_block").find("div[data-avatar-type]").first().attr("data-avatar-type", avatarType.toString());
+
+		if (avatarType == 2)
+			$("#create_person_block").find("div[data-avatar-type]").last().attr("data-avatar-type", avatarType.toString());
+
+		$(".colorpicker").simplecolorpicker('selectColor', color); 
 
 		// 4 lines of code below have to be modified!!!
 		if(avatarType == 1){ 
-			$("#create_person_block").find("div[data-avatar-type='1']")
-				.toggleClass("unselected"); //.toggleClass("selected unselected");
+			$("#create_person_block").find("div[data-avatar-type='1']").first()
+				.addClass("selected"); //.toggleClass("selected unselected");
 		}
 
 		if(avatarType == 2)
@@ -1582,7 +1606,7 @@
 			$("#choose_person").find(".add_person_button").click(addPersonButtonClickEvent);
 			$("#authorizeButton").click(authButtonClickEvent);
 				    
-		    $('select[name="colorpicker-regularfont"]').simplecolorpicker({theme: 'regularfont'});
+		    $(".colorpicker").simplecolorpicker({theme: 'regularfont'});
 
 		   	$("#bt_person_profile").on("click", showShareDialog);
 

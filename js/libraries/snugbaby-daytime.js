@@ -25,7 +25,17 @@ var SnugBabyDayTime = (function(){
 
 		this.basic = (typeof date === "undefined") ? new Date() : date;	//Eg: "Fri Apr 03 2015 06:52:20 GMT-0700 (Pacific Daylight Time)"
 
-		this.time = this.formatTimeAMPM();								//Eg:   "07:36 AM"
+		this.fullTime = this.formatTimeAMPM(							//Eg:   "07:36:40 AM"
+								this.basic.getHours(),
+								this.basic.getMinutes(),
+								this.basic.getSeconds()
+		);	
+
+		this.shortTime = this.formatTimeAMPM(							//Eg:   "07:36 AM"
+								this.basic.getHours(),
+								this.basic.getMinutes()
+		);		
+
 		this.fullMonth = this.formatFullMonth();						//Eg:   "January 24"
 		this.shortMonth = this.formatShortMonth();						//Eg:   "Jan 24"
 		this.fullDay = this.formatFullDay(); 							//Eg:   "Monday"
@@ -42,11 +52,11 @@ var SnugBabyDayTime = (function(){
 
 	SnugBabyDayTime.prototype.HumanToUTC = function(){
 		_timestamp = this.basic.getTime();
-		_timestamp = Math.round(_timestamp/1000.0); 			   	//translate from milliseconds to seconds 
+		_timestamp = Math.round(_timestamp/1000.0); 			   		//translate from milliseconds to seconds 
 		return _timestamp;
 	};
 
-	SnugBabyDayTime.prototype.UTCtoLocal = function(pTimestamp){  	//Eg: "Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)"
+	SnugBabyDayTime.prototype.UTCtoLocal = function(pTimestamp){  		//Eg: "Thu Apr 30 2015 13:05:06 GMT+0100 (Central Europe Standard Time)"
 		var timestamp;
 
 		if (typeof pTimetamp !== "undefined")
@@ -54,27 +64,33 @@ var SnugBabyDayTime = (function(){
 		else if (typeof _timestamp !== "undefined")
 			timestamp =  _timestamp;
 
-		timestamp *= 1000;											//translate from seconds to milliseconds 
+		timestamp *= 1000;												//translate from seconds to milliseconds 
 		return (new Date(timestamp)).toString();
-
 	};
 
-	SnugBabyDayTime.prototype.formatTimeAMPM = function(hh, mm){	//Eg:   "07:36 AM"
+	SnugBabyDayTime.prototype.formatTimeAMPM = function(hh, mm, ss){	//Eg: short "07:36 AM" or full "07:36:23 PM"
 		var hours;
 		var minutes;
-		if(typeof (hh && mm) === "undefined"){
+		var seconds;													//Optional parameter
+
+		if( !hh && !mm && !ss ){ 
 			hours = this.basic.getHours();
 			minutes = this.basic.getMinutes();
+			seconds = this.basic.getSeconds();
 		}else{
 			hours = parseInt(hh, 10);
 			minutes = parseInt(mm, 10);
+			seconds = ss ? parseInt(ss, 10) : ss;
 		}
 
 		var ampm = hours >= 12 ? 'PM' : 'AM';
 		hours = hours % 12;
-		hours = hours ? hours : 12;									// the hour '0' should be '12'
+		hours = hours ? hours : 12;										// the hour '0' should be '12'
 		minutes = minutes < 10 ? '0' + minutes : minutes;
-		var time = hours + ':' + minutes + ' ' + ampm;
+		
+		seconds = seconds < 10 ? '0' + seconds : seconds;				//assume ss = undefined => (ss < 10 == false) so checking typedef not required 
+
+		var time = hours + ':' + minutes + (seconds ? ':' + seconds : '') + ' ' + ampm;	
 		return time;
 	};
 
@@ -109,7 +125,7 @@ var SnugBabyDayTime = (function(){
 		}
 	};
 
-	SnugBabyDayTime.prototype.hoursAMPMtoUsial = function(hours, type){
+	SnugBabyDayTime.prototype.convert12To24hours = function(hours, type){
 		if(type === "AM")
 			return hours == "12" ? "00": hours;
 		if(type === "PM")
