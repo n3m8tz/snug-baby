@@ -1256,6 +1256,9 @@
 				break;
 
 				case BabyTrackWindows.POSTED_RESULTS_TABLE:
+
+					//Search(null);
+
 					$("#add_event_button").show(1000);
 
 					dropNextBackBtns();
@@ -1535,7 +1538,72 @@
 		}, 10);
 	}
 
+	var changePseudoElem = (function(style){ 
+			var sheet = document.head.appendChild(style).sheet;
+			return function(selector, css){
+				var propText = Object.keys(css).map(function(p){ 
+					return p+":"+css[p]; 
+				}).join(";");
+				if(propText.search("_") != -1) propText = propText.replace("_", "-");
+				sheet.insertRule(selector + "{" + propText + "}", sheet.cssRules.length);
+			} 
+	})(document.createElement("style"));
+
+
+	function Search(query){
+		if(query == null)
+			query = "";
+		query = $.trim( query );												// eliminating whitespaces in the begining and in the end of $query
+		query = query.toLowerCase();											// translate letters to lower case
+
+		var $search_scope = $("#posted_results_table > section");
+		var $listOfNames = $search_scope.find("td.table_baby_name");
+
+		$tables = $search_scope.find("table");
+		$tables.show();
+		
+		$listOfNames.each(function(index){
+			if( $(this).html().toLowerCase().indexOf(query) == -1)
+				$(this).parent().hide();
+			else
+				$(this).parent().show();
+		});
+
+		//normalizing
+		var normalize = function(){
+			$search_scope.find("table").each(function(index){
+				var hiddenTRcount = $(this).find("tbody").children("tr:hidden").length;
+				var TRcount = $(this).find("tbody").children("tr").length;
+				if ( hiddenTRcount == TRcount )
+					$(this).hide();
+				else 
+					$(this).show();
+			});
+
+			var hiddenTableCount = $search_scope.children("table:hidden").length;
+			var TableCount = $search_scope.children("table").length;
+			
+			var newContent = hiddenTableCount == TableCount ? "No relevant results were found...": "";
+
+			changePseudoElem("#posted_results_table > section:after", {
+						content: "'" + newContent + "'"
+			});
+			
+		}
+
+		normalize();
+	}
+
+
 	function otherEventsLogic(){
+
+			$( 'input[name="search_field"]' ).change(function(event){
+				
+				Search($(this).val());
+
+			}).keyup(function(){
+				$(this).change();
+			});
 
 			$("#add_event_button").hide();
 

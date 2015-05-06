@@ -171,6 +171,7 @@
 				} else {
 					// get last file and use it
 					// TODO: add dialog to select files
+					// 
 					var file = files[files.length - 1];
 					realtimeLoader.redirectTo([file.id], realtimeLoader.authorizer.userId);
 				}
