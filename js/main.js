@@ -1666,8 +1666,8 @@
 					handleFiles(this.files);
 				});
 
-			$("#bt_search_engine_area").children().last().find("div").click(function(){
-					$(this).parent().prev().find("input[name=search_field]").val("");
+			$("#search_reset_btn").click(function(){
+					$(this).parent().prev().find("input[name=search_field]").val("").trigger( "change" );
 			});
 			
 
