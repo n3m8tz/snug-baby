@@ -3,11 +3,10 @@
 <head>
 	<title>Snug-Baby App</title>
   	<meta http-equiv="X-UA-Compatible" content="IE=9" />
-
   	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
 
   	<link rel="stylesheet/less" type="text/css" href="less/styles.less" />
-
+	<link rel="stylesheet/less" type="text/css" href="less/fonts.less">
   	
   	<link rel="shortcut icon" type="image/x-icon" href="images/favicon.png" />
 
@@ -17,16 +16,23 @@
 </head>   
 <body>                
 
-		<div id="authModal" class="modal fade">
-			<div class="modal-dialog modal-vertical-centered">
-				<div class="modal-content">
-					<div class="modal-body">
+		<div id="authModal" class="bs-modal fade laptop">
+			<div class="bs-modal-dialog bs-modal-vertical-centered">
+				<div class="bs-modal-content">
+					<div class="bs-modal-body">
 						<div>
-							<img src="https://ssl.gstatic.com/accounts/ui/logo_2x.png" />
+							<div>Snug Baby</div>
 						</div>
-						<h4>Please, <span>sign in<span> with your Google Account to continue <br />and to get a real kick out of our fabulous app <br /> once and for all! =)</h4>
 						<div>
-							<button id="authorizeButton" class="authBtn" disabled>Authenticate</button>
+							<object type="image/svg+xml" data="images/start-page-logo.svg">Your browser does not support SVG</object>
+						</div>
+						<div>
+							<div>A baby tracking app that helps you monitor the progress and activities of all your babies in a single view.</div>
+						</div>
+						<div>
+							<div>
+								<button id="authorizeButton" class="waves-effect waves-light btn red lighten-3" disabled>SIGN IN WITH GOOGLE</button>
+							</div>
 						</div>
 					</div>
 				</div>

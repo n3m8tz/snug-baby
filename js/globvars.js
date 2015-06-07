@@ -1,5 +1,8 @@
 	var SnugActivities, SnugBabies, SnugEvents;
 
+	var MAX_XSCREEN_RESOLUTION = 601;
+	var MAX_YSCREEN_RESOLUTION = 450;
+
 	var NormalizeWindow = function(){};
 	
 	var glSubmitTime = "";   //gl == global

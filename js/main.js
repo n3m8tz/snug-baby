@@ -1680,7 +1680,61 @@
 		   	$("#bt_person_profile").on("click", showShareDialog);
 
 	}
- 
+
+	function countFontRate(selector, defaultFontSize, defaultWindowHeight){
+
+		if (typeof defaultFontSize === 'undefined')
+			defaultFontSize = 0;
+
+		if (typeof defaultWindowHeight === 'undefined')
+			defaultWindowHeight = 511;
+
+		var preferredHeight = defaultWindowHeight;
+		//Base font size for the page
+		var fontsize = defaultFontSize;
+
+		var displayHeight = $(window).height();
+		var percentage = displayHeight / preferredHeight;
+		var newFontSize = Math.floor(fontsize * percentage) - 1;
+		return {
+			setRate: function(){
+				$(selector).css("font-size", newFontSize);
+			},
+			fontSize: newFontSize
+		}
+	}
+
+	function updateMobileStyles(screen){
+		//-
+			console.log("mobile");
+		//-
+
+		var startPageHeader = ".bs-modal-body > div:first-of-type > div";
+		var startPageAppDescription = ".bs-modal-body > div:nth-of-type(3) > div";
+		var startPageAuthBtn = "#authorizeButton";
+
+		countFontRate(startPageHeader, 42).setRate();
+		countFontRate(startPageAppDescription, 14).setRate();
+		
+		if ( $(window).height() < 620 || $(window).width() < 260)
+			countFontRate(startPageAuthBtn, 15, 620).setRate();
+
+		$("#authModal").removeClass("fade");
+		$("#authModal").removeClass("laptop").addClass("mobile");
+		$("#authModal .bs-modal-dialog").removeClass("bs-modal-vertical-centered");
+
+	}
+
+	function updateLaptopStyles(screen){
+		//-
+			console.log("personal computer");
+		//-
+
+		$("#authModal").addClass("fade");
+		$("#authModal").removeClass("mobile").addClass("laptop");
+		$("#authModal .bs-modal-dialog").addClass("bs-modal-vertical-centered");
+	}
+
 
 	//Activates once a tab had been loaded. Its just like document.onload()
 	$(document).ready(function(){
@@ -1689,6 +1743,12 @@
 
 		NormalizeWindow = normalize;
 
+		$( window ).bind("resize", function(){
+
+			var updateScreenStyles = $(window).width() <= MAX_XSCREEN_RESOLUTION+1 ? updateMobileStyles : updateLaptopStyles ;
+			updateScreenStyles(window);
+		}).trigger("resize");
+		
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
 		setNextBackButtonsLogic();
