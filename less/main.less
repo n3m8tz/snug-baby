@@ -1,3 +1,8 @@
+@font-face {
+		font-family: Roboto;
+		src: url(../font/roboto/Roboto-Regular.woff);
+	}
+
 	body, html{
 		height: 100%;
 	}
@@ -6,6 +11,7 @@
 		background-color: #65DCF7;
 		overflow-y: auto;
 		overflow-x: hidden;
+		font-family: Roboto, sans-serif;
 		margin: 0;
 		padding: 0;
 	}
@@ -515,61 +521,10 @@
 		border: @border-width solid rgba(81, 203, 238, 1);
 		.box-shadow(0 0 5px rgba(81, 203, 238, 1));
 	}
-	/*************************************************************/
 
-
-	#authModal.laptop{
-		.bs-modal-body {
-			padding-top: 0;
-			padding-bottom: 0;
-
-			> div:first-of-type{
-				font-size: 30px;
-				text-align: center;
-				color: blue;
-			}
-
-			> div:nth-of-type(2){
-				width: 170px;
-				height: 170px;
-				margin-right: auto;
-				margin-left: auto;
-				text-align: center;
-			}
-
-			> div:nth-of-type(3){
-				text-align: center;
-				padding: 20px 60px;
-				font-size: 20px;
-			}
-
-			> div:nth-of-type(4){
-				text-align: center;
-				div{
-					width: 100%;
-					margin-right: auto;
-					margin-left: auto;
-					padding-top: 10px;
-					padding-bottom: 10px;
-					button{
-							background-color: #DE4B39;
-							font-size: 15px;
-							color: white;
-							padding:5px 20px;
-							text-decoration:none;
-							text-shadow:0px 1px 0px #283966;
-							border-radius: 3px;
-							box-shadow: 1px 1px 5px grey;
-						}
-				}
-			}
-		}
-	}
-
-	.bs-modal-content{
-		padding: 30px 0px;
-	}
-
+	
+	/***************     Loading Sign styling    *****************/
+	/******** It's active when app is loading resources **********/
 
 	#loading_sign{
 		position: absolute;
@@ -580,6 +535,83 @@
 		z-index: 20000;
 		img{
 			.centrify("both", 75px, 99px);
+		}
+	}
+
+
+	/*********     Start Authentication Page styling    *********/
+
+	#authModal{
+		overflow: hidden !important;
+		height: 410px;
+	}
+
+	.modal-content {    
+		background-color: @bg-color;
+		height: 100%;
+	}
+
+	.modal-body{
+		padding-top: 0;
+		padding-bottom: 0;
+		height: 100%;
+	}
+
+	#auth-page-header, #auth-page-logo, #auth-page-text, #auth-page-submit{
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	/* header "Snug Baby" */
+	#auth-page-header{
+		font-size: 50px;
+		font-family: 'Satisfy', cursive;
+		text-align: center;
+		color: white;
+		height: 22%;
+	}
+
+	/* Snug Baby svg Logo */
+	#auth-page-logo{
+		height: 34%;
+			z-index: 1;
+			object {
+				display: block;
+				margin: 0 auto;
+				height: 100%;
+			}
+	}
+
+	/* Brief Snug Baby description */
+	#auth-page-summary{
+		text-align: center;
+		padding: 10px 15%;
+		font-size: 17px;
+		height: 22%;
+	}
+	
+	/* Authentication button */
+	#auth-page-submit{
+		text-align: center;
+		height: 22%;
+		div{
+			width: 100%;
+			margin-right: auto;
+			margin-left: auto;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			button{
+				background-color: #DE4B39;
+				font-size: 15px;
+				color: white;
+				padding:5px 20px;
+				text-decoration:none;
+				text-shadow:0px 1px 0px #283966;
+				border-radius: 3px;
+				box-shadow: 1px 1px 5px grey;
+			}
 		}
 	}
 

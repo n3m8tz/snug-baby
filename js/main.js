@@ -1390,7 +1390,7 @@
 						clearInterval(timer);
 						switch (authButtonState){
 							case "disabled": 
-								$("#authModal").modal("hide");
+								$("#authModal").closeModal({dismissible: false});
 								//enabling add event button
 								$("#add_event_button").show(1000);
 							break;
@@ -1478,6 +1478,15 @@
 	function IncorrectInputException(message){
 		this.message = message;
 		this.name = "Incorrect Input Exception";
+
+		this.toString = function(){
+			return this.name + ": " + this.message;
+		}
+	}
+
+	function ArgumentException(message){
+		this.message = message;
+		this.name = "Argument Exception";
 
 		this.toString = function(){
 			return this.name + ": " + this.message;
@@ -1681,24 +1690,36 @@
 
 	}
 
-	function countFontRate(selector, defaultFontSize, defaultWindowHeight){
+	function countFontRate(obj){
+		if (typeof obj === 'undefined'){
+			throw new ArgumentException("No parameters passed to 'countFontRate' function");
+		}
 
-		if (typeof defaultFontSize === 'undefined')
-			defaultFontSize = 0;
+		if (typeof obj.defaultFontSize === 'undefined')
+			obj.defaultFontSize = 0;
 
-		if (typeof defaultWindowHeight === 'undefined')
-			defaultWindowHeight = 511;
+		if (typeof obj.window === 'undefined')
+			obj.window = {handle : window, defaultPartOfWindow: 1, defaultHeight: 511};
 
-		var preferredHeight = defaultWindowHeight;
+		if (typeof obj.window.handle === 'undefined')
+			obj.window.handle = window;
+
+		if (typeof obj.window.defaultPartOfWindow === 'undefined')
+			obj.window.defaultPartOfWindow = 1;
+
+		if (typeof obj.window.defaultWindowHeight === 'undefined')
+			obj.window.defaultWindowHeight = 511;
+
+		var preferredHeight = obj.window.defaultHeight;
 		//Base font size for the page
-		var fontsize = defaultFontSize;
+		var fontsize = obj.defaultFontSize;
 
-		var displayHeight = $(window).height();
+		var displayHeight = $(obj.window.handle).height() * obj.window.defaultPartOfWindow;
 		var percentage = displayHeight / preferredHeight;
-		var newFontSize = Math.floor(fontsize * percentage) - 1;
+		var newFontSize = Math.floor(fontsize * percentage);
 		return {
 			setRate: function(){
-				$(selector).css("font-size", newFontSize);
+				$(obj.selector).css("font-size", newFontSize);
 			},
 			fontSize: newFontSize
 		}
@@ -1709,20 +1730,26 @@
 			console.log("mobile");
 		//-
 
-		var startPageHeader = ".bs-modal-body > div:first-of-type > div";
-		var startPageAppDescription = ".bs-modal-body > div:nth-of-type(3) > div";
-		var startPageAuthBtn = "#authorizeButton";
+		//ap = abbr. auth-page
+		var apHeader = "#auth-page-header";                                        
+		var apLogo = "#auth-page-logo > object";
+		var apSummary = "#auth-page-summary";
+		var apAuthBtn = "#authorizeButton";
 
-		countFontRate(startPageHeader, 42).setRate();
-		countFontRate(startPageAppDescription, 14).setRate();
-		
-		if ( $(window).height() < 620 || $(window).width() < 260)
-			countFontRate(startPageAuthBtn, 15, 620).setRate();
+		//countFontRate(apHeader, 42).setRate();
+		countFontRate({
+			selector: apHeader,
+			defaultFontSize: 42,
+			window: { defaultPartOfWindow: 0.22, defaultHeight : 112}
+		}).setRate();
 
-		$("#authModal").removeClass("fade");
-		$("#authModal").removeClass("laptop").addClass("mobile");
-		$("#authModal .bs-modal-dialog").removeClass("bs-modal-vertical-centered");
+		countFontRate({
+			selector: apSummary,
+			defaultFontSize: 15,
+			window: { defaultPartOfWindow: 0.22, defaultHeight : 112}
+		}).setRate();
 
+		//$("#authModal").removeClass("laptop").addClass("mobile");
 	}
 
 	function updateLaptopStyles(screen){
@@ -1730,9 +1757,7 @@
 			console.log("personal computer");
 		//-
 
-		$("#authModal").addClass("fade");
-		$("#authModal").removeClass("mobile").addClass("laptop");
-		$("#authModal .bs-modal-dialog").addClass("bs-modal-vertical-centered");
+		//$("#authModal").removeClass("mobile").addClass("laptop");
 	}
 
 
@@ -1744,10 +1769,14 @@
 		NormalizeWindow = normalize;
 
 		$( window ).bind("resize", function(){
-
-			var updateScreenStyles = $(window).width() <= MAX_XSCREEN_RESOLUTION+1 ? updateMobileStyles : updateLaptopStyles ;
+			var updateScreenStyles = $(window).width() <= MAX_XSCREEN_RESOLUTION ? updateMobileStyles : updateLaptopStyles ;
 			updateScreenStyles(window);
 		}).trigger("resize");
+
+		if ( navigator.appVersion.indexOf("MSIE") != -1) { // if IE and version is greater 9
+			if( $.browser.version > 9)
+				$('.bs-modal').removeClass('fade');
+		}
 		
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
@@ -1786,7 +1815,7 @@
 						break;
 
 						case "enabled":
-							$("#authModal").modal("show");
+							$("#authModal").openModal({dismissible: false});
 						break;
 					}
 				}
@@ -1797,4 +1826,3 @@
 
 
 })(jQuery)
-
