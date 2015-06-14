@@ -978,8 +978,35 @@
 
 			}
 		}, 10);
-
 	}
+
+	function openWelcomePostWindowLogic(){
+
+		$("#add_event_button").show(1000);
+
+		dropNextBackBtns();
+
+		initialPage = BabyTrackInitialPage.WELCOME_POST;
+		previousWindow = BabyTrackWindows.NONE;
+		mode = BabyTrackMode.NONE;
+
+		clearWindows({effect: "fadeOut", speed: 800});	//asynchronous function
+
+		//awaiting until other animation processes stop
+		//as clearWindows function is asynchronous
+
+		var timer = setInterval(function(){
+			if(windowsAnimationOver){
+				setInitialPage(initialPage, {effect: "drop", speed: 500});
+				clearInterval(timer);
+				
+				//clear all the fields in Create New Person Window
+				clearResults({window: "CREATE_NEW_PERSON"});
+
+			}
+		}, 10);
+	}
+
 
 	function createCurrentBabyToSnug(){
 		var nickname =	$("#choose_person").find(":radio:checked").parent().text();								//should be loaded from a server
@@ -1230,57 +1257,11 @@
 				break;
 
 				case BabyTrackWindows.WELCOME_POST:
-					$("#add_event_button").show(1000);
-
-					dropNextBackBtns();
-
-					initialPage = BabyTrackInitialPage.WELCOME_POST;
-					previousWindow = BabyTrackWindows.NONE;
-					mode = BabyTrackMode.NONE;
-
-					clearWindows({effect: "fadeOut", speed: 800});	//asynchronous function
-
-					//awaiting until other animation processes stop
-					//as clearWindows function is asynchronous
-
-					var timer = setInterval(function(){
-						if(windowsAnimationOver){
-							setInitialPage(initialPage, {effect: "drop", speed: 500});
-							clearInterval(timer);
-							
-							//clear all the fields in Create New Person Window
-							clearResults({window: "CREATE_NEW_PERSON"});
-						}
-					}, 10);
-
+					openWelcomePostWindowLogic();
 				break;
 
 				case BabyTrackWindows.POSTED_RESULTS_TABLE:
-
-					//Search(null);
-
-					$("#add_event_button").show(1000);
-
-					dropNextBackBtns();
-
-					initialPage = BabyTrackInitialPage.POSTED_RESULTS_TABLE;
-					previousWindow = BabyTrackWindows.NONE;
-					mode = BabyTrackMode.NONE;
-
-					clearWindows({effect: "fadeOut", speed: 800});	//asynchronous function
-
-					//awaiting until other animation processes stop
-					//as clearWindows function is asynchronous
-
-					var timer = setInterval(function(){
-						if(windowsAnimationOver){
-							setInitialPage(initialPage, {effect: "drop", speed: 500}, true);
-							clearInterval(timer);
-							
-							//clear all the fields in Create New Person Window
-							clearResults({window: "CREATE_NEW_PERSON"});
-						}
-					}, 10);
+					openPostedResultsWindowLogic();
 				break;
 				
 				case BabyTrackWindows.CREATE_NEW_PERSON:
@@ -1390,7 +1371,12 @@
 						clearInterval(timer);
 						switch (authButtonState){
 							case "disabled": 
+								
 								$("#authModal").closeModal({dismissible: false});
+
+								if( $(window).width() > MAX_XSCREEN_RESOLUTION)
+									$("link#materialize-link").attr("disabled", "disabled");
+
 								//enabling add event button
 								$("#add_event_button").show(1000);
 							break;
@@ -1729,6 +1715,7 @@
 		//-
 			console.log("mobile");
 		//-
+		$("link#materialize-link").removeAttr('disabled');
 
 		//ap = abbr. auth-page
 		var apHeader = "#auth-page-header";                                        
@@ -1757,6 +1744,7 @@
 			console.log("personal computer");
 		//-
 
+		$("link#materialize-link").attr("disabled", "disabled");
 		//$("#authModal").removeClass("mobile").addClass("laptop");
 	}
 
@@ -1778,6 +1766,16 @@
 				$('.bs-modal').removeClass('fade');
 		}
 		
+		$("#bt_title_main").click(function(){
+			if (mode != BabyTrackMode.NONE){
+				if (initialPage == BabyTrackInitialPage.WELCOME_POST)
+					openWelcomePostWindowLogic();
+				else if (initialPage == BabyTrackInitialPage.POSTED_RESULTS_TABLE)
+					openPostedResultsWindowLogic();
+			}
+		});
+
+
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
 		setNextBackButtonsLogic();
@@ -1811,10 +1809,14 @@
 					clearInterval(timer_auth);
 					switch (authButtonState){
 						case "disabled":
-														
+
+							$("#authModal").closeModal({dismissible: false});			
+							if( $(window).width() > MAX_XSCREEN_RESOLUTION)
+									$("link#materialize-link").attr("disabled", "disabled");
 						break;
 
 						case "enabled":
+							$("link#materialize-link").removeAttr('disabled');							
 							$("#authModal").openModal({dismissible: false});
 						break;
 					}
