@@ -6,7 +6,7 @@
   	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
 
   	<!-- CSS styles and Google Fonts -->
-  	<link rel="stylesheet"  type="text/css" href="css/materialize.css" id="materialize-link"/>
+  	<link rel="stylesheet"  type="text/css" href="css/materialize.css" id="materialize-link" media="screen,projection"/>
   	<link rel="stylesheet/less" type="text/css" href="less/styles.less" />
 	<link rel="stylesheet/less" type="text/css" href="less/fonts.less">
 
@@ -45,11 +45,6 @@
 				</div>
 			
 		</div>
-
-		<section class="mobile-disabled-alarm">
-			Sorry, mobile version is in process so it's not supported yet =(
-		</section>
-
 
         <!--#####################################################################################################################################-->
 
@@ -352,10 +347,49 @@
 							<a class="button back" href="javascript:void(0)" >Back</a>
 							<a class="button next" href="javascript:void(0)" >Next</a>
 					</div>
-					<span id="add_event_button"></span>
+					<span id="add_event_buttonPC"></span>
 				</div>
 			</main> 
+
+
+
+
+        <!--#####################################################################################################################################-->
+
+
+                                        <!--####################################################################-->
+                                        <!--###         Baby track Main Page HTML Implementation            ####-->
+                                        <!--###                         Mobile                              ####-->
+                                        <!--####################################################################-->
 		
+		<section id="MobileVersionBoby">
+			<div class="fixed-action-btn" id="add_event_buttonM">
+				<a class="btn-floating btn-large waves-effect waves-light red lighten-1"><i class="mdi-content-add"></i></a>
+			</div>
+			<nav id="mobile-header" role="navigation">
+				<div class="nav-wrapper">
+					
+					<a href="#" data-activates="person-profile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+					
+					<ul>
+						<li class="actions_areaM">
+							<a href="javascritp:void(0)" id="actions-list-item">Actions</a>
+						</li>	
+						<li class="search_areaM">
+							<a href="javascritp:void(0)" id="search_btnM"><i class="mdi-action-search"></i></a>
+						</li>					
+					</ul>
+
+					<ul class="side-nav" id="person-profile">
+						<li><a class="waves-effect waves-light" href="http://www.youtube.com">Sass</a></li>
+						<li><a class="waves-effect waves-light" href="http://www.twitter.com">Components</a></li>
+						<li><a class="waves-effect waves-light" href="http://www.facebook.com">Javascript</a></li>
+						<li><a class="waves-effect waves-light" href="http://www.snug-baby.com">Mobile</a></li>
+					</ul>
+				</div>
+			</nav>
+
+		</section>
 </body>
 
 </html>

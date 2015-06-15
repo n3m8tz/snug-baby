@@ -955,7 +955,7 @@
 
 	function openPostedResultsWindowLogic(){
 
-		$("#add_event_button").show(1000);
+		$("#add_event_buttonPC").show(1000);
 
 		dropNextBackBtns();
 
@@ -982,7 +982,7 @@
 
 	function openWelcomePostWindowLogic(){
 
-		$("#add_event_button").show(1000);
+		$("#add_event_buttonPC").show(1000);
 
 		dropNextBackBtns();
 
@@ -1378,7 +1378,7 @@
 									$("link#materialize-link").attr("disabled", "disabled");
 
 								//enabling add event button
-								$("#add_event_button").show(1000);
+								$("#add_event_buttonPC").show(1000);
 							break;
 
 							case "enabled":
@@ -1401,7 +1401,7 @@
 
 	function addEventButtonClickEvent(){
 
-		$("#add_event_button").hide(1000);
+		$("#add_event_buttonPC").hide(1000);
 		
 		dropNextBackBtns("show");
 
@@ -1482,7 +1482,7 @@
 	function onEntryClick(self){
 		//needToCorrectInputs = true;
 
-		$("#add_event_button").hide(1000);
+		$("#add_event_buttonPC").hide(1000);
 		dropNextBackBtns("show");
 
 		previousWindow = BabyTrackWindows.POSTED_RESULTS_TABLE;
@@ -1600,7 +1600,7 @@
 				$(this).change();
 			});
 
-			$("#add_event_button").hide();
+			$("#add_event_buttonPC").hide();
 
 			$('.timepicker').bind("input change", function() {
 				glSubmitTime = $(this).val(); 
@@ -1666,7 +1666,7 @@
 			});
 			
 
-			$("#add_event_button").click(addEventButtonClickEvent);
+			$("#add_event_buttonPC").click(addEventButtonClickEvent);
 			$("#choose_person").find(".add_person_button").click(addPersonButtonClickEvent);
 			$("#authorizeButton").click(authButtonClickEvent);
 				    
@@ -1775,6 +1775,7 @@
 			}
 		});
 
+		$(".button-collapse").sideNav();
 
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
@@ -1793,7 +1794,7 @@
 				$("#loading_sign").hide();
 
 				//enabling add event button
-				$("#add_event_button").show(1000);	
+				$("#add_event_buttonPC").show(1000);	
 				
 				normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
 				normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});

@@ -1,95 +1,127 @@
 @media all and (max-width:601px), all and (max-height: 450px){
-		body{
-			display: table;
-			overflow: hidden;
-			> *:not(.mobile-disabled-alarm) {
-				display: none;
-			}
+	body{
+		display: table;
+		overflow: hidden;
+		background-color: #E2E3E4;
+	}
+
+	main{
+		display: none;
+	}
+
+	#mobile-menu {
+		
+	}
+
+	.modalWindow-601px-450px;
+
+	#MobileVersionBoby{
+		display: flex;
+		flex-direction: column;
+		width: 100vw;
+		background-color: #E2E3E4;
+
+		#add_event_buttonM { bottom: 10px; right: 10px; }
+		#add_event_buttonM i{ 
+			font-size: 2.8rem; 
+			color: #5D4239;
 		}
 
-		main{
-			margin-top: 0px;
-		}
+		/******  Fixed top header navigation  ******/
+		nav#mobile-header {
+			background-color: #00BBD4;
 
-		#authModal{
-			top: 0% !important;
-			height:100% !important;
-			width:100% !important;
-			max-height: 100%;
-			margin : 0; 
-			.border-radius(0px);
-		} 
+			ul:not(.side-nav) li:hover, 
+			ul:not(.side-nav) li.active{
+ 				background-color: #00A8BE; 
+ 			}
 
-		/*** reset styles for mobile ***/
-		.auth-page * {
-			float: none;
-			width: auto;
-		}
-		/*******************************/
+ 			.actions_areaM{ margin-left: 15px; }
+ 			
+ 			.search_areaM{ float: right; }
 
-		.modal-content {    
-			height: 100%;
-			//background-color: @bg-color;
-			box-shadow: none;
-		}
-
-		.modal-body{
-			height: 100%;
-		}
-
-		/* header "Snug Baby" */
-		#auth-page-header { 	font-size: 42px;	}
-
-		/* Brief Snug Baby description */
-		#auth-page-summary{
-			font-family: 'Actor', sans-serif;
-			color: #01717F;
-			font-size: 14px;
-			//line-height: 20px;
-
-			div{   
-				padding-top: 15px; 
-				padding-bottom: 0px;  
+			.button-collapse {
+				padding-left: 10px;
+				padding-right: 10px;
+				i {  font-size: 2.5rem; }
 			}
 
+			#actions-list-item{
+				font-size: 1.5rem;
+			}
 		}
-		
-		.normalized{
-			height: auto !important;
+		/********************************************/
+
+	}
+
+}
+
+
+@media screen and (max-width: 243px) and (max-height: 744px) {
+	/* Authentication button */
+	#authModal  .modal-body > div:nth-child(4)  button{
+		width: 70%;
+	}
+}
+
+@media screen and (max-width: 1024px) {
+
+}
+
+@media screen and (max-width: 950px) {
+
+}
+
+@media screen and (max-width: 650px) {
+}
+
+
+.modalWindow-601px-450px{
+
+	#authModal{
+		top: 0% !important;
+		height:100% !important;
+		width:100% !important;
+		max-height: 100%;
+		margin : 0; 
+		.border-radius(0px);
+	} 
+
+	/*** reset styles for mobile ***/
+	.auth-page * {
+		float: none;
+		width: auto;
+	}
+	/*******************************/
+
+	.modal-content {    
+		height: 100%;
+		//background-color: @bg-color;
+		box-shadow: none;
+	}
+
+	.modal-body{
+		height: 100%;
+	}
+
+	/* header "Snug Baby" */
+	#auth-page-header { 	font-size: 42px;	}
+
+	/* Brief Snug Baby description */
+	#auth-page-summary{
+		font-family: 'Actor', sans-serif;
+		color: #01717F;
+		font-size: 14px;
+		//line-height: 20px;
+
+		div{   
+			padding-top: 15px; 
+			padding-bottom: 0px;  
 		}
-		
-
-		.mobile-disabled-alarm{
-			.display-flex;
-			flex-direction: column;
-			justify-content: center;
-			z-index: -1;
-			height: 100%;
-			padding-left: 5%;
-			padding-right: 5%;
-			text-align: center;
-			font-size: 30px;
-			font-weight: bold;
-			font-family: 'Courier New', Courier, monospace;
-			color: white;
-			text-shadow: 1px 1px 3px blue;
-		}
-	}
-
-	@media screen and (max-width: 243px) and (max-height: 744px) {
-		/* Authentication button */
-		#authModal  .modal-body > div:nth-child(4)  button{
-			width: 70%;
-		}
-	}
-
-	@media screen and (max-width: 1024px) {
 
 	}
-
-	@media screen and (max-width: 950px) {
-
+	
+	.normalized{
+		height: auto !important;
 	}
-
-	@media screen and (max-width: 650px) {
-	}
+}
