@@ -10,7 +10,7 @@ var scripts = [
 	/***	Custom files	***/
 	"js/gapi.realtime.js", 						//Load Snug Baby Google Drive Realtime QuickStart
 	"js/globvars.js",							//Global Variables
-	"js/main.js"								//Main Apps Logic
+	"js/mobile.js"								//Main Apps Logic
 ];
 
 function loadScripts(urls)

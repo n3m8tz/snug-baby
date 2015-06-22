@@ -7,11 +7,11 @@ var TableRow = (function(){
 		_newentry.setAttribute("id", _entryId);
 		_newentry.setAttribute("class", "table_row_baby_data");
 		_newentry.innerHTML = 
-					'<td class="table_avatar"></td>' +
-					'<td class="table_baby_name">Name</td>' +
-					'<td class="table_baby_activity">Activity</td>' +
-					'<td class="table_feed_time">Time</td>' +
-					'<td class="table_notes">Notes</td>';
+				'<td class="table_avatar"></td>' +
+				'<td class="table_baby_name">Name</td>' +
+				'<td class="table_baby_activity">Activity</td>' +
+				'<td class="table_feed_time">Time</td>' +
+				'<td class="table_notes">Notes</td>';
 		return _newentry;
 	}
 

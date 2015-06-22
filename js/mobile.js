@@ -170,85 +170,6 @@
 			return [ID.toString(), current.person];
 		}
 
-		// Code below "SnugBabyPerson.prototype.addToTable" 
-		// is not supported yet and not used for now !!!
-		SnugBabyPerson.prototype.addToTable = function(table){
-			var self = this;
-				var selector = "#posted_results_table";
-						var babyData = '<tr class="table_row_baby_data">' +
-											'<td class="table_avatar"></td>' +
-											'<td class="table_baby_name">Name</td>' +
-											'<td class="table_baby_activity">Activity</td>' +
-											'<td class="table_feed_time">Time</td>' +
-											'<td class="table_notes">Notes</td>' +
-										'</tr>';
-
-						$(selector).find("table > tbody").append(babyData);
-
-						$(selector)
-							.find("tr.table_row_baby_data")
-							.last()
-							.find("td.table_avatar")
-							.html("<img src='" + self.avatarImg + "' />");
-
-
-						if (self.avatarType == 1)						
-							$(selector)
-								.find("tr.table_row_baby_data")
-								.last()
-								.find("td.table_avatar *")
-								.css("border", "thin solid #3B1D8F");
-
-						$(selector)
-							.find("tr.table_row_baby_data")
-							.last()
-							.find("td.table_baby_name")
-							.text(self.nickname);
-
-						$(selector)
-							.find("tr.table_row_baby_data")
-							.last()
-							.find("td.table_baby_activity")
-							.html( "<img src='" + self.activityImg + "' />");
-
-						$(selector)
-							.find("tr.table_row_baby_data")
-							.last()
-							.find("td.table_feed_time")
-							.text(self.getSubmitTime());
-
-						$(selector)
-							.find("tr.table_row_baby_data")
-							.last()
-							.find("td.table_notes")
-							.text( self.getNotes().value );
-
-						$(selector)
-							.find("tr.table_row_baby_data")
-							.last()
-							.css({ "border-color": self.color})
-							.hover(
-								function(){
-									$(this).css({
-										"background-color": $(this).css("border-color"),
-										"color": "#FFFFFF"
-									});
-								},
-								function(){
-									$(this).css({
-										"background-color": "#FFFFFF",
-										"color": "inherit"
-									});
-								}
-							);
-		
-						/*
-						$(selector)
-							.find( "caption" )
-							.text( "Today, " + $(".datepicker").val() );
-						*/
-		}
-
 		return SnugBabyPerson;
 	})();
 /*************************************************************************/
@@ -322,14 +243,20 @@
 			break;
 
 			case BabyTrackInitialPage.POSTED_RESULTS_TABLE:
-				selector = "#posted_results_table";
-				$("#posted_results_table").on("click", "tr", function(event){
-					event.preventDefault();
-					onEntryClick(this);
-				});
-				var $checked_activity = $("#wizard_new_activity").find(":radio:checked");
-				var $data_diaper_type = $checked_activity.parent().prev().attr("data-activity-type");
 				
+
+				if(currentDeviceType == DeviceType.COMPUTER){
+					selector = "#posted_results_table";
+					$(selector).on("click", "tr", function(event){
+						event.preventDefault();
+						onEntryClick(this);
+					});
+					var $checked_activity = $("#wizard_new_activity").find(":radio:checked");
+					var $data_diaper_type = $checked_activity.parent().prev().attr("data-activity-type");
+				}
+				else{
+					selector = "#posted_results_table_mobile";
+				}
 			break;
 		}
 
@@ -453,7 +380,8 @@
 
 
 
-	function normalizeEntry(event, dom){
+	function normalizeEntry(event, dom, isMobile){
+
 		var timestamp = event[0];
 		var avatar = SnugBabies.get(event[1].Person).AVATAR.VALUE;
 		var activity = event[1].Activity.IMAGE;
@@ -531,11 +459,28 @@
 				dom.appendChild(table);
 		}
 
-		var table = new Table();
-		var entry = new TableRow();
 
+		var table = new Table(),
+			entry = new TableRow();
+	
 		var buildEntry = function(_entryId){
 			entry = new TableRow(_entryId);
+			
+			if (currentDeviceType == DeviceType.MOBILE){
+				entry = new TableRow(_entryId);
+				
+				var insertAfter = function(referenceNode, newNode) {
+					referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+				}
+
+				var elemAfter = entry.value.querySelector("td.table_baby_activity");
+				var elemBefore = entry.value.querySelector("td.table_feed_time");
+
+				insertAfter(elemBefore, elemAfter);
+
+				$(entry.value).append('<td class="table_data_modify"><i class="small mdi-navigation-more-vert"></i></td>')
+			}
+
 			var tableRows = table.value.rows;
 			var orderedEntriesIdList = new Array();
 			var _location = -1;
@@ -557,6 +502,7 @@
 				if ( SnugBabies.get(event[1].Person).AVATAR.TYPE === 1)
 					$(_table).find(id).find("td.table_avatar").children().css("border", "thin solid #3B1D8F");
 
+				/*
 				$(_table)
 					.find(id)
 					.css({ "border-color": SnugBabies.get(event[1].Person).COLOR_SCHEME })
@@ -572,11 +518,15 @@
 									"color": "inherit"
 								});
 							});
+				*/
 			})(table.value);
 		};
 
 		var buildTable = function(_tableId, dom){
 			table = new Table(_tableId);										//create a new table specifing a certain ID to dom node object!
+			
+			table.value.getElementsByTagName( "tbody" )[0].setAttribute( "class", "card" );
+
 			table.setCaption( tableCaption ); 
 			buildEntry(entryId);
 
@@ -592,7 +542,7 @@
 				_location = locationOf(parseInt(_tableId.replace("_", ""), 10), orderedTablesIdList);
 			}
 
-			insertTable(_location+1, table.value, dom);							//insert a table we came across into the dom!
+			insertTable(_location + 1, table.value, dom);							//insert a table we came across into the dom!
 		};
 
 		if (anyTablesExistIn(dom)){															
@@ -600,8 +550,7 @@
 			
 			if(table.value){													//if we didn't come up with a node with specified ID in dom, drop next step
 				entry = table.findEntry(entryId);
-				//if (entry)
-					buildEntry(entryId);								
+				buildEntry(entryId);								
 			}else
 				buildTable(tableId, dom);
 		}else
@@ -612,6 +561,9 @@
 
 
 	function normalize(obj){
+
+		if (obj === "undefined") return;
+
 		var normalizeOneEntry = typeof obj.normalizeOneEntry !== "undefined" ? obj.normalizeOneEntry : false;
 		var single_event = (normalizeOneEntry && typeof obj.event !== "undefined") ? obj.event : undefined;
 
@@ -620,7 +572,13 @@
 			break;
 
 			case BabyTrackWindows.POSTED_RESULTS_TABLE:
-			var prSelector = "#posted_results_table > section";
+
+				var querySelector;
+
+				if (currentDeviceType == DeviceType.MOBILE)
+					querySelector = "#posted_results_table_mobile > section";
+				else
+					querySelector = "#posted_results_table > section";
 
 				if(!SnugEvents.isEmpty()){													//if there any information about babys in the database
 					
@@ -629,13 +587,13 @@
 					// this situation may occur if no events have been added yet
 					// and in case one collaborator adds a new event
 					// but another still doesn't.. 
-					// from this point without page refrashing 
+					// from this point without page refreshing 
 					// the 1st one sees a Posted Results Window
 					// but the 2nd one still sees  Welcome Post Dashboard
 
 
 					//timestamp, time, notes, avatar, name and activity, dom
-					var dom = document.querySelector(prSelector);
+					var dom = document.querySelector(querySelector);
 
 					dom.innerHTML = null;
 
@@ -1219,8 +1177,7 @@
 					//current_baby.addToTable( $("#posted_results_table").find("table").html() );
 					var single_event = current_baby.submit();
 
-					normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
-					
+					normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});		
 					openPostedResultsWindowLogic();
 					break;
 
@@ -1429,9 +1386,9 @@
 						//toggling CREATE_NEW_PERSON mode
 						mode = BabyTrackMode.CHOOSE_EXISTED_PERSON;
 
-						var $welcome_guide_block = $("#posted_results_table");
+						var $posted_results_table = $("#posted_results_table");
 						
-						$welcome_guide_block.fadeOut(500, function(){
+						$posted_results_table.fadeOut(500, function(){
 						   		$("#choose_person").fadeIn(400);
 						});
 						//--
@@ -1551,7 +1508,9 @@
 		query = $.trim( query );												// eliminating whitespaces in the begining and in the end of $query
 		query = query.toLowerCase();											// translate letters to lower case
 
-		var $search_scope = $("#posted_results_table > section");
+		var querySelector = (currentDeviceType == DeviceType.MOBILE) ? "#posted_results_table_mobile > section" : "#posted_results_table > section";
+
+		var $search_scope = $(querySelector);
 		var $listOfNames = $search_scope.find("td.table_baby_name");
 
 		$tables = $search_scope.find("table");
@@ -1565,7 +1524,7 @@
 		});
 
 		//normalizing
-		var normalize = function(){
+		var normalize_results = function(){
 			$search_scope.find("table").each(function(index){
 				var hiddenTRcount = $(this).find("tbody").children("tr:hidden").length;
 				var TRcount = $(this).find("tbody").children("tr").length;
@@ -1580,25 +1539,19 @@
 			
 			var newContent = hiddenTableCount == TableCount ? "No relevant results were found...": "";
 
-			changePseudoElem("#posted_results_table > section:after", {
+			changePseudoElem(querySelector + ":after", {
 						content: "'" + newContent + "'"
 			});
 			
 		}
 
-		normalize();
+		normalize_results();
 	}
 
 
-	function otherEventsLogic(){
+	function loadLogicForComputer(){
 
-			$( 'input[name="search_field"]' ).change(function(event){
-				
-				Search($(this).val());
-
-			}).keyup(function(){
-				$(this).change();
-			});
+			setNextBackButtonsLogic();
 
 			$("#add_event_buttonPC").hide();
 
@@ -1711,12 +1664,15 @@
 		}
 	}
 
+
 	function updateMobileStyles(screen){
 		//-
 			console.log("mobile");
+			currentDeviceType = DeviceType.MOBILE;
 		//-
-		$("link#materialize-link").removeAttr('disabled');
 
+		$("link#materialize-link").removeAttr('disabled');
+		
 		//ap = abbr. auth-page
 		var apHeader = "#auth-page-header";                                        
 		var apLogo = "#auth-page-logo > object";
@@ -1736,36 +1692,34 @@
 			window: { defaultPartOfWindow: 0.22, defaultHeight : 112}
 		}).setRate();
 
+
 		//$("#authModal").removeClass("laptop").addClass("mobile");
 	}
+
 
 	function updateLaptopStyles(screen){
 		//-
 			console.log("personal computer");
+			currentDeviceType = DeviceType.COMPUTER;
 		//-
 
 		$("link#materialize-link").attr("disabled", "disabled");
-		//$("#authModal").removeClass("mobile").addClass("laptop");
+		//$("#posted_results_table").html( $("#posted_results_table_mobile").html() );
+		//$("#posted_results_table_mobile").empty();
 	}
 
 
 	//Activates once a tab had been loaded. Its just like document.onload()
 	$(document).ready(function(){
 
-		$("#loading_sign").fadeIn();
-
 		NormalizeWindow = normalize;
+		$("#loading_sign").fadeIn();
 
 		$( window ).bind("resize", function(){
 			var updateScreenStyles = $(window).width() <= MAX_XSCREEN_RESOLUTION ? updateMobileStyles : updateLaptopStyles ;
 			updateScreenStyles(window);
 		}).trigger("resize");
 
-		if ( navigator.appVersion.indexOf("MSIE") != -1) { // if IE and version is greater 9
-			if( $.browser.version > 9)
-				$('.bs-modal').removeClass('fade');
-		}
-		
 		$("#bt_title_main").click(function(){
 			if (mode != BabyTrackMode.NONE){
 				if (initialPage == BabyTrackInitialPage.WELCOME_POST)
@@ -1775,12 +1729,20 @@
 			}
 		});
 
-		$(".button-collapse").sideNav();
+
+		$( 'input[name="search_field"]' ).change(function(event){
+			Search($(this).val());
+		}).keyup(function(){
+			$(this).change();
+		});
 
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
-		setNextBackButtonsLogic();
-		otherEventsLogic();
+
+		if (currentDeviceType == DeviceType.COMPUTER)
+			loadLogicForComputer();
+		else 
+			loadLogicForMobile();
 
 		//The timer exists until a list of Baby's Information is found
 		var timer_initPage = setInterval(function(){
@@ -1789,15 +1751,15 @@
 				initialPage = SnugBabies.isEmpty() ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
 				//initialPage = BabyTrackInitialPage.WELCOME_POST;	
 				
-				setInitialPage(initialPage, {effect: "fadeIn", speed: 2000}, false);
-				
-				$("#loading_sign").hide();
-
-				//enabling add event button
-				$("#add_event_buttonPC").show(1000);	
+				if (currentDeviceType == DeviceType.COMPUTER){
+					normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
+					//setInitialPage(initialPage, {effect: "fadeIn", speed: 2000}, false);
+					$("#loading_sign").hide();
+					$("#add_event_buttonPC").show(1000);	
+				}
 				
 				normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
-				normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
+				setInitialPage(initialPage, {effect: "fadeIn", speed: 2000}, false);
 
 				clearInterval(timer_initPage);
 			}
@@ -1812,7 +1774,7 @@
 						case "disabled":
 
 							$("#authModal").closeModal({dismissible: false});			
-							if( $(window).width() > MAX_XSCREEN_RESOLUTION)
+							if( currentDeviceType == DeviceType.COMPUTER)
 									$("link#materialize-link").attr("disabled", "disabled");
 						break;
 
@@ -1826,6 +1788,21 @@
 		}, 10);
 
 	});
+
+
+	function loadLogicForMobile(){
+
+		$(".button-collapse").sideNav();
+
+		$('#search_btn_mobile').on("touchend", function(){
+			var search = $('#search_area_mobile');
+
+			search.is(":visible") ? search.slideUp() : search.slideDown(function(){
+				search.find('input').focus();
+			});
+		});
+
+	}
 
 
 })(jQuery)

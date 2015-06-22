@@ -43,6 +43,10 @@
 		ADD_DIAPER_EVENT: 8
 	}
 
+	var DeviceType = { MOBILE: 0, COMPUTER: 1}
+
+	var currentDeviceType = DeviceType.MOBILE;
+
 	var mode = BabyTrackMode.NONE;
 	var initialPage;
 	var previousWindow = BabyTrackWindows.NONE;

@@ -4,8 +4,18 @@
 	}
 
 	@font-face {
-		font-family: Roboto;
+		font-family: RobotoRegular;
 		src: url(../font/roboto/Roboto-Regular.woff);
+	}
+
+	@font-face {
+		font-family: RobotoMedium;
+		src: url(../font/roboto/Roboto-Medium.woff);
+	}
+
+	@font-face {
+		font-family: RobotoLight;
+		src: url(../font/roboto/Roboto-Light.woff);
 	}
 
 	body, html{
@@ -14,9 +24,9 @@
 
 	body{
 		background-color: #65DCF7;
-		overflow-y: auto;
+		overflow-y: hidden;
 		overflow-x: hidden;
-		font-family: Roboto, sans-serif;
+		font-family: RobotoRegular, sans-serif;
 		margin: 0;
 		padding: 0;
 	}
@@ -138,6 +148,20 @@
 		text-align: center;
 	}
 	
+	#bt_search_engine{
+		width: 85.56149733%;
+		input[name="search_field"]{
+			font-style: italic;
+			padding: 0;
+			font-size: 17px;
+			margin-top: 1px;
+			margin-bottom: 1px;
+			width: 100%;
+			height: 21px;
+			border: 0;
+		}
+		input[name="search_field"]:focus{ outline: 0; }
+	}
 
 	#bt_search_engine_area{
 		@margin: 11px;
@@ -151,23 +175,6 @@
 	  	> div{
 	  		float: left;
 	  		height: 23px;
-	  		&#bt_search_engine{
-	  			width: 85.56149733%;
-	  			> input[name="search_field"]{
-					font-style: italic;
-					padding: 0;
-					font-size: 17px;
-					margin-top: 1px;
-					margin-bottom: 1px;
-					width: 100%;
-					height: 21px;
-					border: 0;
-				}
-
-				> input[name="search_field"]:focus{
-					outline: 0;
-				}
-			}
 
 			&:first-child,
 			&:last-child{

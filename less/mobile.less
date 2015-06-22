@@ -1,16 +1,15 @@
 @media all and (max-width:601px), all and (max-height: 450px){
 	body{
 		display: table;
-		overflow: hidden;
 		background-color: #E2E3E4;
+	}
+
+	html, body{
+		overflow: hidden !important;
 	}
 
 	main{
 		display: none;
-	}
-
-	#mobile-menu {
-		
 	}
 
 	.modalWindow-601px-450px;
@@ -22,6 +21,7 @@
 		background-color: #E2E3E4;
 
 		#add_event_buttonM { bottom: 10px; right: 10px; }
+
 		#add_event_buttonM i{ 
 			font-size: 2.8rem; 
 			color: #5D4239;
@@ -33,12 +33,12 @@
 
 			ul:not(.side-nav) li:hover, 
 			ul:not(.side-nav) li.active{
- 				background-color: #00A8BE; 
+ 				background-color: inherit; 
  			}
 
- 			.actions_areaM{ margin-left: 15px; }
+ 			.actions_area_mobile{ float: left; margin-left: 15px; }
  			
- 			.search_areaM{ float: right; }
+ 			.search_icon_mobile{ float: right; }
 
 			.button-collapse {
 				padding-left: 10px;
@@ -49,6 +49,15 @@
 			#actions-list-item{
 				font-size: 1.5rem;
 			}
+		}
+
+		#search_area_mobile {
+			width:100%;
+			z-index: 100;
+			display: none;
+			margin-bottom: 0px;
+			border-top: 1px solid #111;
+			border-bottom: 1px solid #111;
 		}
 		/********************************************/
 

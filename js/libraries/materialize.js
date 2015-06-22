@@ -1959,7 +1959,7 @@ $(document).ready(function(){
         var panning = false;
         var menuOut = false;
 
-        $('.drag-target').on('click', function(){
+        $('.drag-target').on('click touchend', function(){
           removeMenu();
         })
 
