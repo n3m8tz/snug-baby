@@ -369,11 +369,11 @@
 		if (array[pivot] === element) 
 			return pivot;
 		if (end - start <= 1)
-			return array[pivot] > element ? pivot - 1 : pivot;
+			return array[pivot] < element ? pivot - 1 : pivot;
 		if (array[pivot] < element) {
-			return locationOf(element, array, pivot, end);
-		} else {
 			return locationOf(element, array, start, pivot);
+		} else {
+			return locationOf(element, array, pivot, end);
 		}
 	}
 	//----------------------------------------------------------------------
@@ -454,7 +454,7 @@
 
 		var insertTable = function(_location, table, dom){	
 			if(dom.getElementsByTagName("table").length > 0)
-				dom.insertBefore(table, dom.getElementsByTagName("table")[_location+1]);
+				dom.insertBefore(table, dom.getElementsByTagName("table")[_location]);
 			else
 				dom.appendChild(table);
 		}
@@ -469,14 +469,14 @@
 			if (currentDeviceType == DeviceType.MOBILE){
 				entry = new TableRow(_entryId);
 				
-				var insertAfter = function(referenceNode, newNode) {
+				var swapElements = function(referenceNode, newNode) {
 					referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 				}
 
 				var elemAfter = entry.value.querySelector("td.table_baby_activity");
 				var elemBefore = entry.value.querySelector("td.table_feed_time");
 
-				insertAfter(elemBefore, elemAfter);
+				swapElements(elemBefore, elemAfter);
 
 				$(entry.value).append('<td class="table_data_modify"><i class="small mdi-navigation-more-vert"></i></td>')
 			}
@@ -487,7 +487,8 @@
 
 			if(tableRows.length > 0){
 				for(var i=0; i<tableRows.length; i++){
-					var id = parseInt(tableRows[i].getAttribute("id").replace("_", ""), 10);
+					var id = tableRows[i].getAttribute("id").replace("_", "");
+					id = parseInt(id, 10);
 					orderedEntriesIdList.push(id);
 				}
 				_location = locationOf(parseInt(_entryId.replace("_", ""), 10), orderedEntriesIdList);
