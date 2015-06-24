@@ -5,10 +5,10 @@
   	<meta http-equiv="X-UA-Compatible" content="IE=9" />
   	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
 
-  	<!-- CSS styles and Google Fonts -->
+  	<!-- CSS styles and Google Fonts and Icons -->
   	<link rel="stylesheet"  type="text/css" href="css/materialize.css" id="materialize-link" media="screen,projection"/>
   	<link rel="stylesheet/less" type="text/css" href="less/styles.less" />
-	<link rel="stylesheet/less" type="text/css" href="less/fonts.less">
+	<link rel="stylesheet/less" type="text/css" href="less/fonts-icons.less">
 
 	<!-- Shortcut Favicon -->
   	<link rel="shortcut icon" type="image/x-icon" href="images/favicon.png" />
@@ -52,7 +52,8 @@
                                         <!--####################################################################-->
                                         <!--###         Baby track Main Page HTML Implementation            ####-->
                                         <!--####################################################################-->
-		
+			
+
 			<main id="bt_main_table">
 
 				<header id="bt_header">
@@ -75,7 +76,7 @@
 						<div class="clear"></div>
 					</div>
 
-					<div id="bt_person_profile"></div>
+					<div class="share-file" id="bt_person_profile"></div>
 
 				</header>
 				
@@ -362,7 +363,7 @@
                                         <!--####################################################################-->
 		
 		<section id="MobileVersionBoby">
-			<div class="fixed-action-btn" id="add_event_buttonM">
+			<div class="fixed-action-btn" id="add_event_button_mobile">
 				<a class="btn-floating btn-large waves-effect waves-light red lighten-1"><i class="mdi-content-add"></i></a>
 			</div>
 			<div class="navbar-fixed">
@@ -372,19 +373,23 @@
 						<a href="#" data-activates="person-profile" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
 						
 						<ul>
-							<li class="actions_area_mobile waves-effect waves-light">
-								<a href="javascritp:void(0)" id="actions-list-item">Actions</a>
+							<li class="actions_area_mobile">
+								<a href="javascritp:void(0)" id="actions_logo">Actions</a>
 							</li>	
-							<li class="search_icon_mobile waves-effect waves-light">
-								<a href="javascritp:void(0)" id="search_btn_mobile"><i class="mdi-action-search"></i></a>
-							</li>					
+							<li class="right">
+								<a href="javascritp:void(0)" id="search_button_mobile"><i class="mdi-action-search"></i></a>
+								<a href="javascritp:void(0)" id="apply_event_button_mobile"><i class="mdi-action-done"></i></a>
+							</li>				
 						</ul>
 
 						<ul class="side-nav" id="person-profile">
-							<li><a class="waves-effect waves-light" href="http://www.youtube.com">Sass</a></li>
-							<li><a class="waves-effect waves-light" href="http://www.twitter.com">Components</a></li>
-							<li><a class="waves-effect waves-light" href="http://www.facebook.com">Javascript</a></li>
-							<li><a class="waves-effect waves-light" href="http://www.snug-baby.com">Mobile</a></li>
+							<li><a class="waves-effect waves-light" href="http://www.youtube.com">Logout</a></li>
+							<li class="divider"></li>
+							<li><a class="share-file waves-effect waves-light" href="javascript:void(0)">Share</a></li>
+							<li><a class="waves-effect waves-light" href="http://www.snug-baby.com">Settings</a></li>
+							<li class="divider"></li>
+							<li><a class="waves-effect waves-light" href="http://www.facebook.com">Help</a></li>
+							<li><a class="waves-effect waves-light" href="http://www.facebook.com">Contact</a></li>
 						</ul>
 					</div>
 				</nav>
@@ -404,7 +409,88 @@
 				</section>
 			</section>
 
+			<section id="add_action_table_mobile">
+				<section>
+					<div class="avatar_panel_mobile">
+							<div class="illustration">
+								<img src="images/avatar_girl.png"/>
+							</div>
+
+							<div class="information">
+								 <div class="input-field col s12">
+									<select id="select_baby_mobile">
+										<option value="" disabled selected>Choose baby</option>
+									</select>
+									<!-- <label>Choose baby</label> -->
+								</div>	
+							</div>
+
+							<div class="clear"></div>
+					</div>
+
+
+					<div class="activity_panel_mobile">
+							<div class="illustration">
+								<img src="images/feed-mobile.png"/>
+							</div>
+
+							<div class="information"> 
+								<div class="input-field col s12">
+									<select id="select_activity_mobile">
+										<option value="" disabled selected>Choose action</option>
+										<option value="1" >Feed</option>
+									</select>
+									<!-- <label>Choose action</label>-->
+								</div>	
+							</div>
+							<div class="clear"></div>
+					</div>
+
+					<div class="activity_params_panel_mobile">
+							<div class="illustration"></div>
+
+							<div class="information"> 
+								<div>
+									<div class="input-wrapper input-field col s6">
+										<div class="input-group clockpicker">
+											<input type="text" class="form-control timepicker" value="13:14 AM">
+											<span class="input-group-addon">
+												<span class="glyphicon glyphicon-time"></span>
+											</span>
+										</div>
+									</div>
+
+									<div class="input-wrapper input-field col s6">
+										<input id="amount_mobile" type="text">
+										<label for="amount_mobile">Amount</label>
+									</div>
+									<div class="clear"></div>
+								</div>
+							</div>
+							<div class="clear"></div>
+					</div>
+
+					<div class="notes_panel_mobile">
+							<div class="illustration"></div>
+
+							<div class="information"> 
+								<div class="input-field col s6">
+									<div class="input-wrapper">
+										<i class="material-icons prefix">edit</i>
+										<input id="notes_input_mobile" type="text" />
+										<label for="notes_input_mobile">Add notes</label>
+									</div>
+								</div>
+							</div>
+							
+							<div class="clear"></div>
+					</div>
+	
+				</section>
+			</section>
+
 		</section>
 </body>
+
 
 </html>

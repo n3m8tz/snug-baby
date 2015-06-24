@@ -129,7 +129,7 @@ var SnugBabyDayTime = (function(){
 		if(type === "AM")
 			return hours == "12" ? "00": hours;
 		if(type === "PM")
-			switch(hours){
+			switch( (parseInt(hours, 10)).toString() ){
 				case "12": return "12"; break;
 				case "1": return "13"; break;
 				case "2": return "14"; break;

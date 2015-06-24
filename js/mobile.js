@@ -12,8 +12,12 @@
 			switch(type.toUpperCase()){
 				case "TIME":
 					var patternTime = /\b(\d+):(\d+)\b/; 
-					_submitX = _submitX.match(patternTime)[0].replace(/(\d+)(?=:)/, function(match, hours){
-						return date.convert12To24hours(hours, _submitX.match(/(?:AM|PM)/)[0]);
+					var part1 = _submitX.substring(0, submitX.search(/(AM|PM)/)).trim();
+					var part2 = (submitX.search(/(AM)/) != -1) ? "AM" : "PM"
+					_submitX =  part1 + " " + part2;
+					_submitX = _submitX.match(patternTime)[0];
+					_submitX = _submitX.replace(/(\d+)(?=:)/, function(match, hours){
+						return date.convert12To24hours(hours, submitX.match(/(?:AM|PM)/)[0]);
 					});				
 					_basic = _basic.toString().replace(patternTime, _submitX);
 				break;
@@ -99,14 +103,16 @@
 						var amount = _notes.AMOUNT;
 						var duration = _notes.DURATION;
 						var type = _notes.TYPE;
-						_notes.value = (amount !== undefined && duration === undefined) ? amount + "ml via " + type:
+						if (typeof _notes.value == "undefined")
+							_notes.value = (amount !== undefined && duration === undefined) ? amount + "ml via " + type:
 										(amount === undefined && duration !== undefined) ? duration + "min via " + type:
 										(amount !== undefined && duration !== undefined) ? amount + "ml for " +duration + "min via " + type:
 										"Oops, no notes!";
 					break;
 
 					case "DIAPER":
-						_notes.value = _notes.STOOL;
+						if (typeof _notes.value == "undefined")
+							_notes.value = _notes.STOOL;
 					break;
 				}
 			}
@@ -1556,9 +1562,6 @@
 
 			$("#add_event_buttonPC").hide();
 
-			$('.timepicker').bind("input change", function() {
-				glSubmitTime = $(this).val(); 
-			});
 
 			$('.datepicker').bind("input change", function() {
 				glSubmitDate = $(this).val(); 
@@ -1626,8 +1629,7 @@
 				    
 		    $(".colorpicker").simplecolorpicker({theme: 'regularfont'});
 
-		   	$("#bt_person_profile").on("click", showShareDialog);
-
+		   	$(".share-file").on("click", showShareDialog);
 	}
 
 	function countFontRate(obj){
@@ -1730,6 +1732,7 @@
 			}
 		});
 
+		$(".share-file").on("click", showShareDialog); 
 
 		$( 'input[name="search_field"]' ).change(function(event){
 			Search($(this).val());
@@ -1737,8 +1740,19 @@
 			$(this).change();
 		});
 
+		$(".clockpicker").clockpicker({
+			placement: 'bottom',
+			align: 'left',
+			donetext: 'Done',
+			twelvehour: true
+		});
+
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
+		
+		$('.timepicker').bind("input change", function() {
+			glSubmitTime = $(this).val(); 
+		}); 
 
 		if (currentDeviceType == DeviceType.COMPUTER)
 			loadLogicForComputer();
@@ -1790,20 +1804,121 @@
 
 	});
 
-
 	function loadLogicForMobile(){
-
+		
 		$(".button-collapse").sideNav();
 
-		$('#search_btn_mobile').on("touchend", function(){
-			var search = $('#search_area_mobile');
-
-			search.is(":visible") ? search.slideUp() : search.slideDown(function(){
-				search.find('input').focus();
-			});
-		});
-
+		$("#search_button_mobile").on("touchend", onClick_SearchBtnMobile);
+		$("#add_event_button_mobile").click(onClick_AddEventBtnMobile);
+		$("#apply_event_button_mobile").click(onClick_ApplyEventBtnMobile);
 	}
 
+	function loadResults(){
+		if(!SnugBabies.isEmpty()){														//if there any information about babies in the database
+													 
+			var $selectBabyPanel = $("#select_baby_mobile");
+			$selectBabyPanel.children("option").remove(":not([disabled])");	
+
+			//iterate thru babies from database
+			SnugBabies.items().forEach(function(baby, index){
+
+				$selectBabyPanel.append( "<option value='"+ (index + 1) +"'>" + baby[1].NAME + "</option>" );
+				//$(".avatar_panel_mobile").find(".illustration").find("") baby[1].AVATAR.VALUE
+			});
+
+			$('.datepicker-mobile').pickadate({
+				selectMonths: false, // Creates a dropdown to control month
+				selectYears: 15 // Creates a dropdown of 15 years to control year
+			});
+		}
+	}	
+
+
+	function onClick_AddEventBtnMobile(){
+		loadResults();
+		
+		$('#select_baby_mobile').bind("change", function() {
+			var name = $(this).find("option:selected").text().toUpperCase();
+
+			var avatarImg = SnugBabies.get(name).AVATAR.VALUE;
+			$(".avatar_panel_mobile").find(".illustration img").attr("src", avatarImg);
+			$(".avatar_panel_mobile").find(".illustration img").css("border-radius", "50%");
+		});
+
+		$('#select_baby_mobile').material_select();
+		$('#select_activity_mobile').material_select();
+
+		current_baby = new SnugBabyPerson();
+
+		current_baby.sbDayTime = new SnugBabyDayTime();
+		var shortTime = current_baby.sbDayTime.shortTime.replace(' ','');
+
+		$timepicker = $(".activity_params_panel_mobile").find("input.timepicker");
+		$timepicker.val(shortTime);
+		$('.avatar_panel_mobile').find('input[data-activates][readonly]').val("Choose baby");
+		$(".activity_panel_mobile").find("input[data-activates][readonly]").val("Choose action");
+		$("#notes_input_mobile").val("");
+		$("#amount_mobile").val("");
+
+		glSubmitTime = $timepicker.val();
+		glSubmitDate = current_baby.sbDayTime.fullDay +", "+ current_baby.sbDayTime.fullMonth + ", " + current_baby.sbDayTime.year;
+
+		var search = $('#search_area_mobile');
+		if ( search.is(":visible") ) search.slideUp();
+
+		$("#actions_logo").html("Add action");
+		
+		$("#apply_event_button_mobile").css("display", "block");
+		$("#search_button_mobile").css("display", "none");
+
+		$("#posted_results_table_mobile").fadeOut(250, function(){
+			$("#add_action_table_mobile").fadeIn(250);
+		});
+
+		$("#add_event_button_mobile").hide(1000);
+	}
+
+	function onClick_ApplyEventBtnMobile(){	
+		if( !$("#notes_input_mobile").val() ||
+			!$("#amount_mobile").val() ||
+			$('.avatar_panel_mobile').find('input[data-activates][readonly]').val() == "Choose baby" ||
+			$('.activity_panel_mobile').find('input[data-activates][readonly]').val() == "Choose action")
+		{
+			alert("Fill in the form, plz!");
+			return;
+		}
+
+		current_baby.nickname =  $('.avatar_panel_mobile').find('input[data-activates][readonly]').val();
+		current_baby.activityImg = "images/feed-mobile.png"; // apparently assign cuz for now i don't have any images of this type.
+		current_baby.activity = "FOOD"; 					//$(".activity_panel_mobile").find("input[data-activates][readonly]").val().toUpperCase;
+		current_baby.setNotes({
+						"AMOUNT": $("#amount_mobile").val(),
+						"DURATION": undefined,
+						"TYPE": "Bottle",
+						"value": $("#notes_input_mobile").val()
+		});
+
+		current_baby.setSubmitDate( glSubmitDate );
+		current_baby.setSubmitTime( glSubmitTime );
+
+		var single_event = current_baby.submit();
+		$("#actions_logo").html("Actions");
+
+		$("#apply_event_button_mobile").css("display", "none");
+		$("#search_button_mobile").css("display", "block");
+
+		$("#add_action_table_mobile").fadeOut(250, function(){
+			$("#posted_results_table_mobile").fadeIn(250);
+		});
+		
+		$("#add_event_button_mobile").show(500);
+	}
+
+	function onClick_SearchBtnMobile(){
+		var search = $('#search_area_mobile');
+		search.is(":visible") ? search.slideUp() : search.slideDown(function(){
+			search.find('input').focus();
+		});
+	}
 
 })(jQuery)
