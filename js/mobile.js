@@ -1624,12 +1624,9 @@
 			
 
 			$("#add_event_buttonPC").click(addEventButtonClickEvent);
-			$("#choose_person").find(".add_person_button").click(addPersonButtonClickEvent);
-			$("#authorizeButton").click(authButtonClickEvent);
-				    
+			$("#choose_person").find(".add_person_button").click(addPersonButtonClickEvent);				    
 		    $(".colorpicker").simplecolorpicker({theme: 'regularfont'});
 
-		   	$(".share-file").on("click", showShareDialog);
 	}
 
 	function countFontRate(obj){
@@ -1732,7 +1729,8 @@
 			}
 		});
 
-		$(".share-file").on("click", showShareDialog); 
+		$(".share-file").on("click", showShareDialog);
+		$("#authorizeButton").click(authButtonClickEvent);
 
 		$( 'input[name="search_field"]' ).change(function(event){
 			Search($(this).val());
