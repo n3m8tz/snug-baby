@@ -1773,7 +1773,6 @@
 				
 				normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
 				setInitialPage(initialPage, {effect: "fadeIn", speed: 2000}, false);
-
 				clearInterval(timer_initPage);
 			}
 		}, 10);
@@ -1806,6 +1805,10 @@
 		
 		$(".button-collapse").sideNav();
 
+		var href = document.location.href;
+		var hashIndex = href.indexOf("#");
+		var nohashHref = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
+		$(".logout").attr("href", "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=" + nohashHref);
 		$("#search_button_mobile").on("touchend", onClick_SearchBtnMobile);
 		$("#add_event_button_mobile").click(onClick_AddEventBtnMobile);
 		$("#apply_event_button_mobile").click(onClick_ApplyEventBtnMobile);
@@ -1831,6 +1834,7 @@
 		}
 	}	
 
+	
 
 	function onClick_AddEventBtnMobile(){
 		loadResults();
