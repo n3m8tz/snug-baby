@@ -567,15 +567,20 @@
 
 
 
-	function normalize(obj){
+	function normalize(obj, callback){
 
 		if (obj === "undefined") return;
 
 		var normalizeOneEntry = typeof obj.normalizeOneEntry !== "undefined" ? obj.normalizeOneEntry : false;
 		var single_event = (normalizeOneEntry && typeof obj.event !== "undefined") ? obj.event : undefined;
+		var callback = (typeof callback == "function") ? callback : function(){} ;
 
 		switch(obj.window){
 			case BabyTrackWindows.CREATE_NEW_PERSON:
+			break;
+
+			case BabyTrackWindows.WELCOME_POST:
+				callback();
 			break;
 
 			case BabyTrackWindows.POSTED_RESULTS_TABLE:
@@ -604,11 +609,13 @@
 
 					dom.innerHTML = null;
 
-					if (normalizeOneEntry)
+					if (normalizeOneEntry){
 						normalizeEntry(single_event, dom);
-					else 
-						SnugEvents.items().forEach(function(event){
+						callback();
+					}else
+						SnugEvents.items().forEach(function(event, index){
 							normalizeEntry(event, dom);
+							if (index == SnugEvents.size - 1) callback();
 						});
 
 					if (initialPage === BabyTrackInitialPage.WELCOME_POST
@@ -625,7 +632,8 @@
 							}
 						}, 10);
 					}
-					
+
+
 				}
 				
 			break;
@@ -1331,7 +1339,10 @@
 			authButtonState = undefined;	
 			var timer = setInterval(function(){
 				try{
-					if (typeof (authButtonState && SnugActivities && SnugBabies && SnugEvents) !== 'undefined'){
+					if (typeof authButtonState  !== 'undefined' &&
+						typeof SnugActivities !== 'undefined' &&
+						typeof SnugBabies !== 'undefined' && 
+						typeof SnugEvents !== 'undefined'){
 						clearInterval(timer);
 						switch (authButtonState){
 							case "disabled": 
@@ -1757,61 +1768,61 @@
 		else 
 			loadLogicForMobile();
 
-		//The timer exists until a list of Baby's Information is found
-		var timer_initPage = setInterval(function(){
-			if(typeof(SnugActivities && SnugBabies && SnugEvents) !== 'undefined'){
-
-				initialPage = SnugBabies.isEmpty() ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
-				//initialPage = BabyTrackInitialPage.WELCOME_POST;	
-				
-				if (currentDeviceType == DeviceType.COMPUTER){
-					normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
-					//setInitialPage(initialPage, {effect: "fadeIn", speed: 2000}, false);
-					$("#loading_sign").hide();
-					$("#add_event_buttonPC").show(1000);	
-				}
-				
-				normalize({window: BabyTrackWindows.POSTED_RESULTS_TABLE});
-				setInitialPage(initialPage, {effect: "fadeIn", speed: 2000}, false);
-				clearInterval(timer_initPage);
-			}
-		}, 10);
-
-		//The timer exists until a 
-		var timer_auth = setInterval(function(){
-			try{
-				if (typeof authButtonState !== 'undefined'){
-					clearInterval(timer_auth);
-					switch (authButtonState){
-						case "disabled":
-
-							$("#authModal").closeModal({dismissible: false});			
-							if( currentDeviceType == DeviceType.COMPUTER)
-									$("link#materialize-link").attr("disabled", "disabled");
-						break;
-
-						case "enabled":
-							$("link#materialize-link").removeAttr('disabled');							
-							$("#authModal").openModal({dismissible: false});
-						break;
-					}
-				}
-			}catch(e){}
-		}, 10);
-
+		waitGAPIandKeeponLoadingRelatedScript();
 	});
+	
+	function waitGAPIandKeeponLoadingRelatedScript(){
+
+		WaitGAPIobjectsUploading(function(){
+			initialPage = SnugBabies.isEmpty() ? BabyTrackInitialPage.WELCOME_POST : BabyTrackInitialPage.POSTED_RESULTS_TABLE;	
+			var currentPage = SnugBabies.isEmpty() ? BabyTrackWindows.WELCOME_POST: BabyTrackWindows.POSTED_RESULTS_TABLE;
+
+			if (currentDeviceType == DeviceType.COMPUTER){
+				normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
+				$("#loading_sign").hide();
+				normalize({window: currentPage}, function(){
+					$("#add_event_buttonPC").show(1000);
+				});	
+			}
+			else if (currentDeviceType == DeviceType.MOBILE){
+				//normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
+				//$("#loading_sign").hide();
+				normalize({window: currentPage}, function(){
+					$("#add_event_button_mobile").show(1000);
+				});
+			}
+			
+			setInitialPage(initialPage, {effect: "fadeIn", speed: 2000}, false);
+	
+		});
+
+		WaitGAPIauthBtnStateDetection(function(){
+			switch (authButtonState){
+				case "disabled":
+					$("#authModal").closeModal({dismissible: false});			
+					if( currentDeviceType == DeviceType.COMPUTER)
+							$("link#materialize-link").attr("disabled", "disabled");
+				break;
+
+				case "enabled":
+					$("link#materialize-link").removeAttr('disabled');							
+					$("#authModal").openModal({dismissible: false});
+				break;
+			}
+		});
+	}
 
 	function loadLogicForMobile(){
-		
-		$(".button-collapse").sideNav();
-
 		var href = document.location.href;
 		var hashIndex = href.indexOf("#");
 		var nohashHref = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
 		$(".logout").attr("href", "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=" + nohashHref);
+		$(".button-collapse").sideNav();
+		$(".button-close").click(onClick_CancelEventBtnMobile);
 		$("#search_button_mobile").on("touchend", onClick_SearchBtnMobile);
 		$("#add_event_button_mobile").click(onClick_AddEventBtnMobile);
 		$("#apply_event_button_mobile").click(onClick_ApplyEventBtnMobile);
+		expandToDeviceViewportHeightOnSafari("#add_action_table_mobile");
 	}
 
 	function loadResults(){
@@ -1835,6 +1846,31 @@
 	}	
 
 	
+
+	function onClick_CancelEventBtnMobile(){
+
+		$("#notes_input_mobile").val("");
+		$("#amount_mobile").val("");
+		$('.avatar_panel_mobile').find('input[data-activates][readonly]').val("Choose baby");
+		$('.activity_panel_mobile').find('input[data-activates][readonly]').val("Choose action");
+		
+		$("#actions_logo").html("Actions");
+
+		$("#apply_event_button_mobile").css("display", "none");
+		$("#search_button_mobile").css("display", "block");
+
+		$(".button-close").css("display", "none");
+		$(".button-collapse").css("display", "block");
+		
+
+		$("#add_action_table_mobile").fadeOut(250, function(){
+			$("#posted_results_table_mobile").fadeIn(250);
+		});
+		
+		$("#add_event_button_mobile").show(500);
+	}
+
+
 
 	function onClick_AddEventBtnMobile(){
 		loadResults();
@@ -1872,6 +1908,8 @@
 		
 		$("#apply_event_button_mobile").css("display", "block");
 		$("#search_button_mobile").css("display", "none");
+		$(".button-close").css("display", "block");
+		$(".button-collapse").css("display", "none");
 
 		$("#posted_results_table_mobile").fadeOut(250, function(){
 			$("#add_action_table_mobile").fadeIn(250);
@@ -1921,6 +1959,16 @@
 		search.is(":visible") ? search.slideUp() : search.slideDown(function(){
 			search.find('input').focus();
 		});
+	}
+
+	function expandToDeviceViewportHeightOnSafari(selector){
+		$element = $(selector);
+		function fixMobileSafariViewport() {
+		  	$element.css('height', window.innerHeight);
+		}
+		// listen to portrait/landscape changes
+		window.addEventListener('orientationchange', fixMobileSafariViewport, true);
+		fixMobileSafariViewport();
 	}
 
 })(jQuery)

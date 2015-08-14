@@ -10,7 +10,7 @@
 		* Client ID from the console.
 		*
 		*/
-		//777750276820-30pop6psr99unjqt34ubmrq50fi5ao76.apps.googleusercontent.com
+		//488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com
 		
 		clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
 
@@ -183,6 +183,28 @@
 		var shareClient = new gapi.drive.share.ShareClient(realtimeOptions.appId);
 		shareClient.setItemIds(rtclient.params['fileIds']);
 		shareClient.showSettingsDialog();
+	}
+
+	function WaitGAPIobjectsUploading(callback){
+		var timer_initPage = setInterval(function(){
+			try{
+				if(typeof SnugActivities !== 'undefined' && typeof SnugBabies !== 'undefined' && typeof SnugEvents !== 'undefined'){
+					callback();
+					clearInterval(timer_initPage);
+				}
+			} catch(e){}
+		}, 10);
+	}
+
+	function WaitGAPIauthBtnStateDetection(callback){
+		var timer_auth = setInterval(function(){
+			try{
+				if (typeof authButtonState !== 'undefined'){
+					callback();
+					clearInterval(timer_auth);
+				}
+			} catch(e){}
+		}, 10);
 	}
 
 	function startGoogleDriveRealtime() {
