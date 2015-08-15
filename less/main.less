@@ -30,20 +30,11 @@
 		margin: 0;
 		padding: 0;
 	}
-	
-	/*.date-hint-bar{
-		background-color: #EBEBEB;
-		width: 500px - 33px;
-		padding-top: 3px;
-		padding-bottom: 3px;
-		position: absolute;
-		z-index: 9;
-		text-align: left;
-		font-size: 13px;
-		color: #7F8082;
-	}*/
 
-	*:not(input) { .user-select(none);	}
+	*:not(input[type="text"]),
+	*:not(textarea){ 
+		.user-select(none);	
+	}
 
 	.mobile-disabled-alarm {
 		display: none;

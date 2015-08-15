@@ -113,6 +113,30 @@
 		display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
 	}
 
+	.centrify(@orientation){
+		
+		@horisontal: `@{orientation} == 'horisontal'`;
+		@vertical: `@{orientation} == 'vertical'`;
+		@both: `@{orientation} == 'both'`;
+
+			& when (@horisontal){
+				/* ... */
+			}
+
+			& when (@vertical){
+				/* ... */
+			}
+
+			& when (@both){
+				position: absolute;
+				margin: auto;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+			}
+	}
+
 	.centrify(@orientation, @width, @height){
 		
 		@horisontal: `@{orientation} == 'horisontal'`;

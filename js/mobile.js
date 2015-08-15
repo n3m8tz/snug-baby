@@ -1742,6 +1742,8 @@
 
 		$(".share-file").on("click", showShareDialog);
 		$("#authorizeButton").click(authButtonClickEvent);
+		
+		$("input[type='text'], textarea").attr('spellcheck',false);
 
 		$( 'input[name="search_field"]' ).change(function(event){
 			Search($(this).val());
@@ -1788,7 +1790,7 @@
 				//normalize({window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
 				//$("#loading_sign").hide();
 				normalize({window: currentPage}, function(){
-					$("#add_event_button_mobile").show(1000);
+					$("#add_event_button_mobile").fadeIn(800);
 				});
 			}
 			
@@ -1820,8 +1822,13 @@
 		$(".button-collapse").sideNav();
 		$(".button-close").click(onClick_CancelEventBtnMobile);
 		$("#search_button_mobile").on("touchend", onClick_SearchBtnMobile);
+		$("#search_button_mobile").on("click", onClick_SearchBtnMobile);
 		$("#add_event_button_mobile").click(onClick_AddEventBtnMobile);
 		$("#apply_event_button_mobile").click(onClick_ApplyEventBtnMobile);
+		$("#notes_input_mobile").bind({
+			focus: function(){ $(".notes_panel_mobile").find("i.material-icons:contains('edit')").css("color", "#26A69A"); },
+			blur:  function(){ if ($(this).val().length == 0) $(".notes_panel_mobile").find("i.material-icons:contains('edit')").css("color", "#59595B"); }
+		});
 		expandToDeviceViewportHeightOnSafari("#add_action_table_mobile");
 	}
 
@@ -1867,7 +1874,7 @@
 			$("#posted_results_table_mobile").fadeIn(250);
 		});
 		
-		$("#add_event_button_mobile").show(500);
+		$("#add_event_button_mobile").fadeIn(800);
 	}
 
 
@@ -1915,7 +1922,7 @@
 			$("#add_action_table_mobile").fadeIn(250);
 		});
 
-		$("#add_event_button_mobile").hide(1000);
+		$("#add_event_button_mobile").fadeOut(800);
 	}
 
 	function onClick_ApplyEventBtnMobile(){	
@@ -1951,7 +1958,7 @@
 			$("#posted_results_table_mobile").fadeIn(250);
 		});
 		
-		$("#add_event_button_mobile").show(500);
+		$("#add_event_button_mobile").fadeIn(800);
 	}
 
 	function onClick_SearchBtnMobile(){
@@ -1959,6 +1966,7 @@
 		search.is(":visible") ? search.slideUp() : search.slideDown(function(){
 			search.find('input').focus();
 		});
+		return false;
 	}
 
 	function expandToDeviceViewportHeightOnSafari(selector){

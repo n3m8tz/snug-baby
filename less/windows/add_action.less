@@ -32,11 +32,22 @@
 
 	.illustration{
 		width: 16.666666666666666666666666666667%;
-		img{ margin: 0 auto; }
+		position: relative;
+		img{ 
+			.centrify("both"); 
+		}
+		i{
+    		font-size: 2.2rem;
+    		width: 50%;
+    		height: 50%;
+			.transition(color, .2s);
+			.centrify("both");
+		}
 	}
 
 	.information{
 		width: 83.333333333333333333333333333333%;
+		position: relative;
 		.select-wrapper, 
 		.input-wrapper{  
 			width: 90%;
@@ -63,18 +74,6 @@
 			margin-right: 5%;
 			margin-left: 5%;
 		}
-	}
-
-	.notes_panel_mobile{
-		.illustration{ width: 0%; }
-		.information{ width: 100%; }
-
-		.input-field .prefix ~ input{ 
-			margin-left: 4rem; 
-			width: calc(~"100% - 4rem");
-		}
-
-		.input-field .prefix ~ label { margin-left: 4.3rem; }
 	}
 
 }
