@@ -1742,7 +1742,7 @@
 
 		$(".share-file").on("click", showShareDialog);
 		$("#authorizeButton").click(authButtonClickEvent);
-		
+
 		$("input[type='text'], textarea").attr('spellcheck',false);
 
 		$( 'input[name="search_field"]' ).change(function(event){
@@ -1830,6 +1830,8 @@
 			blur:  function(){ if ($(this).val().length == 0) $(".notes_panel_mobile").find("i.material-icons:contains('edit')").css("color", "#59595B"); }
 		});
 		expandToDeviceViewportHeightOnSafari("#add_action_table_mobile");
+		expandToDeviceViewportHeightOnSafari("#posted_results_table_mobile");
+		$("#posted_results_table_mobile").css("height", "-=56");
 	}
 
 	function loadResults(){
