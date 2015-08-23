@@ -1792,6 +1792,15 @@
 				normalize({window: currentPage}, function(){
 					$("#add_event_button_mobile").fadeIn(800);
 				});
+				
+				loadSelectBabyWindowLogic();
+				expandToDeviceViewportHeightOnSafari("#select_baby_table_mobile");
+				
+				var timer= setInterval(function(){
+					document.selectBabyWindow.addBabies(SnugBabies.items());
+					clearInterval(timer);
+				}, 10);
+				
 			}
 			
 			setInitialPage(initialPage, {effect: "fadeIn", speed: 2000}, false);
@@ -1815,12 +1824,15 @@
 	}
 
 	function loadLogicForMobile(){
+
 		var href = document.location.href;
 		var hashIndex = href.indexOf("#");
 		var nohashHref = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
 		$(".logout").attr("href", "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=" + nohashHref);
 		$(".button-collapse").sideNav();
 		$(".button-close").click(onClick_CancelEventBtnMobile);
+		$(".button-back").click(onClick_CancelPhotoBtnMobile);
+		$("#person_avatar_mobile").click(onClick_OpenPhotoBtnMobile);
 		$("#search_button_mobile").on("touchend", onClick_SearchBtnMobile);
 		$("#search_button_mobile").on("click", onClick_SearchBtnMobile);
 		$("#add_event_button_mobile").click(onClick_AddEventBtnMobile);
@@ -1831,30 +1843,48 @@
 		});
 		expandToDeviceViewportHeightOnSafari("#add_action_table_mobile");
 		expandToDeviceViewportHeightOnSafari("#posted_results_table_mobile");
-		$("#posted_results_table_mobile").css("height", "-=56");
 	}
 
-	function loadResults(){
-		if(!SnugBabies.isEmpty()){														//if there any information about babies in the database
-													 
-			var $selectBabyPanel = $("#select_baby_mobile");
-			$selectBabyPanel.children("option").remove(":not([disabled])");	
 
-			//iterate thru babies from database
-			SnugBabies.items().forEach(function(baby, index){
+	function loadSelectBabyWindowLogic(){
 
-				$selectBabyPanel.append( "<option value='"+ (index + 1) +"'>" + baby[1].NAME + "</option>" );
-				//$(".avatar_panel_mobile").find(".illustration").find("") baby[1].AVATAR.VALUE
-			});
+		var selectBabyWindow = new SelectBabyWindow();
+		document.selectBabyWindow = selectBabyWindow;
+		document.selectBabyWindow.insertInto("#MobileVersionBoby");
 
-			$('.datepicker-mobile').pickadate({
-				selectMonths: false, // Creates a dropdown to control month
-				selectYears: 15 // Creates a dropdown of 15 years to control year
-			});
-		}
-	}	
+		$("#select_baby_table_mobile").on("change", "input[name='select-baby-radio']", function() {
+			if(this.checked) {
+				var name = $(this).parent().find(".image-grid-block-text").text();
+				var chosen_avatar = SnugBabies.get(name.toUpperCase()).AVATAR.VALUE;
+				$("#person_avatar_mobile").addClass("round-image").attr("src", chosen_avatar);
+				$("#person_nickname_mobile").prop('disabled', false).val(name);
+				$("label[for='person_nickname_mobile']").addClass('active');
+				
+				$(".button-back").css("display", "none");
+				$(".button-close, #apply_event_button_mobile").css("display", "block");
+				$("#actions_logo").html("Add action");
 
-	
+				$("#select_baby_table_mobile").hide();	
+				$("#add_action_table_mobile").show();
+			}
+		});
+	}
+
+	function onClick_CancelPhotoBtnMobile(){
+		$(".button-back").css("display", "none");
+		$(".button-close, #apply_event_button_mobile").css("display", "block");
+		$("#actions_logo").html("Add action");
+		$("#select_baby_table_mobile").hide("drop", {direction: "right"}, 200);
+		$("#add_action_table_mobile").show("drop", {direction: "left"}, 200);
+	}
+
+	function onClick_OpenPhotoBtnMobile(){		
+		$(".button-back").css("display", "block");
+		$(".button-close, #apply_event_button_mobile").css("display", "none");
+		$("#actions_logo").html("Select avatar");
+		$("#add_action_table_mobile").hide("drop", {direction: "left"}, 200);
+		$("#select_baby_table_mobile").show("drop", {direction: "right"}, 300);
+	}
 
 	function onClick_CancelEventBtnMobile(){
 
@@ -1870,7 +1900,6 @@
 
 		$(".button-close").css("display", "none");
 		$(".button-collapse").css("display", "block");
-		
 
 		$("#add_action_table_mobile").fadeOut(250, function(){
 			$("#posted_results_table_mobile").fadeIn(250);
@@ -1880,19 +1909,18 @@
 	}
 
 
-
 	function onClick_AddEventBtnMobile(){
-		loadResults();
+		//document.SelectBabyWindow.update();
 		
-		$('#select_baby_mobile').bind("change", function() {
+		/*$('#select_baby_mobile').bind("change", function() {
 			var name = $(this).find("option:selected").text().toUpperCase();
 
 			var avatarImg = SnugBabies.get(name).AVATAR.VALUE;
 			$(".avatar_panel_mobile").find(".illustration img").attr("src", avatarImg);
 			$(".avatar_panel_mobile").find(".illustration img").css("border-radius", "50%");
-		});
+		});*/
 
-		$('#select_baby_mobile').material_select();
+		//$('#select_baby_mobile').material_select();
 		$('#select_activity_mobile').material_select();
 
 		current_baby = new SnugBabyPerson();
@@ -1972,12 +2000,13 @@
 	}
 
 	function expandToDeviceViewportHeightOnSafari(selector){
-		$element = $(selector);
+		var $element = $(selector);
 		function fixMobileSafariViewport() {
-		  	$element.css('height', window.innerHeight);
+		  	$element.css('height', window.innerHeight - 56);
 		}
 		// listen to portrait/landscape changes
 		window.addEventListener('orientationchange', fixMobileSafariViewport, true);
+		window.addEventListener('resize', fixMobileSafariViewport, true);
 		fixMobileSafariViewport();
 	}
 

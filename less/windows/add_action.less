@@ -1,7 +1,8 @@
 @media all and (max-width:601px), all and (max-height: 450px){
 	#add_action_table_mobile{
 		display: none;
-		overflow: hidden;
+		overflow-y: auto;
+		overflow-x: hidden;
 		background-color: #FFF;
 		height: calc(~"100vh - 56px");
 		-webkit-overflow-scrolling: touch;
@@ -33,13 +34,11 @@
 	.illustration{
 		width: 16.666666666666666666666666666667%;
 		position: relative;
-		img{ 
-			.centrify("both"); 
-		}
+		img{ .centrify("both"); }
 		i{
-    		font-size: 2.2rem;
-    		width: 50%;
-    		height: 50%;
+			font-size: 2.2rem;
+			width: 50%;
+			height: 50%;
 			.transition(color, .2s);
 			.centrify("both");
 		}
@@ -58,13 +57,17 @@
 	}
 
 	.avatar_panel_mobile{
-		.illustration{
-			img { width: 42px; height: 42px; }
-		}
+		.illustration img { width: 42px; height: 42px;}
+		.illustration img.round-image { border-radius: 50%;}
 	}
 
 	.activity_panel_mobile {
 		.illustration img { width: 30px; height: 30px;}
+	}
+
+
+	.input-field label{
+		left: 0rem !important;	/* align label to the left side of an input box*/
 	}
 
 	.activity_params_panel_mobile{
