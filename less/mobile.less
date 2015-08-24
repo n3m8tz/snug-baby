@@ -11,6 +11,58 @@
 	.button-close, 
 	.button-back { display: none; }
 
+	#hamburger-button{	
+		float: left;
+		padding-left: 10px;
+		padding-right: 10px; 
+		position: relative;
+		height: 56px;
+		width: 56px;
+	}
+
+	#hamburger-button > div{
+		@width: 27px;
+		@height: 17px;
+		width: @width;
+		height: @height;
+		cursor: pointer;
+		z-index: 30;
+		.centrify("both", @width, @height);
+		.transform(rotate(0deg));
+		.transition(all ,.5s, ease-in-out);
+	}
+
+	#hamburger-button > div span{
+		display: block;
+		position: absolute;
+		height: 3px;
+		width: 100%;
+		background: white;
+		opacity: 1;
+		left: 0;
+		.transform(rotate(0deg));
+		.transition(all, .25s, ease-in-out);
+
+		&:nth-child(1) { top: 0px; }
+		&:nth-child(2), &:nth-child(3) { top: 7px; }
+		&:nth-child(4) { top: 14px; }
+	}
+
+	#hamburger-button > div.to-X span{
+		&:nth-child(1) {
+			top: 18px;
+			width: 0%;
+			left: 50%;
+		}
+		&:nth-child(2) {  .transform(rotate(45deg));  }
+		&:nth-child(3) {  .transform(rotate(-45deg)); }
+		&:nth-child(4) {
+			top: 18px;
+			width: 0%;
+			left: 50%;
+		}
+	}
+
 	#MobileVersionBoby{
 		display: block;
 		flex-direction: column;

@@ -1795,7 +1795,7 @@
 				
 				loadSelectBabyWindowLogic();
 				expandToDeviceViewportHeightOnSafari("#select_baby_table_mobile");
-				
+
 				var timer= setInterval(function(){
 					document.selectBabyWindow.addBabies(SnugBabies.items());
 					clearInterval(timer);
@@ -1830,7 +1830,8 @@
 		var nohashHref = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
 		$(".logout").attr("href", "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=" + nohashHref);
 		$(".button-collapse").sideNav();
-		$(".button-close").click(onClick_CancelEventBtnMobile);
+
+		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
 		$(".button-back").click(onClick_CancelPhotoBtnMobile);
 		$("#person_avatar_mobile").click(onClick_OpenPhotoBtnMobile);
 		$("#search_button_mobile").on("touchend", onClick_SearchBtnMobile);
@@ -1861,7 +1862,7 @@
 				$("label[for='person_nickname_mobile']").addClass('active');
 				
 				$(".button-back").css("display", "none");
-				$(".button-close, #apply_event_button_mobile").css("display", "block");
+				$("#apply_event_button_mobile").css("display", "block");
 				$("#actions_logo").html("Add action");
 
 				$("#select_baby_table_mobile").hide();	
@@ -1872,7 +1873,7 @@
 
 	function onClick_CancelPhotoBtnMobile(){
 		$(".button-back").css("display", "none");
-		$(".button-close, #apply_event_button_mobile").css("display", "block");
+		$("#hamburger-button, #apply_event_button_mobile").css("display", "block");
 		$("#actions_logo").html("Add action");
 		$("#select_baby_table_mobile").hide("drop", {direction: "right"}, 200);
 		$("#add_action_table_mobile").show("drop", {direction: "left"}, 200);
@@ -1880,14 +1881,15 @@
 
 	function onClick_OpenPhotoBtnMobile(){		
 		$(".button-back").css("display", "block");
-		$(".button-close, #apply_event_button_mobile").css("display", "none");
+		$("#hamburger-button, #apply_event_button_mobile").css("display", "none");
 		$("#actions_logo").html("Select avatar");
 		$("#add_action_table_mobile").hide("drop", {direction: "left"}, 200);
 		$("#select_baby_table_mobile").show("drop", {direction: "right"}, 300);
 	}
 
-	function onClick_CancelEventBtnMobile(){
-
+	function onClick_CancelEventBtnMobile(e){
+		
+		e.stopPropagation();
 		$("#notes_input_mobile").val("");
 		$("#amount_mobile").val("");
 		$('.avatar_panel_mobile').find('input[data-activates][readonly]').val("Choose baby");
@@ -1898,14 +1900,12 @@
 		$("#apply_event_button_mobile").css("display", "none");
 		$("#search_button_mobile").css("display", "block");
 
-		$(".button-close").css("display", "none");
-		$(".button-collapse").css("display", "block");
-
 		$("#add_action_table_mobile").fadeOut(250, function(){
 			$("#posted_results_table_mobile").fadeIn(250);
 		});
+		$("#hamburger-button > div").removeClass("to-X");
+		$("#add_event_button_mobile").fadeIn(800);	
 		
-		$("#add_event_button_mobile").fadeIn(800);
 	}
 
 
@@ -1945,8 +1945,8 @@
 		
 		$("#apply_event_button_mobile").css("display", "block");
 		$("#search_button_mobile").css("display", "none");
-		$(".button-close").css("display", "block");
-		$(".button-collapse").css("display", "none");
+
+		$("#hamburger-button > div").addClass("to-X");
 
 		$("#posted_results_table_mobile").fadeOut(250, function(){
 			$("#add_action_table_mobile").fadeIn(250);
@@ -1956,8 +1956,7 @@
 	}
 
 	function onClick_ApplyEventBtnMobile(){	
-		if( !$("#notes_input_mobile").val() ||
-			!$("#amount_mobile").val() ||
+		if( !$("#notes_input_mobile").val() || !$("#amount_mobile").val() ||
 			$('.avatar_panel_mobile').find('input[data-activates][readonly]').val() == "Choose baby" ||
 			$('.activity_panel_mobile').find('input[data-activates][readonly]').val() == "Choose action")
 		{
