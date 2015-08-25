@@ -5014,20 +5014,14 @@ nav {
       display: block;
       font-size: 2rem; }
   @media only screen and (min-width : 993px) {
-    nav a.button-collapse,
-    nav a.button-close,
-    nav a.button-back {
+    nav a.button-collapse{
       display: none; } }
-  nav .button-collapse,
-  nav .button-close,
-  nav .button-back {
+  nav .button-collapse{
     float: left;
     position: relative;
     z-index: 1;
     height: 56px; }
-    nav .button-collapse i,
-    nav .button-close i,
-    nav .button-back i{
+    nav .button-collapse i{
       font-size: 2.7rem;
       height: 56px;
       line-height: 56px; }

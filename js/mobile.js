@@ -1832,7 +1832,7 @@
 		$(".button-collapse").sideNav();
 
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
-		$(".button-back").click(onClick_CancelPhotoBtnMobile);
+		$("#hamburger-button").on("click", ".to-Arrow", onClick_CancelPhotoBtnMobile);
 		$("#person_avatar_mobile").click(onClick_OpenPhotoBtnMobile);
 		$("#search_button_mobile").on("touchend", onClick_SearchBtnMobile);
 		$("#search_button_mobile").on("click", onClick_SearchBtnMobile);
@@ -1853,16 +1853,17 @@
 		document.selectBabyWindow = selectBabyWindow;
 		document.selectBabyWindow.insertInto("#MobileVersionBoby");
 
-		$("#select_baby_table_mobile").on("change", "input[name='select-baby-radio']", function() {
+		$("#select_baby_table_mobile").on("change", "input[name='select-baby-radio']", function(e) {
 			if(this.checked) {
+				e.stopImmediatePropagation();
 				var name = $(this).parent().find(".image-grid-block-text").text();
 				var chosen_avatar = SnugBabies.get(name.toUpperCase()).AVATAR.VALUE;
 				$("#person_avatar_mobile").addClass("round-image").attr("src", chosen_avatar);
 				$("#person_nickname_mobile").prop('disabled', false).val(name);
 				$("label[for='person_nickname_mobile']").addClass('active');
 				
-				$(".button-back").css("display", "none");
 				$("#apply_event_button_mobile").css("display", "block");
+				$("#hamburger-button > div").toggleClass("to-X to-Arrow");
 				$("#actions_logo").html("Add action");
 
 				$("#select_baby_table_mobile").hide();	
@@ -1871,17 +1872,18 @@
 		});
 	}
 
-	function onClick_CancelPhotoBtnMobile(){
-		$(".button-back").css("display", "none");
-		$("#hamburger-button, #apply_event_button_mobile").css("display", "block");
+	function onClick_CancelPhotoBtnMobile(e){
+		e.stopImmediatePropagation();
+		$("#hamburger-button > div").toggleClass("to-X to-Arrow");
+		$("#apply_event_button_mobile").css("display", "block");
 		$("#actions_logo").html("Add action");
 		$("#select_baby_table_mobile").hide("drop", {direction: "right"}, 200);
 		$("#add_action_table_mobile").show("drop", {direction: "left"}, 200);
 	}
 
 	function onClick_OpenPhotoBtnMobile(){		
-		$(".button-back").css("display", "block");
-		$("#hamburger-button, #apply_event_button_mobile").css("display", "none");
+		$("#apply_event_button_mobile").css("display", "none");
+		$("#hamburger-button > div").toggleClass("to-X to-Arrow");
 		$("#actions_logo").html("Select avatar");
 		$("#add_action_table_mobile").hide("drop", {direction: "left"}, 200);
 		$("#select_baby_table_mobile").show("drop", {direction: "right"}, 300);
@@ -1889,7 +1891,7 @@
 
 	function onClick_CancelEventBtnMobile(e){
 		
-		e.stopPropagation();
+		e.stopImmediatePropagation();
 		$("#notes_input_mobile").val("");
 		$("#amount_mobile").val("");
 		$('.avatar_panel_mobile').find('input[data-activates][readonly]').val("Choose baby");

@@ -8,9 +8,6 @@
 
 	.modalWindow-601px-450px;
 
-	.button-close, 
-	.button-back { display: none; }
-
 	#hamburger-button{	
 		float: left;
 		padding-left: 10px;
@@ -22,7 +19,7 @@
 
 	#hamburger-button > div{
 		@width: 27px;
-		@height: 17px;
+		@height: 27px;
 		width: @width;
 		height: @height;
 		cursor: pointer;
@@ -40,28 +37,49 @@
 		background: white;
 		opacity: 1;
 		left: 0;
+		top: 13.5px;
 		.transform(rotate(0deg));
 		.transition(all, .25s, ease-in-out);
 
-		&:nth-child(1) { top: 0px; }
-		&:nth-child(2), &:nth-child(3) { top: 7px; }
-		&:nth-child(4) { top: 14px; }
+		&:nth-child(1) { top: 6px; }
+		&:nth-child(2), &:nth-child(3) { top: 13px; }
+		&:nth-child(4) { top: 20px; }
 	}
 
+	/* transformation from Hamburger to X */
 	#hamburger-button > div.to-X span{
-		&:nth-child(1) {
-			top: 18px;
+		&:nth-child(1), &:nth-child(4) {
+			top: 13px;
 			width: 0%;
-			left: 50%;
-		}
+			left: 50%; }
 		&:nth-child(2) {  .transform(rotate(45deg));  }
 		&:nth-child(3) {  .transform(rotate(-45deg)); }
-		&:nth-child(4) {
+	}
+
+	/* transformation from X to Arrow */
+	#hamburger-button > div.to-Arrow span{
+		.transform( rotate(180deg));
+		.transition(all, .5s, ease-in-out);
+		&:nth-child(1){
+			top: 8px;
+			left: 0%;
+			width: 60%;
+			.transform(rotate(-45deg));
+		}
+		&:nth-child(4){
 			top: 18px;
-			width: 0%;
-			left: 50%;
+			left: 0%;
+			width: 60%;
+			.transform(rotate(45deg));
+		}
+		&:nth-child(2), &:nth-child(3) {
+			top: 13px;
+			left: 15%;
+			width: 80%;
 		}
 	}
+
+	/*-----------------------------------*/
 
 	#MobileVersionBoby{
 		display: block;
@@ -83,14 +101,6 @@
  			.actions_area_mobile{ float: left; margin-left: 15px; }
  			
 	 		#apply_event_button_mobile{ display: none; }
-
-			.button-collapse,
-			.button-close,
-			.button-back {
-				padding-left: 10px;
-				padding-right: 10px;
-				i {  font-size: 2.5rem; }
-			}
 
 			#actions_logo{ font-size: 1.5rem; }
 		}
