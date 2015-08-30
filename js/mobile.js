@@ -1573,8 +1573,7 @@
 
 			$("#add_event_buttonPC").hide();
 
-
-			$('.datepicker').on("input change", function() {
+			$("#diaper_content, #food_content").find("input.datepicker").on("input change", function() {
 				glSubmitDate = $(this).val(); 
 			});
 
@@ -1830,7 +1829,7 @@
 		var nohashHref = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
 		$(".logout").attr("href", "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=" + nohashHref);
 		$(".button-collapse").sideNav();
-
+		$(".datepicker").pickadate({  selectMonths: true,  selectYears: 15 });
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
 		$("#hamburger-button").on("click", ".to-Arrow", onClick_CancelPhotoBtnMobile);
 		$("#person_avatar_mobile").click(onClick_OpenPhotoBtnMobile);
@@ -1852,13 +1851,13 @@
 			
 		}else if(!currentBrowser.SAFARI){
 
-			$("#add_action_table_mobile").on("focus", "input, textarea, *[contentEditable]",
+			$("#add_action_table_mobile:not(#activity_panel_mobile)").on("focus", "input, textarea, *[contentEditable]",
 				function(e) {
 					//$(this).blur();
 					//e.stopPropagation();
 					e.preventDefault();
 					var self = this;
-					$("html, body").scrollTop("0px")
+					$("html, body").scrollTop("0px");
 					var inputOffset = $(self).offset().top;
 
 					setTimeout(function(){
@@ -1868,6 +1867,9 @@
 					
 				});
 		}
+
+		//hide keyboard when focused
+		$("#activity_params_panel_mobile").on("focus", ".datepicker", function(){ return false; });
 	}
 
 	function loadSelectBabyWindowLogic(){
