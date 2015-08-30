@@ -1574,7 +1574,7 @@
 			$("#add_event_buttonPC").hide();
 
 
-			$('.datepicker').bind("input change", function() {
+			$('.datepicker').on("input change", function() {
 				glSubmitDate = $(this).val(); 
 			});
 
@@ -1586,7 +1586,7 @@
 			//by means of increasing/descreasing an opacity value
 			$("#create_person_block").find(".avatar").each(function(index){
 
-				$(this).bind({
+				$(this).on({
 
 					mouseover: function(){
 						if( $(this).hasClass("unselected"))
@@ -1726,7 +1726,7 @@
 		NormalizeWindow = normalize;
 		$("#loading_sign").fadeIn();
 
-		$( window ).bind("resize", function(){
+		$( window ).on("resize", function(){
 			var updateScreenStyles = $(window).width() <= MAX_XSCREEN_RESOLUTION ? updateMobileStyles : updateLaptopStyles ;
 			updateScreenStyles(window);
 		}).trigger("resize");
@@ -1761,7 +1761,7 @@
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
 		
-		$('.timepicker').bind("input change", function() {
+		$('.timepicker').on("input change", function() {
 			glSubmitTime = $(this).val(); 
 		}); 
 
@@ -1794,7 +1794,7 @@
 				});
 				
 				loadSelectBabyWindowLogic();
-				expandToDeviceViewportHeightOnSafari("#select_baby_table_mobile");
+				expandToDeviceViewportHeight("#select_baby_table_mobile");
 
 				var timer= setInterval(function(){
 					document.selectBabyWindow.addBabies(SnugBabies.items());
@@ -1834,18 +1834,41 @@
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
 		$("#hamburger-button").on("click", ".to-Arrow", onClick_CancelPhotoBtnMobile);
 		$("#person_avatar_mobile").click(onClick_OpenPhotoBtnMobile);
-		$("#search_button_mobile").on("touchend", onClick_SearchBtnMobile);
 		$("#search_button_mobile").on("click", onClick_SearchBtnMobile);
 		$("#add_event_button_mobile").click(onClick_AddEventBtnMobile);
 		$("#apply_event_button_mobile").click(onClick_ApplyEventBtnMobile);
-		$("#notes_input_mobile").bind({
+		$("#notes_input_mobile").on({
 			focus: function(){ $(".notes_panel_mobile").find("i.material-icons:contains('edit')").css("color", "#26A69A"); },
 			blur:  function(){ if ($(this).val().length == 0) $(".notes_panel_mobile").find("i.material-icons:contains('edit')").css("color", "#59595B"); }
 		});
-		expandToDeviceViewportHeightOnSafari("#add_action_table_mobile");
-		expandToDeviceViewportHeightOnSafari("#posted_results_table_mobile");
+
+		expandToDeviceViewportHeight("#add_action_table_mobile");
+		expandToDeviceViewportHeight("#posted_results_table_mobile");
+		loadWorkaroundsForCurrentBrowser();
 	}
 
+	function loadWorkaroundsForCurrentBrowser(){
+		if(currentBrowser.SAFARI){
+			
+		}else if(!currentBrowser.SAFARI){
+
+			$("#add_action_table_mobile").on("focus", "input, textarea, *[contentEditable]",
+				function(e) {
+					//$(this).blur();
+					//e.stopPropagation();
+					e.preventDefault();
+					var self = this;
+					$("html, body").scrollTop("0px")
+					var inputOffset = $(self).offset().top;
+
+					setTimeout(function(){
+						$('#add_action_table_mobile').animate({scrollTop: inputOffset}, 1000);
+					}, 800); 
+
+					
+				});
+		}
+	}
 
 	function loadSelectBabyWindowLogic(){
 
@@ -2000,14 +2023,14 @@
 		return false;
 	}
 
-	function expandToDeviceViewportHeightOnSafari(selector){
+	function expandToDeviceViewportHeight(selector){
 		var $element = $(selector);
 		function fixMobileSafariViewport() {
 		  	$element.css('height', window.innerHeight - 56);
 		}
 		// listen to portrait/landscape changes
-		window.addEventListener('orientationchange', fixMobileSafariViewport, true);
-		window.addEventListener('resize', fixMobileSafariViewport, true);
+		window.addEventListener('orientationchange', fixMobileSafariViewport, false);
+		window.addEventListener('resize', fixMobileSafariViewport, false);
 		fixMobileSafariViewport();
 	}
 

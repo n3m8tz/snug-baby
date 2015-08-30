@@ -14,6 +14,14 @@
 	var current_baby;
 	var needToCorrectInputs = false;
 
+	var currentBrowser = {
+		OPERA: !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0,
+		FIREFOX : typeof InstallTrigger !== 'undefined',
+		SAFARI: Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0,
+		CHROME: !!window.chrome && !(!!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0), 
+		IE : false || !!document.documentMode
+	}
+
 	var BabyTrackInitialPage = {
 		NONE: 0,
 		WELCOME_POST: 1,
