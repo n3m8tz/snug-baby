@@ -102,7 +102,7 @@ var Table = (function(){
 
 	Table.prototype.setCaption = function(_caption){
 		var caption = this.value.getElementsByTagName("caption")[0];
-		caption.innerText = _caption;
+		caption.innerHTML = _caption;
 	}
 
 	return  Table;
