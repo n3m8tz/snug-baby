@@ -10,21 +10,16 @@
 
 	#hamburger-button{	
 		float: left;
-		padding-left: 10px;
-		padding-right: 10px; 
 		position: relative;
 		height: 56px;
 		width: 56px;
 	}
 
 	#hamburger-button > div{
-		@width: 27px;
-		@height: 27px;
-		width: @width;
-		height: @height;
+		width: 57px;
+		height: 57px;
 		cursor: pointer;
 		z-index: 30;
-		.centrify("both", @width, @height);
 		.transform(rotate(0deg));
 		.transition(all ,.5s, ease-in-out);
 	}
@@ -33,23 +28,23 @@
 		display: block;
 		position: absolute;
 		height: 3px;
-		width: 100%;
+		width: 48.21428571%;
 		background: white;
 		opacity: 1;
-		left: 0;
+		left: 13.5px;
 		top: 13.5px;
 		.transform(rotate(0deg));
 		.transition(all, .25s, ease-in-out);
 
-		&:nth-child(1) { top: 6px; }
-		&:nth-child(2), &:nth-child(3) { top: 13px; }
-		&:nth-child(4) { top: 20px; }
+		&:nth-child(1) { top: 20px; }
+		&:nth-child(2), &:nth-child(3) { top: 27px; }
+		&:nth-child(4) { top: 34px; }
 	}
 
 	/* transformation from Hamburger to X */
 	#hamburger-button > div.to-X span{
 		&:nth-child(1), &:nth-child(4) {
-			top: 13px;
+			top: 27px;
 			width: 0%;
 			left: 50%; }
 		&:nth-child(2) {  .transform(rotate(45deg));  }
@@ -61,21 +56,21 @@
 		.transform( rotate(180deg));
 		.transition(all, .5s, ease-in-out);
 		&:nth-child(1){
-			top: 8px;
-			left: 0%;
-			width: 60%;
+			top: 22px;
+			left: 24%;
+			width: 30%;
 			.transform(rotate(-45deg));
 		}
 		&:nth-child(4){
-			top: 18px;
-			left: 0%;
-			width: 60%;
+			top: 32px;
+			left: 24%;
+			width: 30%;
 			.transform(rotate(45deg));
 		}
 		&:nth-child(2), &:nth-child(3) {
-			top: 13px;
-			left: 15%;
-			width: 80%;
+			top: 27px;
+			left: 30%;
+			width: 39%;
 		}
 	}
 
