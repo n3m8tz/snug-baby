@@ -1829,7 +1829,33 @@
 		var nohashHref = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
 		$(".logout").attr("href", "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=" + nohashHref);
 		$(".button-collapse").sideNav();
-		$(".datepicker").pickadate({  selectMonths: true,  selectYears: 15 });
+
+
+		$(".datepicker").pickadate({
+			today: '',
+			clear: '',
+			format: "ddd dd mmm yyyy",
+			onRender: function() {
+				$(".picker__date-display-w-year").remove();
+				$(".picker__date-display-wo-year").remove();
+				$(".picker__date-display").append("<div class='picker__date-display-w-year'></div>");
+				$(".picker__date-display").append("<div class='picker__date-display-wo-year'></div>");
+
+				var $weekdayName = $(".picker__weekday-display");
+				var $dayNumber = $(".picker__day-display");
+				var $month = $(".picker__month-display");
+				var $year = $(".picker__year-display");
+
+				$(".picker__date-display-w-year").html( $year.text() );
+				$(".picker__date-display-wo-year").html( $weekdayName.text() + ", " + $month.text() + " " + $dayNumber.text() );
+
+				$weekdayName.remove();
+				$dayNumber.remove();
+				$month.remove();
+				$year.remove();
+			}
+		});
+
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
 		$("#hamburger-button").on("click", ".to-Arrow", onClick_CancelPhotoBtnMobile);
 		$("#person_avatar_mobile").click(onClick_OpenPhotoBtnMobile);
