@@ -56,33 +56,43 @@
 	}
 
 	// Clock size
-	var dialRadius = 80,
-		outerRadius = 64,
+
+	var clockArea = 268.813,
+		dialRadius = clockArea / 2,
+		outerRadius = clockArea / 2 - 35,
 		// innerRadius = 64 on 12 hour clock
-		innerRadius = 43.2,
-		tickRadius = 13,
+		innerRadius = clockArea / 2 - 45,
+		tickRadius = 18,
 		diameter = dialRadius * 2,
 		duration = transitionSupported ? 350 : 1;
 
 	// Popover template
 	var tpl = [
-		'<div class="popover clockpicker-popover">',
-			'<div style="display:none" class="arrow"></div>',
-			'<div class="popover-title">',
-				'<span class="clockpicker-span-hours text-primary"></span>',
-				' : ',
-				'<span class="clockpicker-span-minutes"></span>',
-				'   ',
-				'<span class="clockpicker-span-am-pm"></span>',
-			'</div>',
-			'<div class="popover-content">',
-				'<div class="clockpicker-plate">',
-					'<div class="clockpicker-canvas"></div>',
-					'<div class="clockpicker-dial clockpicker-hours"></div>',
-					'<div class="clockpicker-dial clockpicker-minutes clockpicker-dial-out"></div>',
+		'<div class="popover-main">',
+			'<div class="popover__holder">',
+				'<div class="popover__frame">',
+					'<div class="popover__wrap">',
+						'<div class="popover clockpicker-popover popover__box">',
+							'<div style="display:none" class="arrow"></div>',
+							'<div class="popover-title">',
+								'<span class="clockpicker-span-hours text-primary"></span>',
+								' : ',
+								'<span class="clockpicker-span-minutes"></span>',
+								'   ',
+								'<span class="clockpicker-span-am-pm"></span>',
+							'</div>',
+							'<div class="popover-content">',
+								'<div class="clockpicker-plate">',
+									'<div class="clockpicker-canvas"></div>',
+									'<div class="clockpicker-dial clockpicker-hours"></div>',
+									'<div class="clockpicker-dial clockpicker-minutes clockpicker-dial-out"></div>',
+								'</div>',
+								'<div class="clockpicker-am-pm-block">',
+								'</div>',
+							'</div>',
+						'</div>',
+					'</div>',
 				'</div>',
-				'<span class="clockpicker-am-pm-block">',
-				'</span>',
 			'</div>',
 		'</div>'
 	].join('');
@@ -162,9 +172,9 @@
 		
 		if (! options.autoclose) {
 			// If autoclose is not setted, append a button
-			$('<a href="javascript:void(0)"  class="waves-effect btn-default btn-block clockpicker-button">' + options.donetext + '</a>')
+			$('<a href="javascript:void(0)"  class="btn-default btn-block clockpicker-button">' + options.donetext + '</a>')
 				.on("touchend", ($.proxy(this.done, this)))
-				.appendTo(popover);
+				.appendTo( popover.find(".clockpicker-popover") );
 		}
 
 		// Placement and arrow align - make sure they make sense.
@@ -193,8 +203,8 @@
 				radius = outerRadius;
 				tick.css('font-size', '120%');
 				tick.css({
-					left: dialRadius + Math.sin(radian) * radius - tickRadius,
-					top: dialRadius - Math.cos(radian) * radius - tickRadius
+					left: dialRadius + Math.sin(radian) * radius - tickRadius + 8,
+					top: dialRadius - Math.cos(radian) * radius - tickRadius + 8
 				});
 				tick.html(i === 0 ? '00' : i);
 				hoursView.append(tick);
@@ -207,8 +217,8 @@
 				var inner = i > 0 && i < 13;
 				radius = inner ? innerRadius : outerRadius;
 				tick.css({
-					left: dialRadius + Math.sin(radian) * radius - tickRadius,
-					top: dialRadius - Math.cos(radian) * radius - tickRadius
+					left: dialRadius + Math.sin(radian) * radius - tickRadius + 8,
+					top: dialRadius - Math.cos(radian) * radius - tickRadius + 8
 				});
 				if (inner) {
 					tick.css('font-size', '120%');
@@ -224,8 +234,8 @@
 			tick = tickTpl.clone();
 			radian = i / 30 * Math.PI;
 			tick.css({
-				left: dialRadius + Math.sin(radian) * outerRadius - tickRadius,
-				top: dialRadius - Math.cos(radian) * outerRadius - tickRadius
+				left: dialRadius + Math.sin(radian) * outerRadius - tickRadius + 8,
+				top: dialRadius - Math.cos(radian) * outerRadius - tickRadius + 8
 			});
 			tick.css('font-size', '120%');
 			tick.html(leadingZero(i));

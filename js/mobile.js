@@ -1750,13 +1750,6 @@
 			$(this).change();
 		});
 
-		$(".clockpicker").clockpicker({
-			placement: 'bottom',
-			align: 'left',
-			donetext: 'Done',
-			twelvehour: true
-		});
-
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
 		
@@ -1830,30 +1823,17 @@
 		$(".logout").attr("href", "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=" + nohashHref);
 		$(".button-collapse").sideNav();
 
-
-		$(".datepicker").pickadate({
+		$(".datepicker").pickadate({  
 			today: '',
 			clear: '',
-			format: "ddd dd mmm yyyy",
-			onRender: function() {
-				$(".picker__date-display-w-year").remove();
-				$(".picker__date-display-wo-year").remove();
-				$(".picker__date-display").append("<div class='picker__date-display-w-year'></div>");
-				$(".picker__date-display").append("<div class='picker__date-display-wo-year'></div>");
-
-				var $weekdayName = $(".picker__weekday-display");
-				var $dayNumber = $(".picker__day-display");
-				var $month = $(".picker__month-display");
-				var $year = $(".picker__year-display");
-
-				$(".picker__date-display-w-year").html( $year.text() );
-				$(".picker__date-display-wo-year").html( $weekdayName.text() + ", " + $month.text() + " " + $dayNumber.text() );
-
-				$weekdayName.remove();
-				$dayNumber.remove();
-				$month.remove();
-				$year.remove();
-			}
+			format: 'd mmm, yyyy'
+		 });
+ 
+		$(".clockpicker").clockpicker({
+			placement: "bottom",
+			align: "aleft", 
+			twelvehour: true,
+			donetext: 'OK' 
 		});
 
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
@@ -1895,7 +1875,7 @@
 		}
 
 		//hide keyboard when focused
-		$("#activity_params_panel_mobile").on("focus", ".datepicker", function(){ return false; });
+		$("#date_time_panel_mobile").on("focus", ".datepicker", function(){ return false; });
 	}
 
 	function loadSelectBabyWindowLogic(){
@@ -1981,7 +1961,7 @@
 		current_baby.sbDayTime = new SnugBabyDayTime();
 		var shortTime = current_baby.sbDayTime.shortTime.replace(' ','');
 
-		$timepicker = $(".activity_params_panel_mobile").find("input.timepicker");
+		$timepicker = $(".date_time_panel_mobile").find("input.timepicker");
 		$timepicker.val(shortTime);
 		$('.avatar_panel_mobile').find('input[data-activates][readonly]').val("Choose baby");
 		$(".activity_panel_mobile").find("input[data-activates][readonly]").val("Choose action");

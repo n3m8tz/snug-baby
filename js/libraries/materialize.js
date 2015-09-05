@@ -5717,7 +5717,7 @@ DatePicker.prototype.nodes = function( isOpen ) {
                 display_day = selectedObject.day;
             else
                 display_day = nowObject.day;
-            var weekday = settings.weekdaysShort[ display_day ]
+            var weekday = settings.weekdaysFull[ display_day ]
             return weekday
         }
 
