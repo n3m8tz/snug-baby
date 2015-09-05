@@ -64,7 +64,8 @@
 		innerRadius = clockArea / 2 - 45,
 		tickRadius = 18,
 		diameter = dialRadius * 2,
-		duration = transitionSupported ? 350 : 1;
+		duration = transitionSupported ? 350 : 1,
+		offset = 8.2;
 
 	// Popover template
 	var tpl = [
@@ -172,7 +173,7 @@
 		
 		if (! options.autoclose) {
 			// If autoclose is not setted, append a button
-			$('<a href="javascript:void(0)"  class="btn-default btn-block clockpicker-button">' + options.donetext + '</a>')
+			$('<a href="javascript:void(0)"  class="btn-block clockpicker-button">' + options.donetext + '</a>')
 				.on("touchend", ($.proxy(this.done, this)))
 				.appendTo( popover.find(".clockpicker-popover") );
 		}
@@ -203,8 +204,8 @@
 				radius = outerRadius;
 				tick.css('font-size', '120%');
 				tick.css({
-					left: dialRadius + Math.sin(radian) * radius - tickRadius + 8,
-					top: dialRadius - Math.cos(radian) * radius - tickRadius + 8
+					left: dialRadius + Math.sin(radian) * radius - tickRadius + offset,
+					top: dialRadius - Math.cos(radian) * radius - tickRadius + offset
 				});
 				tick.html(i === 0 ? '00' : i);
 				hoursView.append(tick);
@@ -217,8 +218,8 @@
 				var inner = i > 0 && i < 13;
 				radius = inner ? innerRadius : outerRadius;
 				tick.css({
-					left: dialRadius + Math.sin(radian) * radius - tickRadius + 8,
-					top: dialRadius - Math.cos(radian) * radius - tickRadius + 8
+					left: dialRadius + Math.sin(radian) * radius - tickRadius + offset,
+					top: dialRadius - Math.cos(radian) * radius - tickRadius + offset
 				});
 				if (inner) {
 					tick.css('font-size', '120%');
@@ -234,8 +235,8 @@
 			tick = tickTpl.clone();
 			radian = i / 30 * Math.PI;
 			tick.css({
-				left: dialRadius + Math.sin(radian) * outerRadius - tickRadius + 8,
-				top: dialRadius - Math.cos(radian) * outerRadius - tickRadius + 8
+				left: dialRadius + Math.sin(radian) * outerRadius - tickRadius + offset,
+				top: dialRadius - Math.cos(radian) * outerRadius - tickRadius + offset
 			});
 			tick.css('font-size', '120%');
 			tick.html(leadingZero(i));
@@ -401,7 +402,7 @@
 			styles = {},
 			self = this;
 
-		popover.show();
+		popover.addClass('clockpicker--opened');
 
 		// Place the popover
 		switch (placement) {
@@ -516,7 +517,8 @@
 		$doc.off('click.clockpicker.' + this.id + ' focusin.clockpicker.' + this.id);
 		$doc.off('keyup.clockpicker.' + this.id);
 
-		this.popover.hide();
+		this.popover.removeClass('clockpicker--opened');
+
 
 		raiseCallback(this.options.afterHide);
 	};

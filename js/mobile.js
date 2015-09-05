@@ -1836,6 +1836,11 @@
 			donetext: 'OK' 
 		});
 
+		$(".btn-block").on("click", function(e){
+			e.preventDefault();
+		});
+
+
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
 		$("#hamburger-button").on("click", ".to-Arrow", onClick_CancelPhotoBtnMobile);
 		$("#person_avatar_mobile").click(onClick_OpenPhotoBtnMobile);
@@ -1875,7 +1880,7 @@
 		}
 
 		//hide keyboard when focused
-		$("#date_time_panel_mobile").on("focus", ".datepicker", function(){ return false; });
+		//$("#activity_params_panel_mobile").on("focus", ".datepicker", function(){ return false; });
 	}
 
 	function loadSelectBabyWindowLogic(){

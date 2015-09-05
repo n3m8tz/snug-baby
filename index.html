@@ -19,12 +19,13 @@
    	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src="js/libraries/less.min.js" type="text/javascript"></script>
 
+    <script src="https://apis.google.com/js/api.js"></script>
+	<script src="https://apis.google.com/js/platform.js"></script>
+	<script src="js/libraries/realtime-client-utils.js"></script>
+
  	<script src="js/libraries/selectBabyTable.js" type="text/javascript" ></script>	
 	<script src="js/scripts.js" type="text/javascript" ></script>
 
-	
-
-	<script src="https://apis.google.com/js/platform.js"></script>
     <script src="js/libraries/materialize.js" type="text/javascript"></script>
 
 </head>   
@@ -384,7 +385,7 @@
 								<span></span>
 								<span></span>
 							</div>
-						</div>
+						</div> 
 					
 						<ul>
 							<li class="actions_area_mobile">
@@ -457,26 +458,15 @@
 							</div>
 							<div class="clear"></div>
 					</div>
-					<div class="date_time_panel_mobile">
-							<div class="illustration"></div>
 
-							<div class="information"> 
-								<div class="input-group clockpicker">
-									<input type="text" class="form-control timepicker" value="09:32">
-					
-									<span class="input-group-addon">
-										<span class="glyphicon glyphicon-time"></span>
-									</span>
-								</div>
+					<div class="date_time_panel_mobile">
+							<div class="illustration">					
 							</div>
-							
-							<div class="clear"></div>
-					</div>
-					<div class="activity_params_panel_mobile">
-							<div class="illustration"></div>
 
 							<div class="information"> 
 								<div>
+									
+
 									<div class="input-wrapper input-field col s6">
 										<div class="input-group">
 											<input type="date" class="form-control datepicker">
@@ -488,10 +478,29 @@
 									</div>
 
 									<div class="input-wrapper input-field col s6">
-										<input id="amount_mobile" type="text">
-										<label for="amount_mobile">Amount</label>
+										<div class="input-group clockpicker">
+											<input type="text" class="form-control timepicker" value="09:32">
+											
+											<span class="input-group-addon">
+												<span class="glyphicon glyphicon-time"></span>
+											</span>
+										</div>
 									</div>
+
 									<div class="clear"></div>
+								</div>
+							</div>
+							<div class="clear"></div>
+					</div>
+
+					<div class="amount_panel_mobile">
+							<div class="illustration">
+							</div>
+
+							<div class="information"> 
+								<div class="input-wrapper input-field col s6">
+									<input id="amount_mobile" type="text">
+									<label for="amount_mobile">Amount</label>
 								</div>
 							</div>
 							<div class="clear"></div>

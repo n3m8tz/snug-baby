@@ -5,8 +5,7 @@ var scripts = [
 	"js/libraries/jquery.simplecolorpicker.js",
 	"js/libraries/jquery-clockpicker.js",
 	"js/libraries/TableClass.js",
-	"https://apis.google.com/js/api.js",		// Load the Realtime libraries.
-	"js/libraries/realtime-client-utils.js",	// Load the utility library. 
+
 
 	/***	Custom files	***/
 	"js/gapi.realtime.js", 						//Load Snug Baby Google Drive Realtime QuickStart
