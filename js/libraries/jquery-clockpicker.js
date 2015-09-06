@@ -65,7 +65,7 @@
 		tickRadius = 18,
 		diameter = dialRadius * 2,
 		duration = transitionSupported ? 350 : 1,
-		offset = 8.2;
+		offset = 8.1;
 
 	// Popover template
 	var tpl = [

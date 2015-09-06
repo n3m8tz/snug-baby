@@ -1573,10 +1573,6 @@
 
 			$("#add_event_buttonPC").hide();
 
-			$("#diaper_content, #food_content").find("input.datepicker").on("input change", function() {
-				glSubmitDate = $(this).val(); 
-			});
-
 			//establishing default values for radio boxes
 			$("#wizard_new_activity").find("section[data-type='activity']:first-child   :radio").prop("checked", true);
 			$("#diaper_content").find("section[data-type='subactivity_diaper']:first-child   :radio").prop("checked", true);
@@ -1757,6 +1753,16 @@
 			glSubmitTime = $(this).val(); 
 		}); 
 
+		$('.datepicker').on("input change", function() {
+			var currentDate = $(this).val().split(/[,\s]+/),          				// from 'Mon, Jan 7, 2015' to [ 'Mon', 'Jan', '7' , '2015' ]
+				sbDate = new SnugBabyDayTime(),
+				day = sbDate.dayShortToFull(currentDate[0]),     					// from "Mon" to "Monday"
+				month = sbDate.monthShortToFull(currentDate[1])+" "+currentDate[2], // from "Jan 7" to "January 7"
+				year = currentDate[3];
+
+			glSubmitDate = day + ", " + month + ", " + year;       					// 'Monday, January 7, 2015'	
+		});
+
 		if (currentDeviceType == DeviceType.COMPUTER)
 			loadLogicForComputer();
 		else 
@@ -1826,10 +1832,11 @@
 		$(".datepicker").pickadate({  
 			today: '',
 			clear: '',
-			format: 'd mmm, yyyy'
+			close: 'OK',
+			format: 'ddd, mmm d, yyyy'
 		 });
- 
-		$(".clockpicker").clockpicker({
+
+ 		$(".clockpicker").clockpicker({
 			placement: "bottom",
 			align: "aleft", 
 			twelvehour: true,
@@ -1964,17 +1971,20 @@
 		current_baby = new SnugBabyPerson();
 
 		current_baby.sbDayTime = new SnugBabyDayTime();
-		var shortTime = current_baby.sbDayTime.shortTime.replace(' ','');
+		var timeStringified = current_baby.sbDayTime.shortTime,
+			date = current_baby.sbDayTime,
+			dateStringified = date.shortDay +", "+ date.shortMonth+ ", " + date.year;
 
-		$timepicker = $(".date_time_panel_mobile").find("input.timepicker");
-		$timepicker.val(shortTime);
+		var $timepicker = $(".date_time_panel_mobile").find("input.timepicker");
+		var $datepicker = $(".date_time_panel_mobile").find("input.datepicker");
+
+		$timepicker.val(timeStringified).trigger("change");
+		$datepicker.val(dateStringified).trigger("change");
+	
 		$('.avatar_panel_mobile').find('input[data-activates][readonly]').val("Choose baby");
 		$(".activity_panel_mobile").find("input[data-activates][readonly]").val("Choose action");
 		$("#notes_input_mobile").val("");
 		$("#amount_mobile").val("");
-
-		glSubmitTime = $timepicker.val();
-		glSubmitDate = current_baby.sbDayTime.fullDay +", "+ current_baby.sbDayTime.fullMonth + ", " + current_baby.sbDayTime.year;
 
 		var search = $('#search_area_mobile');
 		if ( search.is(":visible") ) search.slideUp();
@@ -2002,7 +2012,9 @@
 			return;
 		}
 
-		current_baby.nickname =  $('.avatar_panel_mobile').find('input[data-activates][readonly]').val();
+		current_baby.nickname =  $('#person_nickname_mobile').val();
+		current_baby.avatarImg = SnugBabies.get(current_baby.nickname.toUpperCase()).AVATAR.VALUE;
+		current_baby.avatarType = SnugBabies.get(current_baby.nickname.toUpperCase()).AVATAR.TYPE;
 		current_baby.activityImg = "images/feed-mobile.png"; // apparently assign cuz for now i don't have any images of this type.
 		current_baby.activity = "FOOD"; 					//$(".activity_panel_mobile").find("input[data-activates][readonly]").val().toUpperCase;
 		current_baby.setNotes({
@@ -2016,6 +2028,8 @@
 		current_baby.setSubmitTime( glSubmitTime );
 
 		var single_event = current_baby.submit();
+		
+		$("#hamburger-button > div").removeClass("to-X");
 		$("#actions_logo").html("Actions");
 
 		$("#apply_event_button_mobile").css("display", "none");
@@ -2024,6 +2038,7 @@
 		$("#add_action_table_mobile").fadeOut(250, function(){
 			$("#posted_results_table_mobile").fadeIn(250);
 		});
+
 		
 		$("#add_event_button_mobile").fadeIn(800);
 	}

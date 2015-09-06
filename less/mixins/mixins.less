@@ -28,12 +28,20 @@
 		transform: @arguments;
 	}
 
-	.transition(@property: all, @duration: 0.2s, @ease: ease-out){
+	.transition(...){
 		-webkit-transition: @arguments;
 		-moz-transition: @arguments;
 		-ms-transition: @arguments;
 		-o-transition: @arguments;
 		transition: @arguments;
+	}
+
+	.transition(@property; @value){
+		-webkit-@{property}: @value;
+		-moz-@{property}: @value;
+		-ms-@{property}: @value;
+		-o-@{property}: @value;
+		@{property}: @value;
 	}
 
 	.border-radius(@radius: 0){

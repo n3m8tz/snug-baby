@@ -112,6 +112,24 @@ var SnugBabyDayTime = (function(){
 		}
 	};
 
+	SnugBabyDayTime.prototype.monthShortToFull = function(month){
+		switch(month.toUpperCase()){
+			case "JAN": return "January"; break;
+			case "FEB": return "February"; break;
+			case "MAR": return "March"; break;
+			case "APR": return "April"; break;
+			case "MAY": return "May"; break;
+			case "JUN": return "June"; break;
+			case "JUL": return "July"; break;
+			case "AUG": return "August"; break;
+			case "SEP": return "September"; break;
+			case "OCT": return "October"; break;
+			case "NOV": return "November"; break;
+			case "DEC": return "December"; break;
+			default: return "";
+		}
+	};
+
 	SnugBabyDayTime.prototype.dayFullToShort = function(day){
 		switch(day.toUpperCase()){
 			case "MONDAY": return "Mon"; break;
@@ -125,6 +143,18 @@ var SnugBabyDayTime = (function(){
 		}
 	};
 
+	SnugBabyDayTime.prototype.dayShortToFull = function(day){
+		switch(day.toUpperCase()){
+			case "MON": return "Monday"; break;
+			case "TUE": return "Tuesday"; break;
+			case "WED": return "Wednesday"; break;
+			case "THU": return "Thursday"; break;
+			case "FRI": return "Friday"; break;
+			case "SAT": return "Saturday"; break;
+			case "SUN": return "Sunday"; break;
+			default: return "";
+		}
+	};
 	SnugBabyDayTime.prototype.convert12To24hours = function(hours, type){
 		if(type === "AM")
 			return hours == "12" ? "00": hours;

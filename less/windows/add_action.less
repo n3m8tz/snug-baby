@@ -96,22 +96,21 @@
 		z-index: 10000;
 		visibility:hidden;
 		opacity:0;
-		transition: visibility 0s linear 0.5s, opacity 0.5s linear;
+		.transition(visibility 0s linear 0.5s, opacity 0.5s linear; );
 	}
 
 	.popover-main.clockpicker--opened {
 		visibility: visible;
 		opacity: 1;
-		transition-delay: 0s;
+		.transition(delay, 0s);
 	}
 
-	.popover-main.clockpicker--opened .popover__holder{
-		transition-delay: 0s;
-	}
 	
-	.popover-main:not(.clockpicker--opened)  .popover__holder{
-		height: 0;
-		transition: height 0s linear 0.5s;
+	.clockpicker--opened .popover__holder{
+		top: 0;
+		zoom: 1;
+		background: rgba(0, 0, 0, 0.46) !important;
+		.transition(background 0.15s ease-out);
 	}
 
 	.popover{
@@ -119,33 +118,30 @@
 		display: block !important;
 		z-index: 10000 !important;
 		max-width: none !important;
-		transition: all 0.4s ease-in-out !important;
-		-webkit-user-select: none;
 		left: 0rem !important;
 		margin: 0 !important;
-
+		.user-select(none);
+		.transition(all 0.4s ease-in-out) !important;
 	}
 
 	.popover__holder{
-		top:0;
+		top: 100%;
 		position: fixed;
-		transition: background 0.15s ease-out,top 0s 0.15s;
-		zoom: 1;
 		width: 100%;
 		overflow-y: auto;
 		bottom: 0;
 		left: 0;
 		right: 0;
-		background: rgba(0, 0, 0, 0.46) !important;
+		.transition(background 0.15s ease-out, top 0s 0.15s; );
 	}
 
 	.popover__frame{
 		.centrify("both");
+		.transition(all 0.15s ease-out);
 		max-width: 325px;
 		overflow: visible;
 		max-width: 290px;
 		max-height: 482.797px;
-		transition: all 0.15s ease-out;
 		bottom: 0;
 		left: 0;
 		right: 0;
@@ -162,11 +158,11 @@
 		padding: 0;
 		width: 100%;
 		border: 0 !important;
-		border-radius: 2px;
 		overflow: hidden;
 		height: 100%;
-		box-shadow: 0 12px 36px 16px rgba(0,0,0,0.24) !important;
-		background-color: #FAFAFA;
+		background: #FAFAFA;
+		.box-shadow(0 12px 36px 16px rgba(0,0,0,0.24)) !important;
+		.border-radius(2px);
 	}
 
 	.clockpicker-span-am-pm{
@@ -180,16 +176,16 @@
 	}
 
 	.clockpicker-popover .popover-title {
-		background-color: #009688;
+		background: #009688;
 		color: #B8E1DD;
 		font-size: 3rem;
 		font-weight: normal;
 		text-align: right;
-		border-radius: 0 !important;
+		.border-radius(0) !important;
 	}
 
 	.clockpicker-popover .popover-content {
-		background-color: #FAFAFA;
+		background: #FAFAFA;
 		margin-top: 20px;
 	}
 
@@ -205,13 +201,13 @@
 		text-align: left !important;
 		color: #26a69a;
 		background-color: #FAFAFA;
-		&:hover {  background-color: #EAEAEA !important; }
+		&:hover {  background: #EAEAEA !important; }
 	}
 
 	.popover-title{	padding: 0; }
 	
 	.clockpicker-plate {
-		background-color: #eee;
+		background: #EEE;
 		border: 0;
 		width: 268.813px;
 		height: 268.813px;
@@ -221,7 +217,7 @@
 	.clockpicker-button.pm-button,
 	.clockpicker-button.am-button { 
 		padding: 10px;
-		border-radius: 50%;
+		.border-radius(50%);
 	}
 
 	.clockpicker-am-pm-block{
