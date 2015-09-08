@@ -183,7 +183,7 @@
 
 
 	function handleFiles(files) {
-	  
+	  	if (files.length == 0) return;
 	    var file = files[0];
 	    var imageType = /image.*/;
 	    
@@ -194,12 +194,11 @@
 	    img.file = file;
 
 	    // Assuming that "preview" is the div output where the content will be displayed.
-	    $("#create_person_block")
-	    	.find("[data-avatar-type='2']")
-	    	.append( img ); 
-	    
+	    $("#create_person_block").find("[data-avatar-type='2']").append( img ); 
+	    $("#new_person_avatar_mobile")[0].file = file; 
+
 	    var reader = new FileReader();
-	    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+	    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })( $("#new_person_avatar_mobile")[0]);
 	    reader.readAsDataURL(file);
 	}
 
@@ -250,7 +249,6 @@
 
 			case BabyTrackInitialPage.POSTED_RESULTS_TABLE:
 				
-
 				if(currentDeviceType == DeviceType.COMPUTER){
 					selector = "#posted_results_table";
 					$(selector).on("click", "tr", function(event){
@@ -260,9 +258,8 @@
 					var $checked_activity = $("#wizard_new_activity").find(":radio:checked");
 					var $data_diaper_type = $checked_activity.parent().prev().attr("data-activity-type");
 				}
-				else{
+				else
 					selector = "#posted_results_table_mobile";
-				}
 			break;
 		}
 
@@ -645,6 +642,11 @@
 			break;
 
 			case BabyTrackWindows.CHOOSE_EXISTED_PERSON:
+				var querySelector;
+
+				if (currentDeviceType == DeviceType.MOBILE)
+					document.selectBabyWindow.update(SnugBabies.items());
+				else
 					if(!SnugBabies.isEmpty()){												 //if there any information about baby's in the database
 						
 						$("#choose_person").find(".add_person_button").prevAll().remove();
@@ -1754,6 +1756,8 @@
 		}); 
 
 		$('.datepicker').on("input change", function() {
+			if ( !$(this).siblings("label").hasClass("active") )  $(this).siblings("label").addClass("active")
+
 			var currentDate = $(this).val().split(/[,\s]+/),          				// from 'Mon, Jan 7, 2015' to [ 'Mon', 'Jan', '7' , '2015' ]
 				sbDate = new SnugBabyDayTime(),
 				day = sbDate.dayShortToFull(currentDate[0]),     					// from "Mon" to "Monday"
@@ -1761,6 +1765,10 @@
 				year = currentDate[3];
 
 			glSubmitDate = day + ", " + month + ", " + year;       					// 'Monday, January 7, 2015'	
+		});
+
+		$('.birthdaypicker').on("input change", function(){
+			if ( !$(this).siblings("label").hasClass("active") )  $(this).siblings("label").addClass("active")
 		});
 
 		if (currentDeviceType == DeviceType.COMPUTER)
@@ -1836,6 +1844,14 @@
 			format: 'ddd, mmm d, yyyy'
 		 });
 
+		$(".birthdaypicker").pickadate({  
+			today: '',
+			clear: '',
+			close: 'OK',
+			selectYears: 30,
+			format: 'mmmm d, yyyy'
+		 });
+
  		$(".clockpicker").clockpicker({
 			placement: "bottom",
 			align: "aleft", 
@@ -1843,23 +1859,41 @@
 			donetext: 'OK' 
 		});
 
-		$(".btn-block").on("click", function(e){
-			e.preventDefault();
+ 		$("#new_person_avatar_mobile").click(function (event) {
+			$(this).siblings("input[type='file']").click();
+			event.preventDefault(); // prevent navigation to "#"
 		});
 
+ 		 $(".new_avatar_panel_mobile").on("change", "input[type=file]", function (){
+			handleFiles(this.files);
+			document.isUploadedAvatar = true; 
+			$("#new_person_avatar_mobile").addClass("round-image");
+		});
+
+		$(".btn-block").on("click", function(e){ e.preventDefault(); });
 
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
 		$("#hamburger-button").on("click", ".to-Arrow", onClick_CancelPhotoBtnMobile);
-		$("#person_avatar_mobile").click(onClick_OpenPhotoBtnMobile);
+		$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
 		$("#search_button_mobile").on("click", onClick_SearchBtnMobile);
-		$("#add_event_button_mobile").click(onClick_AddEventBtnMobile);
-		$("#apply_event_button_mobile").click(onClick_ApplyEventBtnMobile);
+		$("#add_event_button_mobile").on("click", onClick_AddEventBtnMobile);
+		$("#create_baby_button_mobile").on("click", onClick_CreateBabyBtnMobile);
+		$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
 		$("#notes_input_mobile").on({
-			focus: function(){ $(".notes_panel_mobile").find("i.material-icons:contains('edit')").css("color", "#26A69A"); },
-			blur:  function(){ if ($(this).val().length == 0) $(".notes_panel_mobile").find("i.material-icons:contains('edit')").css("color", "#59595B"); }
+			focus: function(){ $(".notes_panel_mobile").find("i.material-icons:contains('edit')").addClass("icon--highlighted"); },
+			blur:  function(){ if ($(this).val().length == 0) $(".notes_panel_mobile").find("i.material-icons:contains('edit')").removeClass("icon--highlighted"); }
+		});
+		$("#birthday_input_mobile").on({
+			change: function(){
+				if ($(this).val().length == 0) 
+					$(".birthday_panel_mobile").find("i.material-icons:contains('cake')").removeClass("icon--highlighted");
+				else
+					$(".birthday_panel_mobile").find("i.material-icons:contains('cake')").addClass("icon--highlighted");
+			}
 		});
 
 		expandToDeviceViewportHeight("#add_action_table_mobile");
+		expandToDeviceViewportHeight("#create_baby_table_mobile");
 		expandToDeviceViewportHeight("#posted_results_table_mobile");
 		loadWorkaroundsForCurrentBrowser();
 	}
@@ -1899,14 +1933,19 @@
 		$("#select_baby_table_mobile").on("change", "input[name='select-baby-radio']", function(e) {
 			if(this.checked) {
 				e.stopImmediatePropagation();
-				var name = $(this).parent().find(".image-grid-block-text").text();
-				var chosen_avatar = SnugBabies.get(name.toUpperCase()).AVATAR.VALUE;
+				var $babyblock = $(this).parent().find(".image-grid-block-text"),
+					name = $babyblock.text(),
+					chosen_avatar = $babyblock.siblings('img').attr('src');
+				
 				$("#person_avatar_mobile").addClass("round-image").attr("src", chosen_avatar);
+			
 				$("#person_nickname_mobile").prop('disabled', false).val(name);
 				$("label[for='person_nickname_mobile']").addClass('active');
 				
 				$("#apply_event_button_mobile").css("display", "block");
 				$("#hamburger-button > div").toggleClass("to-X to-Arrow");
+				$("#create_baby_button_mobile").toggleClass("btn--shown");
+
 				$("#actions_logo").html("Add action");
 
 				$("#select_baby_table_mobile").hide();	
@@ -1917,16 +1956,36 @@
 
 	function onClick_CancelPhotoBtnMobile(e){
 		e.stopImmediatePropagation();
-		$("#hamburger-button > div").toggleClass("to-X to-Arrow");
+		$("#create_baby_button_mobile").toggleClass("btn--shown");
+		if( !isVisible( $("#create_baby_table_mobile") ) ){
+			$("#hamburger-button > div").toggleClass("to-X to-Arrow");
+			$("#apply_event_button_mobile").css("display", "block");
+			$("#actions_logo").html("Add action");
+			$("#select_baby_table_mobile").hide("drop", {direction: "right"}, 200);
+			$("#add_action_table_mobile").show("drop", {direction: "left"}, 200);
+		}else{
+			$("#apply_event_button_mobile").css("display", "none");
+			$("#actions_logo").html("Select avatar");
+			$("#create_baby_table_mobile").hide("drop", {direction: "left"}, 200);
+			$("#select_baby_table_mobile").show("drop", {direction: "right"}, 300);
+		}
+	}
+	
+	function onClick_CreateBabyBtnMobile(){
+
+		$("#create_baby_button_mobile").toggleClass("btn--shown");
+		$("#actions_logo").html("Create baby");
 		$("#apply_event_button_mobile").css("display", "block");
-		$("#actions_logo").html("Add action");
-		$("#select_baby_table_mobile").hide("drop", {direction: "right"}, 200);
-		$("#add_action_table_mobile").show("drop", {direction: "left"}, 200);
+
+		$("#select_baby_table_mobile").fadeOut(250, function(){
+			$("#create_baby_table_mobile").show(250);
+		});
 	}
 
 	function onClick_OpenPhotoBtnMobile(){		
 		$("#apply_event_button_mobile").css("display", "none");
 		$("#hamburger-button > div").toggleClass("to-X to-Arrow");
+		$("#create_baby_button_mobile").toggleClass("btn--shown");
 		$("#actions_logo").html("Select avatar");
 		$("#add_action_table_mobile").hide("drop", {direction: "left"}, 200);
 		$("#select_baby_table_mobile").show("drop", {direction: "right"}, 300);
@@ -1935,11 +1994,16 @@
 	function onClick_CancelEventBtnMobile(e){
 		
 		e.stopImmediatePropagation();
+		
+		if(document.selectBabyWindow.containsTemporaries())
+			document.selectBabyWindow.clearTemporaries();
+
 		$("#notes_input_mobile").val("");
 		$("#amount_mobile").val("");
+
 		$('.avatar_panel_mobile').find('input[data-activates][readonly]').val("Choose baby");
 		$('.activity_panel_mobile').find('input[data-activates][readonly]').val("Choose action");
-		
+
 		$("#actions_logo").html("Actions");
 
 		$("#apply_event_button_mobile").css("display", "none");
@@ -1980,11 +2044,6 @@
 
 		$timepicker.val(timeStringified).trigger("change");
 		$datepicker.val(dateStringified).trigger("change");
-	
-		$('.avatar_panel_mobile').find('input[data-activates][readonly]').val("Choose baby");
-		$(".activity_panel_mobile").find("input[data-activates][readonly]").val("Choose action");
-		$("#notes_input_mobile").val("");
-		$("#amount_mobile").val("");
 
 		var search = $('#search_area_mobile');
 		if ( search.is(":visible") ) search.slideUp();
@@ -2004,43 +2063,99 @@
 	}
 
 	function onClick_ApplyEventBtnMobile(){	
-		if( !$("#notes_input_mobile").val() || !$("#amount_mobile").val() ||
-			$('.avatar_panel_mobile').find('input[data-activates][readonly]').val() == "Choose baby" ||
-			$('.activity_panel_mobile').find('input[data-activates][readonly]').val() == "Choose action")
-		{
-			alert("Fill in the form, plz!");
-			return;
+
+		if ( !isVisible( $("#create_baby_table_mobile")) ){
+			
+				if( !$("#notes_input_mobile").val() || !$("#amount_mobile").val() ||
+					$('.avatar_panel_mobile').find('input[data-activates][readonly]').val() == "Choose baby" ||
+					$('.activity_panel_mobile').find('input[data-activates][readonly]').val() == "Choose action")
+				{
+					alert("Fill in the form, plz!");
+					return;
+				}
+
+				current_baby.nickname =  $('#person_nickname_mobile').val();
+
+				if ( SnugBabies.get(current_baby.nickname) ){
+					current_baby.birthday = SnugBabies.get(current_baby.nickname.toUpperCase()).BIRTHDAY;
+					current_baby.color = SnugBabies.get(current_baby.nickname.toUpperCase()).COLOR_SCHEME;
+					current_baby.avatarImg = SnugBabies.get(current_baby.nickname.toUpperCase()).AVATAR.VALUE;
+					current_baby.avatarType = SnugBabies.get(current_baby.nickname.toUpperCase()).AVATAR.TYPE;
+				}else{
+					current_baby.birthday = $("#birthday_input_mobile").val();
+					current_baby.color = undefined;
+					current_baby.avatarImg = $('#person_avatar_mobile').attr('src');
+					current_baby.avatarType = document.isUploadedAvatar ? 2 : 1;
+				}
+
+				current_baby.activityImg = "images/feed-mobile.png"; // apparently assign cuz for now i don't have any images of this type.
+				current_baby.activity = "FOOD"; 					//$(".activity_panel_mobile").find("input[data-activates][readonly]").val().toUpperCase;
+				current_baby.setNotes({
+								"AMOUNT": $("#amount_mobile").val(),
+								"DURATION": undefined,
+								"TYPE": "Bottle",
+								"value": $("#notes_input_mobile").val()
+				});
+
+				current_baby.setSubmitDate( glSubmitDate );
+				current_baby.setSubmitTime( glSubmitTime );
+
+				var single_event = current_baby.submit();
+
+				document.selectBabyWindow.removeFromTemporaries(current_baby.nickname);
+				
+				if(document.selectBabyWindow.containsTemporaries())
+					document.selectBabyWindow.clearTemporaries();
+
+				$("#hamburger-button > div").removeClass("to-X");
+				$("#actions_logo").html("Actions");
+
+				$("#apply_event_button_mobile").css("display", "none");
+				$("#search_button_mobile").css("display", "block");
+
+				$("#add_action_table_mobile").fadeOut(250, function(){
+					$("#posted_results_table_mobile").fadeIn(250);
+				});
+				
+				$("#add_event_button_mobile").fadeIn(800);
+
+		}else{
+				if( !$("#birthday_input_mobile").val() || !$("#new_person_nickname_mobile").val()) {
+					alert("Fill in the form, plz.");
+					return;
+				}
+
+				if( $("#new_person_nickname_mobile").val().split(' ').length > 1 ) {
+					alert("One-word name is allowed only.");
+					return;
+				}
+
+				if( SnugBabies.get( $("#new_person_nickname_mobile").val().toUpperCase())) {
+					alert("This name already exists!\nPlease, choose a new one.");
+					return;
+				}
+
+				var babyName = $('#new_person_nickname_mobile').val(),
+					avatar = $('#new_person_avatar_mobile').attr("src");
+				
+				$("#create_baby_table_mobile").fadeOut(250, function(){
+					$("#select_baby_table_mobile").fadeIn(250, function(e){
+						$("#create_baby_button_mobile").toggleClass("btn--shown");
+						$("#apply_event_button_mobile").css("display", "none");
+						$("#actions_logo").html("Select avatar");
+						document.selectBabyWindow.addBaby(babyName, avatar, true);
+						document.selectBabyWindow.markAsTemporary(babyName);
+						var self = $(this);
+						setTimeout(function(){
+							self.animate({scrollTop: self.height() });
+						}, 1000);
+					});
+				});
 		}
+	}
 
-		current_baby.nickname =  $('#person_nickname_mobile').val();
-		current_baby.avatarImg = SnugBabies.get(current_baby.nickname.toUpperCase()).AVATAR.VALUE;
-		current_baby.avatarType = SnugBabies.get(current_baby.nickname.toUpperCase()).AVATAR.TYPE;
-		current_baby.activityImg = "images/feed-mobile.png"; // apparently assign cuz for now i don't have any images of this type.
-		current_baby.activity = "FOOD"; 					//$(".activity_panel_mobile").find("input[data-activates][readonly]").val().toUpperCase;
-		current_baby.setNotes({
-						"AMOUNT": $("#amount_mobile").val(),
-						"DURATION": undefined,
-						"TYPE": "Bottle",
-						"value": $("#notes_input_mobile").val()
-		});
-
-		current_baby.setSubmitDate( glSubmitDate );
-		current_baby.setSubmitTime( glSubmitTime );
-
-		var single_event = current_baby.submit();
-		
-		$("#hamburger-button > div").removeClass("to-X");
-		$("#actions_logo").html("Actions");
-
-		$("#apply_event_button_mobile").css("display", "none");
-		$("#search_button_mobile").css("display", "block");
-
-		$("#add_action_table_mobile").fadeOut(250, function(){
-			$("#posted_results_table_mobile").fadeIn(250);
-		});
-
-		
-		$("#add_event_button_mobile").fadeIn(800);
+	function isVisible($obj){
+		return $obj.css('display') != 'none';
 	}
 
 	function onClick_SearchBtnMobile(){

@@ -127,11 +127,10 @@
 
 			try{
 
-				NormalizeWindow({ window: BabyTrackWindows.CHOOSE_EXISTED_PERSON });
-
 				//if property added to SnugEvents 
 				if(parseInt(property, 10)){
 					NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE});
+					NormalizeWindow({ window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
 				}
 
 			}finally{

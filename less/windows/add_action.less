@@ -8,15 +8,21 @@
 		-webkit-overflow-scrolling: touch;
 	}
 
-	#person_avatar_mobile{cursor: pointer; }
+	#person_avatar_mobile, #mew_person_avatar_mobile{cursor: pointer; }
+
 	.material-icons { color: #59595B; }
+
+	.material-icons.icon--highlighted{	color: #26A69A !important;	}
+
 	.mdi-navigation-arrow-drop-down { color: #C5C6CA !important; }
 
 	.avatar_panel_mobile,
 	.activity_panel_mobile,
 	.amount_panel_mobile,
 	.date_time_panel_mobile,
-	.notes_panel_mobile{
+	.notes_panel_mobile,
+	.new_avatar_panel_mobile,
+	.birthday_panel_mobile{
 		height: 70px;
 		width: 100vw;
 		margin-top: 5px;
@@ -58,7 +64,8 @@
 		.dropdown-content{max-height: 200px;}
 	}
 
-	.avatar_panel_mobile{
+	.avatar_panel_mobile,
+	.new_avatar_panel_mobile{
 		.illustration img { width: 42px; height: 42px;}
 		.illustration img.round-image { border-radius: 50%;}
 	}
@@ -71,6 +78,7 @@
 	.input-field label{
 		left: 0rem !important;	/* align label to the left side of an input box*/
 	}
+
 
 	.date_time_panel_mobile{
 		.information .input-wrapper{
@@ -105,7 +113,10 @@
 		.transition(delay, 0s);
 	}
 
-	
+	.clockpicker-tick{
+		color: #000 !important;
+	}
+		
 	.clockpicker--opened .popover__holder{
 		top: 0;
 		zoom: 1;
