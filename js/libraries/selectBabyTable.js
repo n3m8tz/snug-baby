@@ -112,10 +112,10 @@ var SelectBabyWindow = (function(){
 			if(imageGridBlocks.length > snugBabies.length)
 				snugBabies.forEach(function(baby){
 					if(!isFound)
-						for(var i in imageGridBlocks){
-							var babyName = imageGridBlocks[i].getAttribute("id").replace('#', '');
-							if( babyName == baby[1].NAME ){
-								addBabyBlock({ name: baby[1].NAME,  avatarSrc: baby[1].AVATAR.VALUE },  babiesCount);
+						for(var i = 0; i < imageGridBlocks.length; i++){
+							var babyName = imageGridBlocks[i].getAttribute("id");
+							if( babyName == baby[0] ){
+								addBabyBlock({ name: baby[0],  avatarSrc: baby[1].AVATAR.VALUE },  babiesCount);
 								babiesCount++;
 								isFound = true;
 								break;
@@ -123,11 +123,11 @@ var SelectBabyWindow = (function(){
 						}
 				});
 			else
-				for(var i in imageGridBlocks){
+				for(var i = 0; i < imageGridBlocks.length; i++){
 
-					var babyName = imageGridBlocks[i].getAttribute("id").replace('#', '');
+					var babyName = imageGridBlocks[i].getAttribute("id");
 					snugBabies.forEach(function(baby){
-						if( !isFound && babyName == baby[1].NAME){
+						if( !isFound && babyName == baby[0]){
 							removeElement( document.getElementById( "#" + babyName ) );
 							babiesCount--;
 							isFound = true;

@@ -1767,8 +1767,16 @@
 			glSubmitDate = day + ", " + month + ", " + year;       					// 'Monday, January 7, 2015'	
 		});
 
+		$("#notes_input_mobile, #amount_mobile, #person_nickname_mobile").on("input change", function(){
+			if ( $(this).is(":disabled") )  $(this).prop('disabled', false);
+			var label = $(this).siblings("label");
+			if ( !label.hasClass("active") )  label.addClass("active");
+		});
+
+		
 		$('.birthdaypicker').on("input change", function(){
-			if ( !$(this).siblings("label").hasClass("active") )  $(this).siblings("label").addClass("active")
+			var label = $(this).siblings("label");
+			if ( !label.hasClass("active") )  label.addClass("active");
 		});
 
 		if (currentDeviceType == DeviceType.COMPUTER)
@@ -1836,6 +1844,9 @@
 		var nohashHref = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
 		$(".logout").attr("href", "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=" + nohashHref);
 		$(".button-collapse").sideNav();
+		
+		$("#posted_results_table_mobile").on("click", ".table_data_modify", onClick_OpenModifyWindowMobile);
+
 
 		$(".datepicker").pickadate({  
 			today: '',
@@ -1859,9 +1870,10 @@
 			donetext: 'OK' 
 		});
 
+
  		$("#new_person_avatar_mobile").click(function (event) {
 			$(this).siblings("input[type='file']").click();
-			event.preventDefault(); // prevent navigation to "#"
+			event.preventDefault();
 		});
 
  		 $(".new_avatar_panel_mobile").on("change", "input[type=file]", function (){
@@ -1879,13 +1891,15 @@
 		$("#add_event_button_mobile").on("click", onClick_AddEventBtnMobile);
 		$("#create_baby_button_mobile").on("click", onClick_CreateBabyBtnMobile);
 		$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
+
 		$("#notes_input_mobile").on({
 			focus: function(){ $(".notes_panel_mobile").find("i.material-icons:contains('edit')").addClass("icon--highlighted"); },
 			blur:  function(){ if ($(this).val().length == 0) $(".notes_panel_mobile").find("i.material-icons:contains('edit')").removeClass("icon--highlighted"); }
 		});
+
 		$("#birthday_input_mobile").on({
 			change: function(){
-				if ($(this).val().length == 0) 
+				if ($(this).val().length == 0)
 					$(".birthday_panel_mobile").find("i.material-icons:contains('cake')").removeClass("icon--highlighted");
 				else
 					$(".birthday_panel_mobile").find("i.material-icons:contains('cake')").addClass("icon--highlighted");
@@ -1940,7 +1954,7 @@
 				$("#person_avatar_mobile").addClass("round-image").attr("src", chosen_avatar);
 			
 				$("#person_nickname_mobile").prop('disabled', false).val(name);
-				$("label[for='person_nickname_mobile']").addClass('active');
+				$("#person_nickname_mobile").siblings("label").addClass('active');
 				
 				$("#apply_event_button_mobile").css("display", "block");
 				$("#hamburger-button > div").toggleClass("to-X to-Arrow");
@@ -2029,12 +2043,12 @@
 			$(".avatar_panel_mobile").find(".illustration img").css("border-radius", "50%");
 		});*/
 
-		//$('#select_baby_mobile').material_select();
 		$('#select_activity_mobile').material_select();
 
 		current_baby = new SnugBabyPerson();
 
 		current_baby.sbDayTime = new SnugBabyDayTime();
+
 		var timeStringified = current_baby.sbDayTime.shortTime,
 			date = current_baby.sbDayTime,
 			dateStringified = date.shortDay +", "+ date.shortMonth+ ", " + date.year;
@@ -2049,7 +2063,7 @@
 		if ( search.is(":visible") ) search.slideUp();
 
 		$("#actions_logo").html("Add action");
-		
+
 		$("#apply_event_button_mobile").css("display", "block");
 		$("#search_button_mobile").css("display", "none");
 
@@ -2061,6 +2075,103 @@
 
 		$("#add_event_button_mobile").fadeOut(800);
 	}
+
+	function onClick_OpenModifyWindowMobile(){
+		
+		$("#add_event_button_mobile").fadeOut(800);
+		var search = $('#search_area_mobile');
+		if ( search.is(":visible") ) search.slideUp();
+		$("#actions_logo").html("Modify action");
+		$("#search_button_mobile").css("display", "none");
+		$("#apply_event_button_mobile").css("display", "block");
+		$("#hamburger-button > div").addClass("to-X");				
+		$('#select_activity_mobile').material_select();
+		$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
+
+		var $handle =  $(this).parent(),
+			nickname = $handle.find('.table_baby_name').html(),
+			avatar = $handle.find('.table_avatar').children('img').attr('src'),
+			notes = $handle.find('.table_notes').html(),
+			time = $handle.find('.table_feed_time').html(),
+			timeForConvertion = $handle.attr('id').replace('_','');
+
+		$handle = $handle.parents("table:first");
+
+		var date = $handle.find('caption').html().split(' ');
+
+		date = date[0] + ", " + date[1] + " " + date[2] + ", " + date[3];
+
+		$("#person_nickname_mobile").val(nickname).trigger("change");
+		$("#person_avatar_mobile").attr('src', avatar);
+		$("#date_mobile").val(date).trigger("change");
+		$("#time_mobile").val(time).trigger("change");	
+		$("#amount_mobile").val(notes).trigger("change");
+		$("#notes_input_mobile").val(notes).trigger("change");
+
+		if ( SnugBabies.get(nickname.toUpperCase()).AVATAR.TYPE == 2 ) 
+			$("#person_avatar_mobile").addClass("round-image")
+
+		$("#posted_results_table_mobile").fadeOut(250, function(){
+			$("#add_action_table_mobile").fadeIn(250);
+		});
+
+		var onClick_SaveModifiedEventBtnMobile = function(e){
+
+			//restore timestamp so that it includes both date and time;
+			var timestamp = parseInt( $handle.attr("id").replace('_',''), 10);
+			timestamp += (new SnugBabyDayTime()).convertTimeToMilliseconds(timeForConvertion, "UNIX-LIKE") / 1000;
+
+			try{
+				current_baby = new SnugBabyPerson();
+				current_baby.nickname =  $('#person_nickname_mobile').val();
+
+				if( nickname != current_baby.nickname) {
+					alert("Name can not be changed in this version.");
+					return;
+				}
+				
+				var obj = SnugEvents.get(timestamp.toString());
+				SnugEvents.delete(timestamp.toString());
+
+				current_baby.activityImg = "images/feed-mobile.png"; // apparently assign cuz for now i don't have any images of this type.
+				current_baby.activity = "FOOD"; 					 // $(".activity_panel_mobile").find("input[data-activates][readonly]").val().toUpperCase;
+				current_baby.setNotes({
+								"AMOUNT": $("#amount_mobile").val(),
+								"DURATION": undefined,
+								"TYPE": "Bottle",
+								"value": $("#notes_input_mobile").val()
+				});
+
+				current_baby.setSubmitDate( glSubmitDate );
+				current_baby.setSubmitTime( glSubmitTime );
+				var single_event = current_baby.submit();
+				$("#hamburger-button > div").removeClass("to-X");
+				$("#actions_logo").html("Actions");
+
+				$("#apply_event_button_mobile").css("display", "none");
+				$("#search_button_mobile").css("display", "block");
+
+				$("#add_action_table_mobile").fadeOut(250, function(){
+					$("#posted_results_table_mobile").fadeIn(250);
+				});
+				
+				$("#add_event_button_mobile").fadeIn(800);
+				
+				$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
+				$("#apply_event_button_mobile").off("click", onClick_SaveModifiedEventBtnMobile);
+				$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
+
+			}catch(e){ console.log("Event not found."); }
+
+		}
+
+		$("#apply_event_button_mobile").off("click", onClick_ApplyEventBtnMobile);
+		$("#apply_event_button_mobile").on("click", onClick_SaveModifiedEventBtnMobile);
+		
+	}
+
+	
+
 
 	function onClick_ApplyEventBtnMobile(){	
 

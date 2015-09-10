@@ -9,7 +9,7 @@
 		/**
 		* Client ID from the console.
 		*
-		*/
+		*/  
 		
 		clientId: '488687976561-cbn0sjmncb567hviggdetb3g84tb6ipk.apps.googleusercontent.com',
 

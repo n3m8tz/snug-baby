@@ -68,6 +68,35 @@ var SnugBabyDayTime = (function(){
 		return (new Date(timestamp)).toString();
 	};
 
+	SnugBabyDayTime.prototype.convertTimeToMilliseconds = function(time, way){	// from "1031024"(PM 03:10:24) to 
+		if (typeof time == undefined) return;
+		way = (typeof way == undefined) ? "STANDART" : "UNIX-LIKE";
+
+		var hours, minutes, seconds;
+
+		switch(way){
+
+			case "STANDART": 
+				time = time.split(/[\s:]+/);
+				hours = parseInt( time[0], 10);
+				minutes = parseInt( time[1], 10);
+				seconds = parseInt( time[2], 10);
+				ampm = time[2];
+				break;
+
+			case "UNIX-LIKE":
+				time = time.split('');
+				hours = parseInt( time[1] + time[2], 10);
+				minutes = parseInt( time[3] + time[4], 10);
+				seconds = parseInt( time[5] + time[6], 10);
+				ampm = 0 == parseInt(time[0], 10) ? "AM" : "PM";
+				break;
+		}
+
+		hours = this.convert12To24hours(hours, ampm);
+		return (((hours * 60 + minutes) * 60) + seconds) * 1000;
+	}
+
 	SnugBabyDayTime.prototype.formatTimeAMPM = function(hh, mm, ss){	//Eg: short "07:36 AM" or full "07:36:23 PM"
 		var hours;
 		var minutes;
