@@ -1751,7 +1751,7 @@
 		startGoogleDriveRealtime();
 		current_baby = new SnugBabyPerson();
 		
-		$('.timepicker').on("input change", function() {
+		$('.timepicker').on("input change", function(e) {
 			glSubmitTime = $(this).val(); 
 		}); 
 
@@ -1776,6 +1776,7 @@
 			else label.removeClass("active");
 		});
 
+		$("#")
 		if (currentDeviceType == DeviceType.COMPUTER)
 			loadLogicForComputer();
 		else 
@@ -1844,6 +1845,9 @@
 		
 		$("#posted_results_table_mobile").on("click", ".table_data_modify", onClick_OpenModifyWindowMobile);
 
+		$("#time_mobile").on({
+			focus: function(){ $(this).blur(); }
+		});
 
 		$(".datepicker").pickadate({  
 			today: '',
