@@ -629,7 +629,7 @@
 						}, 10);
 					}
 
-
+					normalize();
 				}
 				
 			break;
@@ -1886,7 +1886,7 @@
 
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
 		$("#hamburger-button").on("click", ".to-Arrow", onClick_CancelPhotoBtnMobile);
-		$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
+		$("#person_avatar_mobile, #person_nickname_mobile").on("click", onClick_OpenPhotoBtnMobile);
 		$("#search_button_mobile").on("click", onClick_SearchBtnMobile);
 		$("#add_event_button_mobile").on("click", onClick_AddEventBtnMobile);
 		$("#create_baby_button_mobile").on("click", onClick_CreateBabyBtnMobile);
@@ -2016,8 +2016,8 @@
 		if(document.selectBabyWindow.containsTemporaries())
 			document.selectBabyWindow.clearTemporaries();
 
-		$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
-		$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
+		$("#person_avatar_mobile, #person_nickname_mobile").off("click", onClick_OpenPhotoBtnMobile);
+		$("#person_avatar_mobile, #person_nickname_mobile").on("click", onClick_OpenPhotoBtnMobile);
 		$("#apply_event_button_mobile").off("click");
 		$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
 
@@ -2092,7 +2092,7 @@
 		$("#hamburger-button > div").addClass("to-X");				
 		$('#select_activity_mobile').material_select();
 
-		$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
+		$("#person_avatar_mobile, #person_nickname_mobile").off("click", onClick_OpenPhotoBtnMobile);
 
 		var collabEvent, collabBaby, $handle, nickname, avatar, amount, notes, time, timeForConvertion;
 		$handle =  $(this).parent();
@@ -2182,7 +2182,7 @@
 				
 				$("#add_event_button_mobile").fadeIn(800);
 				
-				$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
+				$("#person_avatar_mobile, #person_nickname_mobile").on("click", onClick_OpenPhotoBtnMobile);
 				$("#apply_event_button_mobile").off("click", onClick_SaveModifiedEventBtnMobile);
 				$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
 
@@ -2221,7 +2221,12 @@
 					return;
 				}
 
-				current_baby.nickname =  $('#person_nickname_mobile').val();
+				var nickname =  $('#person_nickname_mobile').val();
+
+				if( ! /^[a-zA-Z]+$/.test( nickname ) ){
+					alert("The nickname should contain the letters only!");
+					return;
+				}
 
 				if ( SnugBabies.get(current_baby.nickname) ){
 					current_baby.birthday = SnugBabies.get(current_baby.nickname.toUpperCase()).BIRTHDAY;
