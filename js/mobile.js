@@ -628,6 +628,8 @@
 							}
 						}, 10);
 					}
+
+
 				}
 				
 			break;
@@ -1765,7 +1767,7 @@
 		});
 
 		$("#notes_input_mobile, #amount_mobile, #person_nickname_mobile, #new_person_nickname_mobile, #birthday_input_mobile").on("input change", function(){
-			if ( $(this).is(":disabled") )  $(this).prop('disabled', false);
+			
 			var label = $(this).siblings("label");
 			if( $(this).val().length != 0){
 				if ( !label.hasClass("active") )  label.addClass("active");
@@ -1773,7 +1775,7 @@
 			else label.removeClass("active");
 		});
 
-		$("#")
+
 		if (currentDeviceType == DeviceType.COMPUTER)
 			loadLogicForComputer();
 		else 
@@ -1868,6 +1870,7 @@
 			donetext: 'OK' 
 		});
 
+ 		$(".clickable-disabled").click(onClick_OpenPhotoBtnMobile);
 
  		$("#new_person_avatar_mobile").click(function (event) {
 			$(this).siblings("input[type='file']").click();
@@ -1884,7 +1887,7 @@
 
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
 		$("#hamburger-button").on("click", ".to-Arrow", onClick_CancelPhotoBtnMobile);
-		$("#person_avatar_mobile, #person_nickname_mobile").on("click", onClick_OpenPhotoBtnMobile);
+		$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
 		$("#search_button_mobile").on("click", onClick_SearchBtnMobile);
 		$("#add_event_button_mobile").on("click", onClick_AddEventBtnMobile);
 		$("#create_baby_button_mobile").on("click", onClick_CreateBabyBtnMobile);
@@ -1955,6 +1958,7 @@
 			
 				$("#person_nickname_mobile").prop('disabled', false).val(name);
 				$("#person_nickname_mobile").siblings("label").addClass('active');
+				$("#person_nickname_mobile").siblings(".clickable-disabled").hide();
 				
 				$("#apply_event_button_mobile").css("display", "block");
 				$("#hamburger-button > div").toggleClass("to-X to-Arrow");
@@ -2014,8 +2018,8 @@
 		if(document.selectBabyWindow.containsTemporaries())
 			document.selectBabyWindow.clearTemporaries();
 
-		$("#person_avatar_mobile, #person_nickname_mobile").off("click", onClick_OpenPhotoBtnMobile);
-		$("#person_avatar_mobile, #person_nickname_mobile").on("click", onClick_OpenPhotoBtnMobile);
+		$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
+		$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
 		$("#apply_event_button_mobile").off("click");
 		$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
 
@@ -2090,7 +2094,7 @@
 		$("#hamburger-button > div").addClass("to-X");				
 		$('#select_activity_mobile').material_select();
 
-		$("#person_avatar_mobile, #person_nickname_mobile").off("click", onClick_OpenPhotoBtnMobile);
+		$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
 
 		var collabEvent, collabBaby, $handle, nickname, avatar, amount, notes, time, timeForConvertion;
 		$handle =  $(this).parent();
@@ -2180,7 +2184,7 @@
 				
 				$("#add_event_button_mobile").fadeIn(800);
 				
-				$("#person_avatar_mobile, #person_nickname_mobile").on("click", onClick_OpenPhotoBtnMobile);
+				$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
 				$("#apply_event_button_mobile").off("click", onClick_SaveModifiedEventBtnMobile);
 				$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
 
@@ -2194,7 +2198,6 @@
 	}
 
 	function resetCreateBabyWindowParams(){
-
 		$("#new_person_nickname_mobile").val("").trigger("change");
 		$("#new_person_avatar_mobile").removeClass("round-image").attr('src', 'images/avatar_girl.png');
 		$("#birthday_input_mobile").val("").trigger("change");
@@ -2202,6 +2205,8 @@
 
 	function resetCreateActionWindowParams(){
 		$("#person_nickname_mobile").val("").trigger("change").attr("disabled", true);
+		$("#person_nickname_mobile").siblings(".clickable-disabled").show();
+
 		$("#notes_input_mobile").val("").trigger("change");
 		$("#amount_mobile").val("").trigger("change");
 		$('#select_activity_mobile').material_select();
@@ -2213,8 +2218,7 @@
 		if ( !isVisible( $("#create_baby_table_mobile")) ){
 			
 				if( $('.avatar_panel_mobile').find('input[data-activates][readonly]').val() == "Choose baby" ||
-					$('.activity_panel_mobile').find('input[data-activates][readonly]').val() == "Choose action")
-				{
+					$('.activity_panel_mobile').find('input[data-activates][readonly]').val() == "Choose action"){
 					alert("Fill in the form, plz!");
 					return;
 				}
