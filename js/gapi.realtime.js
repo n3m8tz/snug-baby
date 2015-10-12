@@ -18,7 +18,7 @@
 		*/
 		authButtonElementId: 'authorizeButton',
 
-		appId: '488687976561',
+		appId: '488687976561', 
 
 		/**
 		* Function to be called when a Realtime model is first created.

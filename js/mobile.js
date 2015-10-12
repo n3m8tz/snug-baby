@@ -106,8 +106,7 @@
 						if (typeof _notes.value == "undefined")
 							_notes.value = (amount !== undefined && duration === undefined) ? amount + "ml via " + type:
 										(amount === undefined && duration !== undefined) ? duration + "min via " + type:
-										(amount !== undefined && duration !== undefined) ? amount + "ml for " +duration + "min via " + type:
-										"Oops, no notes!";
+										(amount !== undefined && duration !== undefined) ? amount + "ml for " +duration + "min via " + type: "";
 					break;
 
 					case "DIAPER":
@@ -2215,8 +2214,7 @@
 
 		if ( !isVisible( $("#create_baby_table_mobile")) ){
 			
-				if( !$("#notes_input_mobile").val() || !$("#amount_mobile").val() ||
-					$('.avatar_panel_mobile').find('input[data-activates][readonly]').val() == "Choose baby" ||
+				if( $('.avatar_panel_mobile').find('input[data-activates][readonly]').val() == "Choose baby" ||
 					$('.activity_panel_mobile').find('input[data-activates][readonly]').val() == "Choose action")
 				{
 					alert("Fill in the form, plz!");
