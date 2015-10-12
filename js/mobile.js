@@ -628,8 +628,6 @@
 							}
 						}, 10);
 					}
-
-					normalize();
 				}
 				
 			break;
