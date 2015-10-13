@@ -405,6 +405,7 @@
 							<li class="divider"></li>
 							<li><a class="share-file waves-effect waves-light" href="javascript:void(0)">Share</a></li>
 							<li><a class="waves-effect waves-light" href="javascript:void(0)">Settings</a></li>
+							<li><a class="remove-baby waves-effect waves-light" href="javascript:void(0)">Remove babies</a></li>
 							<li class="divider"></li>
 							<li><a class="waves-effect waves-light" href="javascript:window.location.href='mailto:n3m8tz@gmail.com'">Contact</a></li>
 						</ul>
@@ -456,7 +457,8 @@
 									<select id="select_activity_mobile">
 										<option value="" disabled>Choose action</option>
 										<option value="1" selected>Feed</option>
-
+										<option value="2" >Diaper</option>
+										<option value="3" >Sleep</option>
 									</select>
 									<!-- <label>Choose action</label>-->
 								</div>	
@@ -506,6 +508,45 @@
 								<div class="input-wrapper input-field col s6">
 									<input id="amount_mobile" type="text">
 									<label for="amount_mobile">Amount</label>
+								</div>
+							</div>
+							<div class="clear"></div>
+					</div>
+
+					<div class="diaper_panel_mobile">
+							<div class="illustration">
+							</div>
+
+							<div class="information"> 
+								<form class="input-wrapper input-field col s6" action="#">
+									<div>
+										<div><img src="images/poop-mobile.png"></div>
+										<div>
+											<input value="Pooped" name="diaper_mobile" type="radio" id="poop_mobile" />
+											<label for="poop_mobile">Poop</label>
+										</div>
+									</div>
+									<div>
+										<div><img src="images/pee-mobile.png"></div>
+										<div>
+											<input value="Peed" name="diaper_mobile" type="radio" id="pee_mobile" />
+											<label for="pee_mobile">Pee</label>
+										</div>
+									</div>
+									<div class="clear"></div>
+								</form>
+							</div>
+							<div class="clear"></div>
+					</div>
+
+					<div class="duration_panel_mobile">
+							<div class="illustration">
+							</div>
+
+							<div class="information"> 
+								<div class="input-wrapper input-field col s6">
+									<input id="duration_mobile" type="text">
+									<label for="duration_mobile">Duration</label>
 								</div>
 							</div>
 							<div class="clear"></div>
