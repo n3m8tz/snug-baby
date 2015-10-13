@@ -99,6 +99,7 @@
 
 				_notes = notes;
 				switch(this.activity.toUpperCase()){
+					case "FEED":
 					case "FOOD":					 	
 						var amount = _notes.AMOUNT;
 						var duration = _notes.DURATION;
@@ -112,6 +113,10 @@
 					case "DIAPER":
 						if (typeof _notes.value == "undefined")
 							_notes.value = _notes.STOOL;
+						break;
+					case "SLEEP":
+						if (typeof _notes.value == "undefined")
+							_notes.value = _notes.DURATION;
 					break;
 				}
 			}
@@ -157,6 +162,10 @@
 
 					case "DIAPER":
 						_.STOOL = notes.STOOL;
+						break;
+
+					case "SLEEP":
+						_.DURATION = notes.DURATION;
 						break;
 				}
 				_.NOTES = notes.value;
@@ -1766,7 +1775,7 @@
 			glSubmitDate = day + ", " + month + ", " + year;       					// 'Monday, January 7, 2015'	
 		});
 
-		$("#notes_input_mobile, #amount_mobile, #person_nickname_mobile, #new_person_nickname_mobile, #birthday_input_mobile").on("input change", function(){
+		$("#notes_input_mobile, #amount_mobile, #duration_mobile, #person_nickname_mobile, #new_person_nickname_mobile, #birthday_input_mobile").on("input change", function(){
 			
 			var label = $(this).siblings("label");
 			if( $(this).val().length != 0){
@@ -1848,6 +1857,8 @@
 			focus: function(){ $(this).blur(); }
 		});
 
+		document.currentActivity = "FEED";
+
 		$(".datepicker").pickadate({  
 			today: '',
 			clear: '',
@@ -1870,7 +1881,38 @@
 			donetext: 'OK' 
 		});
 
+ 		//$(".remove-baby").click(onClick_OpenPhotoBtnMobile);
  		$(".clickable-disabled").click(onClick_OpenPhotoBtnMobile);
+ 		
+ 		$('#select_activity_mobile').on('change', function (e) {
+			var optionSelected = $("option:selected", this).html().toUpperCase();
+			var valueSelected = this.value;
+			var $handleToActivityPanel = $(".activity_panel_mobile");
+			var activityWindowSelector = "#add_action_table_mobile";
+
+			document.currentActivity = optionSelected;
+
+			switch(optionSelected){
+				case "FEED":
+					$handleToActivityPanel.find(".illustration > img").attr("src", "images/feed-mobile.png").show();
+					loadControlsForFeedActivityMobile(activityWindowSelector);
+					break;
+
+				case "DIAPER":
+					$handleToActivityPanel.find(".illustration > img").hide();
+					loadControlsForDiaperActivityMobile(activityWindowSelector);
+					break;
+
+				case "SLEEP":
+					$handleToActivityPanel.find(".illustration > img").attr("src", "images/sleep-mobile.png").show();
+					loadControlsForSleepActivityMobile(activityWindowSelector);
+					break;
+
+				default: return;
+
+			}
+
+		});
 
  		$("#new_person_avatar_mobile").click(function (event) {
 			$(this).siblings("input[type='file']").click();
@@ -1939,6 +1981,33 @@
 
 		//hide keyboard when focused
 		//$("#activity_params_panel_mobile").on("focus", ".datepicker", function(){ return false; });
+	}
+
+	function loadControlsForFeedActivityMobile(parentSelector){
+		if (typeof parentSelector === "undefined") return;
+
+		var $activityWindow = $(parentSelector);
+		$activityWindow.find(".diaper_panel_mobile").hide();
+		$activityWindow.find(".duration_panel_mobile").hide();
+		$activityWindow.find(".amount_panel_mobile").show();
+	}
+
+	function loadControlsForDiaperActivityMobile(parentSelector){
+		if (typeof parentSelector === "undefined") return;
+
+		var $activityWindow = $(parentSelector);
+		$activityWindow.find(".amount_panel_mobile").hide();
+		$activityWindow.find(".duration_panel_mobile").hide();
+		$activityWindow.find(".diaper_panel_mobile").show();
+	}
+
+	function loadControlsForSleepActivityMobile(parentSelector){
+		if (typeof parentSelector === "undefined") return;
+
+		var $activityWindow = $(parentSelector);
+		$activityWindow.find(".diaper_panel_mobile").hide();
+		$activityWindow.find(".amount_panel_mobile").hide();
+		$activityWindow.find(".duration_panel_mobile").show();
 	}
 
 	function loadSelectBabyWindowLogic(){
@@ -2085,6 +2154,8 @@
 
 	function onClick_OpenModifyWindowMobile(){
 		
+		resetCreateActionWindowParams();
+
 		$("#add_event_button_mobile").fadeOut(800);
 		var search = $('#search_area_mobile');
 		if ( search.is(":visible") ) search.slideUp();
@@ -2095,8 +2166,9 @@
 		$('#select_activity_mobile').material_select();
 
 		$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
+		//$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
 
-		var collabEvent, collabBaby, $handle, nickname, avatar, amount, notes, time, timeForConvertion;
+		var collabEvent, collabBaby, $handle, nickname, avatar, amount, notes, duration, time, timeForConvertion;
 		$handle =  $(this).parent();
 		
 		time = $handle.find('.table_feed_time').html();
@@ -2113,6 +2185,7 @@
 			nickname = collabBaby.NAME;
 			avatar = collabBaby.AVATAR.VALUE;
 			amount = collabEvent.Activity.AMOUNT;
+			duration = collabEvent.Activity.DURATION;
 			notes = collabEvent.Activity.NOTES;
 		}catch(e){
 			/*
@@ -2136,6 +2209,7 @@
 		$("#date_mobile").val(date).trigger("change");
 		$("#time_mobile").val(time).trigger("change");	
 		$("#amount_mobile").val(amount).trigger("change");
+		$("#duration_mobile").val(duration).trigger("change");
 		$("#notes_input_mobile").val(notes).trigger("change");
 
 		if ( SnugBabies.get(nickname.toUpperCase()).AVATAR.TYPE == 2 ) 
@@ -2159,14 +2233,43 @@
 				var obj = SnugEvents.get(timestamp.toString());
 				SnugEvents.delete(timestamp.toString());
 
-				current_baby.activityImg = "images/feed-mobile.png"; // apparently assign cuz for now i don't have any images of this type.
-				current_baby.activity = "FOOD"; 					 // $(".activity_panel_mobile").find("input[data-activates][readonly]").val().toUpperCase;
-				current_baby.setNotes({
-								"AMOUNT": $("#amount_mobile").val(),
-								"DURATION": undefined,
-								"TYPE": "Bottle",
-								"value": $("#notes_input_mobile").val()
-				});
+				var notes = {};
+				var activityImg = "";
+				var activity = "";
+
+				switch(document.currentActivity){
+					case "FEED":
+						activityImg = $(".activity_panel_mobile").find("illustration > img");
+						notes = {
+							"AMOUNT": $("#amount_mobile").val(),
+							"TYPE": "Bottle",
+							"value": $("#notes_input_mobile").val()
+						};
+					break;
+
+					case "DIAPER":
+						var stool = $("input[name=diaper_mobile]:checked").val();
+						activityImg = (stool.toUpperCase() == "POOPED") ? "images/poop-mobile.png" : "images/pee-mobile.png"; 
+						notes = {
+							"STOOL": stool,
+							"value": $("#notes_input_mobile").val()
+						};
+					break;
+
+					case "SLEEP":
+						activityImg = $(".activity_panel_mobile").find("illustration > img");
+						notes = {
+							"DURATION": $("#duration_mobile").val(),
+							"value": $("#notes_input_mobile").val()
+						};
+					break;
+
+					default : return;
+				}
+
+				current_baby.activity = document.currentActivity;
+				current_baby.activityImg = activityImg;
+				current_baby.setNotes(notes);
 
 				current_baby.setSubmitDate( glSubmitDate );
 				current_baby.setSubmitTime( glSubmitTime );
@@ -2230,6 +2333,7 @@
 					return;
 				}
 
+				current_baby.nickname = nickname.toUpperCase();
 				if ( SnugBabies.get(current_baby.nickname) ){
 					current_baby.birthday = SnugBabies.get(current_baby.nickname.toUpperCase()).BIRTHDAY;
 					current_baby.color = SnugBabies.get(current_baby.nickname.toUpperCase()).COLOR_SCHEME;
@@ -2242,14 +2346,43 @@
 					current_baby.avatarType = document.isUploadedAvatar ? 2 : 1;
 				}
 
-				current_baby.activityImg = "images/feed-mobile.png"; // apparently assign cuz for now i don't have any images of this type.
-				current_baby.activity = "FOOD"; 					//$(".activity_panel_mobile").find("input[data-activates][readonly]").val().toUpperCase;
-				current_baby.setNotes({
-								"AMOUNT": $("#amount_mobile").val(),
-								"DURATION": undefined,
-								"TYPE": "Bottle",
-								"value": $("#notes_input_mobile").val()
-				});
+				var notes = {};
+				var activityImg = "";
+				var activity = "";
+
+				switch(document.currentActivity){
+					case "FEED":
+						activityImg = $(".activity_panel_mobile").find("illustration > img");
+						notes = {
+							"AMOUNT": $("#amount_mobile").val(),
+							"TYPE": "Bottle",
+							"value": $("#notes_input_mobile").val()
+						};
+					break;
+
+					case "DIAPER":
+						var stool = $("input[name=diaper_mobile]:checked").val();
+						activityImg = (stool.toUpperCase() == "POOPED") ? "images/poop-mobile.png" : "images/pee-mobile.png"; 
+						notes = {
+							"STOOL": stool,
+							"value": $("#notes_input_mobile").val()
+						};
+					break;
+
+					case "SLEEP":
+						activityImg = $(".activity_panel_mobile").find("illustration > img");
+						notes = {
+							"DURATION": $("#duration_mobile").val(),
+							"value": $("#notes_input_mobile").val()
+						};
+					break;
+
+					default : return;
+				}
+
+				current_baby.activity = document.currentActivity;
+				current_baby.activityImg = activityImg;
+				current_baby.setNotes(notes);
 
 				current_baby.setSubmitDate( glSubmitDate );
 				current_baby.setSubmitTime( glSubmitTime );

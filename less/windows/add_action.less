@@ -21,6 +21,7 @@
 	.amount_panel_mobile,
 	.date_time_panel_mobile,
 	.notes_panel_mobile,
+	.diaper_panel_mobile,
 	.new_avatar_panel_mobile,
 	.birthday_panel_mobile{
 		height: 70px;
@@ -28,6 +29,11 @@
 		margin-top: 5px;
 		margin-bottom: 5px;
 		input {color: #7C7D7F;} 
+	}
+
+	.duration_panel_mobile,
+	.diaper_panel_mobile{
+		display: none;
 	}
 
 	.illustration,
@@ -74,6 +80,29 @@
 		.illustration img { width: 30px; height: 30px;}
 	}
 
+	.diaper_panel_mobile{
+
+		.information img { width: 42px; height: 42px;}
+		.information form{ height: 100%; }
+		
+		.information form > div > div:first-of-type{ 
+			position: relative;
+			img{ .centrify("both"); }
+		}
+		.information form > div > div:nth-of-type(2){
+			position: relative;
+			top: 20px; 
+		}
+
+		.information form > div:first-of-type{
+			float: left;
+			width: 50%;
+		}
+		.information form > div:nth-of-type(2){
+			float: left;
+			width: 50%;
+		}
+	}
 
 	.input-field label{
 		left: 0rem !important;	/* align label to the left side of an input box*/
