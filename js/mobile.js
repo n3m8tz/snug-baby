@@ -1880,9 +1880,6 @@
 			twelvehour: true,
 			donetext: 'OK' 
 		});
-
- 		//$(".remove-baby").click(onClick_OpenPhotoBtnMobile);
- 		$(".clickable-disabled").click(onClick_OpenPhotoBtnMobile);
  		
  		$('#select_activity_mobile').on('change', function (e) {
 			var optionSelected = $("option:selected", this).html().toUpperCase();
@@ -1930,6 +1927,7 @@
 		$("#hamburger-button").on("click", ".to-X", onClick_CancelEventBtnMobile);
 		$("#hamburger-button").on("click", ".to-Arrow", onClick_CancelPhotoBtnMobile);
 		$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
+		$(".clickable-disabled").on("click", onClick_OpenPhotoBtnMobile);
 		$("#search_button_mobile").on("click", onClick_SearchBtnMobile);
 		$("#add_event_button_mobile").on("click", onClick_AddEventBtnMobile);
 		$("#create_baby_button_mobile").on("click", onClick_CreateBabyBtnMobile);
@@ -2088,7 +2086,9 @@
 			document.selectBabyWindow.clearTemporaries();
 
 		$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
+		$(".clickable-disabled").off("click", onClick_OpenPhotoBtnMobile);
 		$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
+		$(".clickable-disabled").on("click", onClick_OpenPhotoBtnMobile);
 		$("#apply_event_button_mobile").off("click");
 		$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
 
@@ -2166,7 +2166,7 @@
 		$('#select_activity_mobile').material_select();
 
 		$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
-		//$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
+		$(".clickable-disabled").off("click", onClick_OpenPhotoBtnMobile);
 
 		var collabEvent, collabBaby, $handle, nickname, avatar, amount, notes, duration, time, timeForConvertion;
 		$handle =  $(this).parent();
@@ -2288,6 +2288,7 @@
 				$("#add_event_button_mobile").fadeIn(800);
 				
 				$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
+				$(".clickable-disabled").on("click", onClick_OpenPhotoBtnMobile);
 				$("#apply_event_button_mobile").off("click", onClick_SaveModifiedEventBtnMobile);
 				$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
 
