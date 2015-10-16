@@ -2053,7 +2053,7 @@
 				
 				$("#person_avatar_mobile").attr("src", chosen_avatar);
 			
-				$("#person_nickname_mobile").prop('disabled', false).val(name);
+				$("#person_nickname_mobile").val(name);
 				$("#person_nickname_mobile").siblings("label").addClass('active');
 				$("#person_nickname_mobile").siblings(".clickable-disabled").hide();
 				
@@ -2380,7 +2380,7 @@
 	}
 
 	function resetCreateActionWindowParams(){
-		$("#person_nickname_mobile").val("").trigger("change").attr("disabled", true);
+		$("#person_nickname_mobile").val("").trigger("change");
 		$("#person_nickname_mobile").siblings(".clickable-disabled").show();
 
 		$("#notes_input_mobile").val("").trigger("change");
