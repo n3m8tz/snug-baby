@@ -119,40 +119,93 @@
 				console.log("Collaborator left!");
 		}
 		
-		var onMapValueChanged = function(e){
-			
+		var onBabyValueChanged = function(e){
+
 			var property = e.property;	//Which property(key) changed
 			var oldValue = e.oldValue;	//Previous map value for this property(key)
-			var newValue = e.newValue;	//New map value for this property(key)
+			var newValue = e.newValue;	//New map value for this property(key)	
 
 			try{
-
-				//if property added to SnugEvents 
-				if(parseInt(property, 10)){
-					NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE});
-					NormalizeWindow({ window: BabyTrackWindows.CHOOSE_EXISTED_PERSON});
+				/* in case of value addition */
+				if (newValue !== null && oldValue === null){
+					NormalizeWindow({ window: BabyTrackWindows.CHOOSE_EXISTED_PERSON });
+					NormalizeWindow({ window: BabyTrackWindows.REMOVE_EXISTED_PERSON });
+					console.log("Property " + property + " was successfully added!");
 				}
 
-			}finally{
-			
-				if (newValue === null && oldValue !== null)
+				/* in case of value deletion */
+				if (newValue === null && oldValue !== null){
+					NormalizeWindow({ window: BabyTrackWindows.CHOOSE_EXISTED_PERSON });
+					NormalizeWindow({ window: BabyTrackWindows.REMOVE_EXISTED_PERSON });
+					NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE  });
 					console.log("Property " + property + " was successfully removed!");
+				}
 
-				if (newValue !== null && oldValue === null)
-					console.log("Property " + property + " was successfully added!");
-
-
-				if (newValue !== null && oldValue !== null)
+				/* in case of value modification */
+				if (newValue !== null && oldValue !== null){
+					if (currentDeviceType == DeviceType.COMPUTER){
+						NormalizeWindow({ window: BabyTrackWindows.CHOOSE_EXISTED_PERSON });
+						NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE  });
+					}
 					console.log("Property " + property + " changed value from "+ JSON.stringify(oldValue) + " to "+JSON.stringify(newValue));
-			}
+				}
+			}catch(e){}
+		}
+
+		var onEventValueChanged = function(e){
+
+			var property = e.property;	//Which property(key) changed
+			var oldValue = e.oldValue;	//Previous map value for this property(key)
+			var newValue = e.newValue;	//New map value for this property(key)	
+
+			try{
+				/* in case of value addition */
+				if (newValue !== null && oldValue === null){
+					NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE  });
+					console.log("Property " + property + " was successfully added!");
+				}
+
+				/* in case of value deletion */
+				if (newValue === null && oldValue !== null){
+					NormalizeWindow({ window: BabyTrackWindows.CHOOSE_EXISTED_PERSON });
+					NormalizeWindow({ window: BabyTrackWindows.REMOVE_EXISTED_PERSON });
+					NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE  });
+					console.log("Property " + property + " was successfully removed!");
+				}
+
+				/* in case of value modification */
+				if (newValue !== null && oldValue !== null){
+					NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE  });
+					console.log("Property " + property + " changed value from "+ JSON.stringify(oldValue) + " to "+JSON.stringify(newValue));
+				}
+			}catch(e){}
+		}
+
+		var onActivityValueChanged = function(e){
+
+			var property = e.property;	//Which property(key) changed
+			var oldValue = e.oldValue;	//Previous map value for this property(key)
+			var newValue = e.newValue;	//New map value for this property(key)		
+
+			/* in case of value addition */
+			if (newValue !== null && oldValue === null)
+				console.log("Property " + property + " was successfully added!");
+
+			/* in case of value deletion */
+			if (newValue === null && oldValue !== null)
+				console.log("Property " + property + " was successfully removed!");
+
+			/* in case of value modification */
+			if (newValue !== null && oldValue !== null)
+				console.log("Property " + property + " changed value from "+ JSON.stringify(oldValue) + " to "+JSON.stringify(newValue));
 		}
 
 		collabdoc.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_JOINED, onCollaboratorsChanged);
 		collabdoc.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_LEFT, onCollaboratorsChanged);
 
-		SnugBabies.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onMapValueChanged);
-		SnugEvents.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onMapValueChanged);
-		SnugActivities.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onMapValueChanged);
+		SnugBabies.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onBabyValueChanged);
+		SnugEvents.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onEventValueChanged);
+		SnugActivities.addEventListener(gapi.drive.realtime.EventType.VALUE_CHANGED, onActivityValueChanged);
 	}
 
 

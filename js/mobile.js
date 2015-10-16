@@ -154,6 +154,7 @@
 
 				var _ = $.extend(true, {}, SnugActivities.get(type));		//deep copying of a Google Drive CollaborativeMap object
 				switch(type){
+					case "FEED":
 					case "FOOD":
 						_.TYPE = notes.TYPE;
 						_.AMOUNT = notes.AMOUNT;
@@ -647,6 +648,11 @@
 			break;
 
 			case BabyTrackWindows.ADD_EVENT_WIZARD_NEW_ACTIVITY:
+			break;
+
+			case BabyTrackWindows.REMOVE_EXISTED_PERSON:
+				if (currentDeviceType == DeviceType.MOBILE)
+					document.removeBabyWindow.update(SnugBabies.items());
 			break;
 
 			case BabyTrackWindows.CHOOSE_EXISTED_PERSON:
@@ -1814,10 +1820,14 @@
 				});
 				
 				loadSelectBabyWindowLogic();
-				expandToDeviceViewportHeight("#select_baby_table_mobile");
+				loadRemoveBabyWindowLogic();
+
+				expandToDeviceViewportHeight("#" + document.selectBabyWindow.getId());
+				expandToDeviceViewportHeight("#" + document.removeBabyWindow.getId());
 
 				var timer= setInterval(function(){
 					document.selectBabyWindow.addBabies(SnugBabies.items());
+					document.removeBabyWindow.addBabies(SnugBabies.items());
 					clearInterval(timer);
 				}, 10);
 				
@@ -1852,6 +1862,21 @@
 		$(".button-collapse").sideNav();
 		
 		$("#posted_results_table_mobile").on("click", ".table_data_modify", onClick_OpenModifyWindowMobile);
+		
+		$(".remove-baby").on("click", function(e){
+			e.stopPropagation();
+			e.preventDefault();
+
+			$("#actions_logo").html("Remove baby");
+			$("#search_button_mobile").css("display", "none");
+			$("#hamburger-button > div").addClass("to-X");
+
+			$("#posted_results_table_mobile").fadeOut(250, function(){
+				document.removeBabyWindow.fadeIn(250);
+			});
+
+			$("#add_event_button_mobile").fadeOut(800);
+		});
 
 		$("#time_mobile").on({
 			focus: function(){ $(this).blur(); }
@@ -2010,11 +2035,14 @@
 
 	function loadSelectBabyWindowLogic(){
 
-		var selectBabyWindow = new SelectBabyWindow();
-		document.selectBabyWindow = selectBabyWindow;
+		document.selectBabyWindow = new SelectBabyWindow({
+			id: "select_baby_table_mobile",
+			selectBabyRadioPrefix: "select-baby-radio"
+		});
+
 		document.selectBabyWindow.insertInto("#MobileVersionBoby");
 
-		$("#select_baby_table_mobile").on("change", "input[name='select-baby-radio']", function(e) {
+		document.selectBabyWindow.on("selectbaby", function(e) {
 			if(this.checked) {
 				e.stopImmediatePropagation();
 				var $babyblock = $(this).parent().find(".image-grid-block-text"),
@@ -2033,11 +2061,57 @@
 
 				$("#actions_logo").html("Add action");
 
-				$("#select_baby_table_mobile").hide();	
+				document.selectBabyWindow.hide();	
 				$("#add_action_table_mobile").show();
 			}
 		});
 	}
+
+	function loadRemoveBabyWindowLogic(){
+
+		document.removeBabyWindow = new SelectBabyWindow({
+			id: "remove_baby_table_mobile",
+			selectBabyRadioPrefix: "remove-baby-radio"
+		});
+
+		document.removeBabyWindow.insertInto("#MobileVersionBoby");
+
+		document.removeBabyWindow.on("selectbaby", function(e) {
+			if(this.checked) {
+				e.stopImmediatePropagation();
+				var answer = confirm("Note! All the information about this baby will be lost. \nDo you really want to continue?");
+				if (!answer) return;
+
+				var $babyblock = $(this).parent().find(".image-grid-block-text"),
+					 name      = $babyblock.text();
+				try{
+					SnugBabies.delete(name.toUpperCase());
+					var babies = SnugEvents.items();	
+					babies.forEach(function(event, i){
+						var timestamp = event[0];
+						if(event[1].Person == name.toUpperCase())
+							SnugEvents.delete(timestamp);
+					});
+					
+					console.log("U removed "+ name);
+
+				}catch(e){ 
+					console.log(e.name + ": " + e.message);
+				}	
+
+				$("#actions_logo").html("Actions");
+				$("#search_button_mobile").css("display", "block");
+				$("#hamburger-button > div").removeClass("to-X");
+
+				document.removeBabyWindow.fadeOut(250, function(){
+					$("#posted_results_table_mobile").fadeIn(250);
+				});
+
+				$("#add_event_button_mobile").fadeIn(800);
+			}
+		});
+	}
+
 
 	function onClick_CancelPhotoBtnMobile(e){
 		e.stopImmediatePropagation();
@@ -2046,13 +2120,13 @@
 			$("#hamburger-button > div").toggleClass("to-X to-Arrow");
 			$("#apply_event_button_mobile").css("display", "block");
 			$("#actions_logo").html("Add action");
-			$("#select_baby_table_mobile").hide("drop", {direction: "right"}, 200);
+			document.selectBabyWindow.hide("drop", {direction: "right"}, 200);
 			$("#add_action_table_mobile").show("drop", {direction: "left"}, 200);
 		}else{
 			$("#apply_event_button_mobile").css("display", "none");
 			$("#actions_logo").html("Select avatar");
 			$("#create_baby_table_mobile").hide("drop", {direction: "left"}, 200);
-			$("#select_baby_table_mobile").show("drop", {direction: "right"}, 300);
+			document.selectBabyWindow.show("drop", {direction: "right"}, 300);
 		}
 	}
 	
@@ -2063,7 +2137,7 @@
 		$("#actions_logo").html("Create baby");
 		$("#apply_event_button_mobile").css("display", "block");
 
-		$("#select_baby_table_mobile").fadeOut(250, function(){
+		document.selectBabyWindow.fadeOut(250, function(){
 			$("#create_baby_table_mobile").show(250);
 		});
 	}
@@ -2075,7 +2149,7 @@
 		$("#create_baby_button_mobile").toggleClass("btn--shown");
 		$("#actions_logo").html("Select avatar");
 		$("#add_action_table_mobile").hide("drop", {direction: "left"}, 200);
-		$("#select_baby_table_mobile").show("drop", {direction: "right"}, 300);
+		document.selectBabyWindow.show("drop", {direction: "right"}, 300);
 	}
 
 	function onClick_CancelEventBtnMobile(e){
@@ -2113,7 +2187,6 @@
 		
 		/*$('#select_baby_mobile').bind("change", function() {
 			var name = $(this).find("option:selected").text().toUpperCase();
-
 			var avatarImg = SnugBabies.get(name).AVATAR.VALUE;
 			$(".avatar_panel_mobile").find(".illustration img").attr("src", avatarImg);
 			$(".avatar_panel_mobile").find(".illustration img").css("border-radius", "50%");
@@ -2239,7 +2312,7 @@
 
 				switch(document.currentActivity){
 					case "FEED":
-						activityImg = $(".activity_panel_mobile").find("illustration > img");
+						activityImg = $(".activity_panel_mobile").find(".illustration > img").attr("src");
 						notes = {
 							"AMOUNT": $("#amount_mobile").val(),
 							"TYPE": "Bottle",
@@ -2257,7 +2330,7 @@
 					break;
 
 					case "SLEEP":
-						activityImg = $(".activity_panel_mobile").find("illustration > img");
+						activityImg = $(".activity_panel_mobile").find(".illustration > img").attr("src");
 						notes = {
 							"DURATION": $("#duration_mobile").val(),
 							"value": $("#notes_input_mobile").val()
@@ -2334,8 +2407,8 @@
 					return;
 				}
 
-				current_baby.nickname = nickname.toUpperCase();
-				if ( SnugBabies.get(current_baby.nickname) ){
+				current_baby.nickname = nickname;
+				if ( SnugBabies.get(current_baby.nickname.toUpperCase()) ){
 					current_baby.birthday = SnugBabies.get(current_baby.nickname.toUpperCase()).BIRTHDAY;
 					current_baby.color = SnugBabies.get(current_baby.nickname.toUpperCase()).COLOR_SCHEME;
 					current_baby.avatarImg = SnugBabies.get(current_baby.nickname.toUpperCase()).AVATAR.VALUE;
@@ -2352,8 +2425,8 @@
 				var activity = "";
 
 				switch(document.currentActivity){
-					case "FEED":
-						activityImg = $(".activity_panel_mobile").find("illustration > img");
+					case "FEED": 
+						activityImg = $(".activity_panel_mobile").find(".illustration > img").attr("src");
 						notes = {
 							"AMOUNT": $("#amount_mobile").val(),
 							"TYPE": "Bottle",
@@ -2371,7 +2444,7 @@
 					break;
 
 					case "SLEEP":
-						activityImg = $(".activity_panel_mobile").find("illustration > img");
+						activityImg = $(".activity_panel_mobile").find(".illustration > img").attr("src");
 						notes = {
 							"DURATION": $("#duration_mobile").val(),
 							"value": $("#notes_input_mobile").val()
@@ -2427,7 +2500,7 @@
 					avatar = $('#new_person_avatar_mobile').attr("src");
 				
 				$("#create_baby_table_mobile").fadeOut(250, function(){
-					$("#select_baby_table_mobile").fadeIn(250, function(e){
+					document.selectBabyWindow.fadeIn(250, function(e){
 						$("#create_baby_button_mobile").toggleClass("btn--shown");
 						$("#apply_event_button_mobile").css("display", "none");
 						$("#actions_logo").html("Select avatar");

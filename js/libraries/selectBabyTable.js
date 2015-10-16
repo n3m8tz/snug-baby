@@ -1,10 +1,9 @@
 
-
 var SelectBabyWindow = (function(){
 
-	var initDOM = function(){
+	var initDOM = function(windowId){
 		var _parentSection = document.createElement("section");
-		_parentSection.setAttribute("id", "select_baby_table_mobile");
+		_parentSection.setAttribute("id", windowId);
 
 		var _childSection = document.createElement("section");
 		_parentSection.appendChild(_childSection);
@@ -12,25 +11,26 @@ var SelectBabyWindow = (function(){
 		return _parentSection;
 	}
 
-	var addBabyBlock = function(baby, index, _animateShow){
+	var addBabyBlock = function(baby, index, _animateShow, _windowId, _selectBabyRadioPrefix){
 		var animateShow = false;
 		if(_animateShow) animateShow = true;
 
 		var hiddenProperty = animateShow ? "prop--hidden" : "";
 
 		var _blockStructure = [
-			'<div id="' + baby.name.toUpperCase() + '" class="image-grid-block ' + hiddenProperty + '" >',
+			'<div data-baby-name="' + baby.name.toUpperCase() + '" class="image-grid-block ' + hiddenProperty + '" >',
 				'<div class="image-grid-block-content">',
-					'<label for="select-baby-radio-' + index + '">',
+					'<label for="'+ _selectBabyRadioPrefix + "-" + index + '">',
 						'<div class="image-grid-block-text">' + baby.name + '</div>',
 						'<img src="' + baby.avatarSrc + '" />',
-						'<input id="select-baby-radio-' + index + '" name="select-baby-radio" type="radio" value="' + index + '" />',
+						'<input id="' + _selectBabyRadioPrefix + "-" + index + '" name="' + _selectBabyRadioPrefix +'" type="radio" value="' + index + '" />',
 					'</label>',
 				'</div>',
 			'</div>'
 		].join('');
 
-		var parent = document.querySelector("#select_baby_table_mobile > section");
+		var subsectionSelector = '#' + _windowId + ' > section';
+		var parent = document.querySelector(subsectionSelector);
 
 		if(parent){
 			parent.innerHTML += _blockStructure;
@@ -38,7 +38,7 @@ var SelectBabyWindow = (function(){
 			if(animateShow)
 				//code below will be replaced with a new one later on;
 				if($) 
-					$(parent).find("#" + baby.name.toUpperCase()).removeClass("prop--hidden");
+					$(parent).find("[data-baby-name = '" + baby.name.toUpperCase()+"']").removeClass("prop--hidden");
 		}
 	}
 
@@ -46,13 +46,21 @@ var SelectBabyWindow = (function(){
 		element && element.parentNode && element.parentNode.removeChild(element);
 	}
 
-	function SelectBabyWindow(){
+	function SelectBabyWindow(initStruct){
 
 		var babiesCount = 0;
 		var temporaryBabies = new Array();
+		var windowId = "select_baby_table_mobile";
+		var selectBabyRadioPrefix = "select-baby-radio";
+		var snugBabies = new Array();
 
-		this.value =  initDOM();
-		this.snugBabies;
+		if (initStruct !== undefined){
+			windowId = (typeof initStruct.id !== "undefined") ? initStruct.id : windowId;
+			selectBabyRadioPrefix = (typeof initStruct.selectBabyRadioPrefix !== "undefined") ? initStruct.selectBabyRadioPrefix : selectBabyRadioPrefix;
+		}
+
+		
+		this.value =  initDOM(windowId);
 
 		this.insertInto = function(handle){
 			document.querySelector(handle).appendChild(this.value);
@@ -63,7 +71,7 @@ var SelectBabyWindow = (function(){
 		}
 
 		this.addBaby = function(_name, _avatarSrc, _animateShow){
-			addBabyBlock({ name: _name,  avatarSrc: _avatarSrc },  babiesCount, _animateShow);
+			addBabyBlock({ name: _name,  avatarSrc: _avatarSrc },  babiesCount, _animateShow, windowId, selectBabyRadioPrefix);
 			babiesCount++;
 		}
 
@@ -76,64 +84,124 @@ var SelectBabyWindow = (function(){
 		}
 
 		this.clearTemporaries = function(){
-			var tempBabies = temporaryBabies;
+			var tempBabies = temporaryBabies.slice(0, temporaryBabies.length);
 			for(var i in tempBabies){
-				if(document.getElementById(tempBabies[i].toUpperCase())){
-					var temp = document.getElementById(tempBabies[i].toUpperCase());
+				if(this.value.querySelector("[data-baby-name = '" + tempBabies[i].toUpperCase() + "']" )){
+					var temp = this.value.querySelector("[data-baby-name = '" + tempBabies[i].toUpperCase() + "']" );
 					removeElement( temp );
 				}
-				var index = tempBabies.indexOf(tempBabies[i].toUpperCase());
-				temporaryBabies.slice(index, 1);
 			}
+			temporaryBabies.splice(0, temporaryBabies.length);
 		}
 
-		this.addBabies = function(snugBabies){
-			if(!snugBabies) return;
+		this.addBabies = function(_snugBabies){
+			if(!_snugBabies) return;
 
-			snugBabies.forEach(function(baby, index){
-				addBabyBlock({ name: baby[1].NAME,  avatarSrc: baby[1].AVATAR.VALUE },  index);
+			_snugBabies.forEach(function(baby, index){
+				addBabyBlock({ name: baby[1].NAME,  avatarSrc: baby[1].AVATAR.VALUE },  index, false, windowId, selectBabyRadioPrefix);
 				babiesCount++;
 			});
 
-			this.snugBabies = snugBabies;
+			snugBabies = _snugBabies;
 		}
 		
 		this.removeFromTemporaries = function(baby){
 			var index = temporaryBabies.indexOf(baby.toUpperCase());
 			if(index != -1)
-				temporaryBabies.slice(index, 1);
+				temporaryBabies.splice(index, 1);
 		}
 
-		this.update = function(snugBabies){
-			this.snugBabies = snugBabies;
-			var imageGridBlocks = this.value.getElementsByClassName('image-grid-block');
-			var isFound = false;
+		this.on = function(event, callback){
+			if(typeof event === "undefined" || typeof event !== "string") return;
+			if(typeof callback === "undefined" || typeof callback !== "function") return;
+			switch(event){
+				case "selectbaby":
+					$('#' + this.value.getAttribute("id")).on("change", "input[name=" + selectBabyRadioPrefix + "]", callback);
+				break;
+			}
+		}
 
-			if(imageGridBlocks.length > snugBabies.length)
+		this.off = function(event, callback){
+			if(typeof event === "undefined" || typeof event !== "string") return;
+			if(typeof callback === "undefined" || typeof callback !== "function") return;
+			switch(event){
+				case "selectbaby":
+					$('#' + windowId).off("change", "input[name=" + selectBabyRadioPrefix + "]", callback);
+				break;
+			}
+		}
+
+		this.getId = function(){
+			return windowId;
+		}
+
+		this.getBabies = function(){
+			return snugBabies;
+		}
+
+		this.hide = function( speed, callback ){
+			$('#' + windowId).hide( speed, callback );
+		}
+
+		this.show = function( speed, callback ){
+			$('#' + windowId).show( speed, callback );
+		}
+		
+		this.hide = function( effect, options, duration, complete ){
+			$('#' + windowId).hide( effect, options, duration, complete );
+		}
+
+		this.show = function( effect, options, duration, complete){
+			$('#' + windowId).show( effect, options, duration, complete );
+		}
+
+		this.fadeIn = function( duration, callback ){
+			$('#' + windowId).fadeIn( duration, callback );
+		}
+
+		this.fadeOut = function( duration, callback ){
+			$('#' + windowId).fadeOut( duration, callback );
+		}
+
+		this.update = function(_snugBabies){
+			if(!_snugBabies) return;
+
+			snugBabies = _snugBabies;
+			var imageGridBlocks = this.value.getElementsByClassName('image-grid-block');
+
+			if(imageGridBlocks.length < snugBabies.length){
+				var isBabyAdded = false;
 				snugBabies.forEach(function(baby){
-					if(!isFound)
+					if(!isBabyAdded){
+						var isFoundIdentical = false;
 						for(var i = 0; i < imageGridBlocks.length; i++){
-							var babyName = imageGridBlocks[i].getAttribute("id");
+							var babyName = imageGridBlocks[i].getAttribute("data-baby-name");
 							if( babyName == baby[0] ){
-								addBabyBlock({ name: baby[0],  avatarSrc: baby[1].AVATAR.VALUE },  babiesCount);
-								babiesCount++;
-								isFound = true;
+								isFoundIdentical = true;
 								break;
 							}
 						}
-				});
-			else
-				for(var i = 0; i < imageGridBlocks.length; i++){
-
-					var babyName = imageGridBlocks[i].getAttribute("id");
-					snugBabies.forEach(function(baby){
-						if( !isFound && babyName == baby[0]){
-							removeElement( document.getElementById( "#" + babyName ) );
-							babiesCount--;
-							isFound = true;
+						if( !isFoundIdentical){
+							addBabyBlock({ name: baby[1].NAME,  avatarSrc: baby[1].AVATAR.VALUE },  babiesCount, false, windowId, selectBabyRadioPrefix);
+							babiesCount++;
+							isBabyAdded = true;
 						}
+					}
+				});
+			}else if(imageGridBlocks.length > snugBabies.length)
+				for(var i = 0; i < imageGridBlocks.length; i++){
+					var isFoundIdentical = false;
+					var babyName = imageGridBlocks[i].getAttribute("data-baby-name");
+					snugBabies.forEach(function(baby){
+						if( !isFoundIdentical && babyName == baby[0])
+							isFoundIdentical = true;
 					});
-					if(isFound) break;
+
+					if(!isFoundIdentical){
+						removeElement( this.value.querySelector( "[data-baby-name = '" + babyName + "']" ) );
+						babiesCount--;
+						break;
+					} 
 				}
 		}
 
@@ -141,4 +209,3 @@ var SelectBabyWindow = (function(){
 
 	return SelectBabyWindow;
 })()
-

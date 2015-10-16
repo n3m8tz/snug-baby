@@ -5,6 +5,8 @@
 
 	var NormalizeWindow = function(){};
 	
+	var selectBabyWindow;
+	var removeBabyWindow;
 	var glSubmitTime = "";   //gl == global
 	var glSubmitDate = "";   
 
@@ -34,9 +36,11 @@
 		ADD_EVENT_WIZARD_NEW_PERSON: 2,
 		ADD_EVENT_WIZARD_NEW_ACTIVITY: 3,
 		CHOOSE_EXISTED_PERSON: 4,
-		ADD_FOOD_EVENT: 5,
-		ADD_DIAPER_EVENT: 6,
-		MODIFY_PERSON: 7
+		REMOVE_EXISTED_PERSON: 5,
+		ADD_FOOD_EVENT: 6,
+		ADD_DIAPER_EVENT: 7,
+		ADD_SLEEP_EVENT: 8,
+		MODIFY_PERSON: 9
 	}
 
 	var BabyTrackWindows = {
@@ -47,8 +51,10 @@
 		ADD_EVENT_WIZARD_NEW_PERSON: 4,
 		ADD_EVENT_WIZARD_NEW_ACTIVITY: 5,
 		CHOOSE_EXISTED_PERSON: 6,
-		ADD_FOOD_EVENT: 7,
-		ADD_DIAPER_EVENT: 8
+		REMOVE_EXISTED_PERSON: 7,
+		ADD_FOOD_EVENT: 8,
+		ADD_DIAPER_EVENT: 9,
+		ADD_SLEEP_EVENT: 10
 	}
 
 	var DeviceType = { MOBILE: 0, COMPUTER: 1}
