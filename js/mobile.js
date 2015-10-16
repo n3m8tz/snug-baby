@@ -1883,7 +1883,8 @@
 		});
 
 		document.currentActivity = "FEED";
-
+		document.defaultImageChosenOnCreate = false;
+		
 		$(".datepicker").pickadate({  
 			today: '',
 			clear: '',
@@ -2049,7 +2050,11 @@
 					name = $babyblock.text(),
 					chosen_avatar = $babyblock.siblings('img').attr('src');
 				
-				$("#person_avatar_mobile").addClass("round-image").attr("src", chosen_avatar);
+				if (document.defaultImageChosenOnCreate){
+					document.defaultImageChosenOnCreate = false;
+					$("#person_avatar_mobile").attr("src", chosen_avatar);
+				}else 
+					$("#person_avatar_mobile").addClass("round-image").attr("src", chosen_avatar);
 			
 				$("#person_nickname_mobile").prop('disabled', false).val(name);
 				$("#person_nickname_mobile").siblings("label").addClass('active');
@@ -2506,6 +2511,7 @@
 						$("#actions_logo").html("Select avatar");
 						document.selectBabyWindow.addBaby(babyName, avatar, true);
 						document.selectBabyWindow.markAsTemporary(babyName);
+						document.defaultImageChosenOnCreate = true;
 						var self = $(this);
 						setTimeout(function(){
 							self.animate({scrollTop: self.height() });
