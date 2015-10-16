@@ -1956,7 +1956,6 @@
 		$(".clickable-disabled").on("click", onClick_OpenPhotoBtnMobile);
 		$("#search_button_mobile").on("click", onClick_SearchBtnMobile);
 		$("#add_event_button_mobile").on("click", onClick_AddEventBtnMobile);
-		$("#create_baby_button_mobile").on("click", onClick_CreateBabyBtnMobile);
 		$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
 
 		$("#notes_input_mobile").on({
@@ -2042,7 +2041,7 @@
 		});
 
 		document.selectBabyWindow.insertInto("#MobileVersionBoby");
-
+		document.selectBabyWindow.on("createbaby", onClick_CreateBabyBtnMobile);
 		document.selectBabyWindow.on("selectbaby", function(e) {
 			if(this.checked) {
 				e.stopImmediatePropagation();
@@ -2050,16 +2049,14 @@
 					name = $babyblock.text(),
 					chosen_avatar = $babyblock.siblings('img').attr('src');
 				
-				
 				$("#person_avatar_mobile").attr("src", chosen_avatar);
 			
 				$("#person_nickname_mobile").val(name);
 				$("#person_nickname_mobile").siblings("label").addClass('active');
 				$("#person_nickname_mobile").siblings(".clickable-disabled").hide();
-				
+						
 				$("#apply_event_button_mobile").css("display", "block");
 				$("#hamburger-button > div").toggleClass("to-X to-Arrow");
-				$("#create_baby_button_mobile").toggleClass("btn--shown");
 
 				$("#actions_logo").html("Add action");
 
@@ -2073,7 +2070,8 @@
 
 		document.removeBabyWindow = new SelectBabyWindow({
 			id: "remove_baby_table_mobile",
-			selectBabyRadioPrefix: "remove-baby-radio"
+			selectBabyRadioPrefix: "remove-baby-radio",
+			createBabyButton : false
 		});
 
 		document.removeBabyWindow.insertInto("#MobileVersionBoby");
@@ -2117,7 +2115,6 @@
 
 	function onClick_CancelPhotoBtnMobile(e){
 		e.stopImmediatePropagation();
-		$("#create_baby_button_mobile").toggleClass("btn--shown");
 		if( !isVisible( $("#create_baby_table_mobile") ) ){
 			$("#hamburger-button > div").toggleClass("to-X to-Arrow");
 			$("#apply_event_button_mobile").css("display", "block");
@@ -2135,7 +2132,6 @@
 	function onClick_CreateBabyBtnMobile(){
 
 		resetCreateBabyWindowParams();
-		$("#create_baby_button_mobile").toggleClass("btn--shown");
 		$("#actions_logo").html("Create baby");
 		$("#apply_event_button_mobile").css("display", "block");
 
@@ -2148,7 +2144,6 @@
 		e.stopPropagation();	
 		$("#apply_event_button_mobile").css("display", "none");
 		$("#hamburger-button > div").toggleClass("to-X to-Arrow");
-		$("#create_baby_button_mobile").toggleClass("btn--shown");
 		$("#actions_logo").html("Select avatar");
 		$("#add_action_table_mobile").hide("drop", {direction: "left"}, 200);
 		document.selectBabyWindow.show("drop", {direction: "right"}, 300);
@@ -2500,7 +2495,6 @@
 				
 				$("#create_baby_table_mobile").fadeOut(250, function(){
 					document.selectBabyWindow.fadeIn(250, function(e){
-						$("#create_baby_button_mobile").toggleClass("btn--shown");
 						$("#apply_event_button_mobile").css("display", "none");
 						$("#actions_logo").html("Select avatar");
 						document.selectBabyWindow.addBaby(babyName, avatar, true);

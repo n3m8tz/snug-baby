@@ -11,6 +11,18 @@ var SelectBabyWindow = (function(){
 		return _parentSection;
 	}
 
+	var createBabyButton = function(parent, buttonClass){
+		var button = document.createElement("div");
+		button.setAttribute("class", buttonClass);
+		var wrapper = document.createElement("div");
+		var image = document.createElement("img");
+		image.setAttribute("src", "images/create_baby_button.png");
+
+		wrapper.appendChild(image);
+		button.appendChild(wrapper);
+		parent.appendChild(button);
+	}
+
 	var addBabyBlock = function(baby, index, _animateShow, _windowId, _selectBabyRadioPrefix){
 		var animateShow = false;
 		if(_animateShow) animateShow = true;
@@ -52,15 +64,20 @@ var SelectBabyWindow = (function(){
 		var temporaryBabies = new Array();
 		var windowId = "select_baby_table_mobile";
 		var selectBabyRadioPrefix = "select-baby-radio";
+		var needCreateBabyButton = true;
+		var createBabyButtonClass = "create_baby_button_mobile";
+
 		var snugBabies = new Array();
 
 		if (initStruct !== undefined){
 			windowId = (typeof initStruct.id !== "undefined") ? initStruct.id : windowId;
 			selectBabyRadioPrefix = (typeof initStruct.selectBabyRadioPrefix !== "undefined") ? initStruct.selectBabyRadioPrefix : selectBabyRadioPrefix;
+			needCreateBabyButton = (typeof initStruct.createBabyButton !== "undefined") ? initStruct.createBabyButton : needCreateBabyButton;
 		}
-
 		
-		this.value =  initDOM(windowId);
+		this.value = initDOM(windowId);
+
+		if(needCreateBabyButton) createBabyButton(this.value, createBabyButtonClass);
 
 		this.insertInto = function(handle){
 			document.querySelector(handle).appendChild(this.value);
@@ -116,7 +133,10 @@ var SelectBabyWindow = (function(){
 			if(typeof callback === "undefined" || typeof callback !== "function") return;
 			switch(event){
 				case "selectbaby":
-					$('#' + this.value.getAttribute("id")).on("change", "input[name=" + selectBabyRadioPrefix + "]", callback);
+					$('#' + windowId).on("change", "input[name=" + selectBabyRadioPrefix + "]", callback);
+				break;
+				case "createbaby":
+					$('.' + createBabyButtonClass).on("click", callback);
 				break;
 			}
 		}

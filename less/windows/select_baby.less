@@ -22,7 +22,7 @@
 		padding-bottom: 49%; /* = width for a 1:1 aspect ratio */
 		margin: 0.5%;
 		visibility: visible;
-		opacity: 1;    transition: ;
+		opacity: 1; 
 		.transition( visibility 1s linear 0s, opacity 1s linear 0s; );
 		.image-grid-block-content{
 			position:absolute;
@@ -59,30 +59,16 @@
 	/* customize CreateBabyButton */
 	@diameter: 50px;
 
-	#create_baby_button_mobile {
-		top: 18.5px;
-		right: 20px;
-		bottom: auto;
-		z-index: 1000;
-		a {
-			height: 0;
-			width: 0;
-			visibility: hidden;
-			opacity: 0;
-			.transition( visibility 0.5s ease 0s, opacity 0.5s ease 0s, height 0.5s ease 0.6s, width 0.5s ease 0.6s;); }
-
-		&.btn--shown a {
-			width: @diameter !important;
-			height: @diameter !important;
-			visibility: visible !important;
-			opacity: 1 !important;
-			.transition(visibility 1s ease 0s, opacity 1s ease 0s; );
-		}
-
-		i {
-			color: #0B7676;
-			line-height: @diameter !important;
-			font-size: 2rem; }
+	.create_baby_button_mobile {
+		float: left;
+		position: relative;
+		border: thin solid #40AEFF;
+		width: 49%;
+		padding-bottom: 49%; /* = width for a 1:1 aspect ratio */
+		margin: 0.5%;
+		visibility: visible;
+		opacity: 1;
+		img{ .centrify("both"); }
 	}
 
 	.aqua{ background-color: #18F9F9 !important; }
