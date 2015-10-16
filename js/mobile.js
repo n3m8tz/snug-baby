@@ -512,8 +512,10 @@
 			(function(_table){
 				var id = "#"+_entryId;
 
+				/*
 				if ( SnugBabies.get(event[1].Person).AVATAR.TYPE === 1)
 					$(_table).find(id).find("td.table_avatar").children().css("border", "thin solid #3B1D8F");
+				*/
 
 				/*
 				$(_table)
@@ -1883,7 +1885,6 @@
 		});
 
 		document.currentActivity = "FEED";
-		document.defaultImageChosenOnCreate = false;
 		
 		$(".datepicker").pickadate({  
 			today: '',
@@ -1945,7 +1946,6 @@
  		 $(".new_avatar_panel_mobile").on("change", "input[type=file]", function (){
 			handleFiles(this.files);
 			document.isUploadedAvatar = true; 
-			$("#new_person_avatar_mobile").addClass("round-image");
 		});
 
 		$(".btn-block").on("click", function(e){ e.preventDefault(); });
@@ -2050,11 +2050,8 @@
 					name = $babyblock.text(),
 					chosen_avatar = $babyblock.siblings('img').attr('src');
 				
-				if (document.defaultImageChosenOnCreate){
-					document.defaultImageChosenOnCreate = false;
-					$("#person_avatar_mobile").attr("src", chosen_avatar);
-				}else 
-					$("#person_avatar_mobile").addClass("round-image").attr("src", chosen_avatar);
+				
+				$("#person_avatar_mobile").attr("src", chosen_avatar);
 			
 				$("#person_nickname_mobile").prop('disabled', false).val(name);
 				$("#person_nickname_mobile").siblings("label").addClass('active');
@@ -2283,15 +2280,12 @@
 		date = date[0] + ", " + date[1] + " " + date[2] + ", " + date[3];
 
 		$("#person_nickname_mobile").val(nickname).trigger("change");
-		$("#person_avatar_mobile").addClass("round-image").attr('src', avatar);
+		$("#person_avatar_mobile").attr('src', avatar);
 		$("#date_mobile").val(date).trigger("change");
 		$("#time_mobile").val(time).trigger("change");	
 		$("#amount_mobile").val(amount).trigger("change");
 		$("#duration_mobile").val(duration).trigger("change");
 		$("#notes_input_mobile").val(notes).trigger("change");
-
-		if ( SnugBabies.get(nickname.toUpperCase()).AVATAR.TYPE == 2 ) 
-			$("#person_avatar_mobile").addClass("round-image")
 
 		$("#posted_results_table_mobile").fadeOut(250, function(){
 			$("#add_action_table_mobile").fadeIn(250);
@@ -2381,7 +2375,7 @@
 
 	function resetCreateBabyWindowParams(){
 		$("#new_person_nickname_mobile").val("").trigger("change");
-		$("#new_person_avatar_mobile").removeClass("round-image").attr('src', 'images/avatar_girl.png');
+		$("#new_person_avatar_mobile").attr('src', 'images/avatar_girl.png');
 		$("#birthday_input_mobile").val("").trigger("change");
 	}
 
@@ -2392,7 +2386,7 @@
 		$("#notes_input_mobile").val("").trigger("change");
 		$("#amount_mobile").val("").trigger("change");
 		$('#select_activity_mobile').material_select();
-		$('#person_avatar_mobile').removeClass('round-image').attr('src', 'images/avatar_girl.png');
+		$('#person_avatar_mobile').attr('src', 'images/avatar_girl.png');
 	}
 
 	function onClick_ApplyEventBtnMobile(){	
@@ -2511,7 +2505,7 @@
 						$("#actions_logo").html("Select avatar");
 						document.selectBabyWindow.addBaby(babyName, avatar, true);
 						document.selectBabyWindow.markAsTemporary(babyName);
-						document.defaultImageChosenOnCreate = true;
+						
 						var self = $(this);
 						setTimeout(function(){
 							self.animate({scrollTop: self.height() });
