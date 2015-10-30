@@ -60,7 +60,6 @@ var SelectBabyWindow = (function(){
 
 	function SelectBabyWindow(initStruct){
 
-		var babiesCount = 0;
 		var temporaryBabies = new Array();
 		var windowId = "select_baby_table_mobile";
 		var selectBabyRadioPrefix = "select-baby-radio";
@@ -68,6 +67,7 @@ var SelectBabyWindow = (function(){
 		var createBabyButtonClass = "create_baby_button_mobile";
 
 		var snugBabies = new Array();
+		var babiesContainer = new Array();
 
 		if (initStruct !== undefined){
 			windowId = (typeof initStruct.id !== "undefined") ? initStruct.id : windowId;
@@ -84,12 +84,13 @@ var SelectBabyWindow = (function(){
 		}
 
 		this.getBabiesCount = function(){
-			return babiesCount;
+			return babiesContainer.length;
 		}
 
 		this.addBaby = function(_name, _avatarSrc, _animateShow){
-			addBabyBlock({ name: _name,  avatarSrc: _avatarSrc },  babiesCount, _animateShow, windowId, selectBabyRadioPrefix);
-			babiesCount++;
+			var infoAboutBaby = { name: _name,  avatarSrc: _avatarSrc };
+			addBabyBlock(infoAboutBaby,  babiesContainer.length, _animateShow, windowId, selectBabyRadioPrefix);
+			babiesContainer.push( infoAboutBaby );
 		}
 
 		this.markAsTemporary = function(_name){
@@ -114,9 +115,10 @@ var SelectBabyWindow = (function(){
 		this.addBabies = function(_snugBabies){
 			if(!_snugBabies) return;
 
-			_snugBabies.forEach(function(baby, index){
-				addBabyBlock({ name: baby[1].NAME,  avatarSrc: baby[1].AVATAR.VALUE },  index, false, windowId, selectBabyRadioPrefix);
-				babiesCount++;
+			_snugBabies.forEach(function(baby){
+				var infoAboutBaby = { name: baby[1].NAME,  avatarSrc: baby[1].AVATAR.VALUE };
+				addBabyBlock(infoAboutBaby,  babiesContainer.length, false, windowId, selectBabyRadioPrefix);
+				babiesContainer.push( infoAboutBaby );
 			});
 
 			snugBabies = _snugBabies;
@@ -124,7 +126,7 @@ var SelectBabyWindow = (function(){
 		
 		this.removeFromTemporaries = function(baby){
 			var index = temporaryBabies.indexOf(baby.toUpperCase());
-			if(index != -1)
+			if(index > -1)
 				temporaryBabies.splice(index, 1);
 		}
 
@@ -187,43 +189,49 @@ var SelectBabyWindow = (function(){
 			if(!_snugBabies) return;
 
 			snugBabies = _snugBabies;
-			var imageGridBlocks = this.value.getElementsByClassName('image-grid-block');
 
-			if(imageGridBlocks.length < snugBabies.length){
-				var isBabyAdded = false;
-				snugBabies.forEach(function(baby){
-					if(!isBabyAdded){
-						var isFoundIdentical = false;
-						for(var i = 0; i < imageGridBlocks.length; i++){
-							var babyName = imageGridBlocks[i].getAttribute("data-baby-name");
-							if( babyName == baby[0] ){
-								isFoundIdentical = true;
-								break;
-							}
-						}
-						if( !isFoundIdentical){
-							addBabyBlock({ name: baby[1].NAME,  avatarSrc: baby[1].AVATAR.VALUE },  babiesCount, false, windowId, selectBabyRadioPrefix);
-							babiesCount++;
-							isBabyAdded = true;
+			var idAddition = false,
+				isDeletion = false,
+				cSnugBabies = snugBabies,
+				cBabiesContainer = babiesContainer;
+
+			if(cBabiesContainer.length < snugBabies.length){
+				isAddition = true;
+				// Swap ( cBabiesContainer, cSnugBabies )
+				var temp = cBabiesContainer;
+				cBabiesContainer = cSnugBabies;
+				cSnugBabies = temp;
+				//--
+			}else if(cBabiesContainer.length > snugBabies.length)
+				isDeletion = true;
+
+			for(var i = 0; i < cBabiesContainer.length; i++){
+				var isFoundIdentical = false;
+
+				for(var j = 0; j < cSnugBabies.length; j++)
+					if(!isFoundIdentical){
+						var babyName = cBabiesContainer[i].name;
+						if( babyName == cSnugBabies[j][0]){
+							isFoundIdentical = true;
+							break;
 						}
 					}
-				});
-			}else if(imageGridBlocks.length > snugBabies.length)
-				for(var i = 0; i < imageGridBlocks.length; i++){
-					var isFoundIdentical = false;
-					var babyName = imageGridBlocks[i].getAttribute("data-baby-name");
-					snugBabies.forEach(function(baby){
-						if( !isFoundIdentical && babyName == baby[0])
-							isFoundIdentical = true;
-					});
-
-					if(!isFoundIdentical){
-						removeElement( this.value.querySelector( "[data-baby-name = '" + babyName + "']" ) );
-						babiesCount--;
-						break;
-					} 
+				if(!isFoundIdentical){
+					var infoAboutBaby = { name: cBabiesContainer[i][1].NAME,  avatarSrc: cBabiesContainer[i][1].AVATAR.VALUE };
+					if(isAddition){
+						addBabyBlock(infoAboutBaby,  babiesContainer.length, false, windowId, selectBabyRadioPrefix);
+						babiesContainer.push(infoAboutBaby);
+					}else if(isDeletion){
+						var babyIndex = babiesContainer.indexOf(infoAboutBaby);
+						if(babyIndex > -1){
+							removeElement( this.value.querySelector( "[data-baby-name = '" + infoAboutBaby.name + "']" ) );
+							babiesContainer.splice(babyIndex, 1);
+						}
+					}
 				}
+			}
 		}
+				
 
 	}
 
