@@ -1967,6 +1967,23 @@
 			blur:  function(){ if ($(this).val().length == 0) $(".notes_panel_mobile").find("i.material-icons:contains('edit')").removeClass("icon--highlighted"); }
 		});
 
+		$("#delete_action_mobile").on("click", function(){ 
+			var answer = confirm("Do you really want to delete this action?");
+			if (!answer) return;
+
+			try{
+				var timestamp =  $("#add_action_table_mobile").data("timestamp");
+				if(timestamp !== undefined){
+					SnugEvents.delete(timestamp.toString());
+					console.log("U removed "+ timestamp);
+					alert("Action " + timestamp + " has been successfully deleted.");
+					goToMainPage();
+				}	
+			}catch(e){ 
+				console.log(e.name + ": " + e.message);
+			}	
+		});
+
 		$("#birthday_input_mobile").on({
 			change: function(){
 				var $icon = $(".birthday_panel_mobile").find("i.material-icons:contains('cake')");
@@ -2094,20 +2111,10 @@
 					});
 					
 					console.log("U removed "+ name);
-
+					alert("Baby " + name + " has been successfully deleted.");
 				}catch(e){ 
 					console.log(e.name + ": " + e.message);
 				}	
-
-				$("#actions_logo").html("Actions");
-				$("#search_button_mobile").css("display", "block");
-				$("#hamburger-button > div").removeClass("to-X");
-
-				document.removeBabyWindow.fadeOut(250, function(){
-					$("#posted_results_table_mobile").fadeIn(250);
-				});
-
-				$("#add_event_button_mobile").fadeIn(800);
 			}
 		});
 	}
@@ -2163,12 +2170,14 @@
 		$("#apply_event_button_mobile").off("click");
 		$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
 
+		$("#add_action_table_mobile").data("timestamp", "");
+		$(".trash_panel_mobile").hide();
 		$('.avatar_panel_mobile').find('input[data-activates][readonly]').val("Choose baby");
 		$('.activity_panel_mobile').find('input[data-activates][readonly]').val("Choose action");
 		$("#actions_logo").html("Actions");
 		$("#apply_event_button_mobile").css("display", "none");
 		$("#search_button_mobile").css("display", "block");
-
+		$(".trash_panel_mobile").hide();
 		$("#add_action_table_mobile").fadeOut(250, function(){
 			$("#posted_results_table_mobile").fadeIn(250);
 		});
@@ -2212,7 +2221,7 @@
 
 		$("#apply_event_button_mobile").css("display", "block");
 		$("#search_button_mobile").css("display", "none");
-
+		$(".trash_panel_mobile").hide();
 		$("#hamburger-button > div").addClass("to-X");
 
 		$("#posted_results_table_mobile").fadeOut(250, function(){
@@ -2222,6 +2231,26 @@
 		$("#add_event_button_mobile").fadeOut(800);
 	}
 
+	function goToMainPage(){
+		$("#hamburger-button > div").removeClass("to-X");
+		$("#actions_logo").html("Actions");
+		$(".trash_panel_mobile").hide();
+		$("#add_action_table_mobile").data("timestamp", "");
+		$("#apply_event_button_mobile").css("display", "none");
+		$("#search_button_mobile").css("display", "block");
+
+		$("#add_action_table_mobile").fadeOut(250, function(){
+			$("#posted_results_table_mobile").fadeIn(250);
+		});
+		
+		$("#add_event_button_mobile").fadeIn(800);
+		
+		$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
+		$(".clickable-disabled").on("click", onClick_OpenPhotoBtnMobile);
+		$("#apply_event_button_mobile").off("click", onClick_SaveModifiedEventBtnMobile);
+		$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
+	}
+
 	function onClick_OpenModifyWindowMobile(){
 		
 		resetCreateActionWindowParams();
@@ -2229,7 +2258,8 @@
 		$("#add_event_button_mobile").fadeOut(800);
 		var search = $('#search_area_mobile');
 		if ( search.is(":visible") ) search.slideUp();
-		$("#actions_logo").html("Modify action");
+		$("#actions_logo").html("Edit action");
+		$(".trash_panel_mobile").show();
 		$("#search_button_mobile").css("display", "none");
 		$("#apply_event_button_mobile").css("display", "block");
 		$("#hamburger-button > div").addClass("to-X");				
@@ -2238,17 +2268,19 @@
 		$("#person_avatar_mobile").off("click", onClick_OpenPhotoBtnMobile);
 		$(".clickable-disabled").off("click", onClick_OpenPhotoBtnMobile);
 
-		var collabEvent, collabBaby, $handle, nickname, avatar, amount, notes, duration, time, timeForConvertion;
-		$handle =  $(this).parent();
+		var collabEvent, collabBaby, nickname, avatar, amount, notes, duration, time, timeForConvertion;
+		var $parent =  $(this).parent();
 		
-		time = $handle.find('.table_feed_time').html();
-		timeForConvertion = $handle.attr('id').replace('_','');
-		$handle = $handle.parents("table:first");
+		time = $parent.find('.table_feed_time').html();
+		timeForConvertion = $parent.attr('id').replace('_','');
+		
+		var $handle = $parent.parents("table:first");
 
 		//restore timestamp so that it includes both date and time;
 		var timestamp = parseInt( $handle.attr("id").replace('_',''), 10);
 		timestamp += (new SnugBabyDayTime()).convertTimeToMilliseconds(timeForConvertion, "UNIX-LIKE") / 1000;
-		
+		$("#add_action_table_mobile").data("timestamp", timestamp);
+
 		try{
 			collabEvent = SnugEvents.get(timestamp.toString());
 			collabBaby = SnugBabies.get(collabEvent.Person);
@@ -2342,22 +2374,7 @@
 				current_baby.setSubmitTime( glSubmitTime );
 				var single_event = current_baby.submit();
 
-				$("#hamburger-button > div").removeClass("to-X");
-				$("#actions_logo").html("Actions");
-
-				$("#apply_event_button_mobile").css("display", "none");
-				$("#search_button_mobile").css("display", "block");
-
-				$("#add_action_table_mobile").fadeOut(250, function(){
-					$("#posted_results_table_mobile").fadeIn(250);
-				});
-				
-				$("#add_event_button_mobile").fadeIn(800);
-				
-				$("#person_avatar_mobile").on("click", onClick_OpenPhotoBtnMobile);
-				$(".clickable-disabled").on("click", onClick_OpenPhotoBtnMobile);
-				$("#apply_event_button_mobile").off("click", onClick_SaveModifiedEventBtnMobile);
-				$("#apply_event_button_mobile").on("click", onClick_ApplyEventBtnMobile);
+				goToMainPage();
 
 			}catch(e){ console.log("Event not found."); }
 
