@@ -72,7 +72,7 @@ var Table = (function(){
 			currentEntry.value = _entryValue;
 			currentEntry.value.getElementsByClassName("table_avatar")[0].innerHTML = "<img src='" + _avatar + "' />";
 			currentEntry.value.getElementsByClassName("table_baby_name")[0].innerHTML = _name;
-			currentEntry.value.getElementsByClassName("table_baby_activity")[0].innerHTML = "<img src='" + _activity + "' />";
+			currentEntry.value.getElementsByClassName("table_baby_activity")[0].innerHTML = "<img src='" + _activity.img + "' data-type='" + _activity.type +"' />";
 			currentEntry.value.getElementsByClassName("table_feed_time")[0].innerHTML = _time;
 			currentEntry.value.getElementsByClassName("table_notes")[0].innerHTML = _notes;
 		}

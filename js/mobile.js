@@ -103,11 +103,10 @@
 					case "FOOD":					 	
 						var amount = _notes.AMOUNT;
 						var duration = _notes.DURATION;
-						var type = _notes.TYPE;
 						if (typeof _notes.value == "undefined")
-							_notes.value = (amount !== undefined && duration === undefined) ? amount + "ml via " + type:
-										(amount === undefined && duration !== undefined) ? duration + "min via " + type:
-										(amount !== undefined && duration !== undefined) ? amount + "ml for " +duration + "min via " + type: "";
+							_notes.value = (amount !== undefined && duration === undefined) ? amount + "ml":
+										(amount === undefined && duration !== undefined) ? duration + "min":
+										(amount !== undefined && duration !== undefined) ? amount + "ml for " + duration + "min" : "";
 					break;
 
 					case "DIAPER":
@@ -150,13 +149,12 @@
 			var current = new Object();
 			var notes = this.getNotes();
 			var activityImg = this.activityImg;
-			current.activity = (function(type){
 
+			current.activity = (function(type){
 				var _ = $.extend(true, {}, SnugActivities.get(type));		//deep copying of a Google Drive CollaborativeMap object
 				switch(type){
 					case "FEED":
 					case "FOOD":
-						_.TYPE = notes.TYPE;
 						_.AMOUNT = notes.AMOUNT;
 						_.DURATION = notes.DURATION; 
 						break;
@@ -171,6 +169,7 @@
 				}
 				_.NOTES = notes.value;
 				_.IMAGE = activityImg;
+				_.TYPE  = type;
 				return _;
 			})(this.activity.toUpperCase());
 
@@ -396,7 +395,10 @@
 
 		var timestamp = event[0];
 		var avatar = SnugBabies.get(event[1].Person).AVATAR.VALUE;
-		var activity = event[1].Activity.IMAGE;
+		var activity = { 
+				img : event[1].Activity.IMAGE,
+				type : event[1].Activity.TYPE != undefined ? event[1].Activity.TYPE : ""
+		};
 		var name = SnugBabies.get(event[1].Person).NAME;
 		var notes = event[1].Activity.NOTES;
 
@@ -1110,28 +1112,25 @@
 				if (food_amount !== ""	&&	food_duration !== "")
 					notes = {
 						"AMOUNT": food_amount,
-						"DURATION": food_duration,
-						"TYPE": "Bottle"				//disabled for now, set to "Bottle" by default
+						"DURATION": food_duration		
 					}
 				if (food_amount !== ""	&& 	food_duration === "")
 					notes = {
 						"AMOUNT": food_amount,
-						"DURATION": undefined,
-						"TYPE": "Bottle"				//disabled for now, set to "Bottle" by default
+						"DURATION": undefined			
 					}
 
 				if (food_amount === ""	&& 	food_duration !== "")
 					notes = {
 						"AMOUNT": undefined,
-						"DURATION": food_duration,
-						"TYPE": "Bottle"				//disabled for now, set to "Bottle" by default
+						"DURATION": food_duration		
 					};
 				break;
 
 			case "DIAPER":
 				var diaperType = $("#diaper_content").find(".subactivity_diaper.selected").attr("data-diaper-type");
 				notes = {
-					"STOOL": (diaperType === "peed") ?  "Peed" : "Pooped" 
+					"STOOL": (diaperType === "peed") ?  "Peed" : "Pooped"
 				};
 				break;
 		}
@@ -1542,21 +1541,30 @@
 		if(query == null)
 			query = "";
 		query = $.trim( query );												// eliminating whitespaces in the begining and in the end of $query
-		query = query.toLowerCase();											// translate letters to lower case
+		query = query.toUpperCase();											// translate letters to lower case
 
-		var querySelector = (currentDeviceType == DeviceType.MOBILE) ? "#posted_results_table_mobile > section" : "#posted_results_table > section";
+		var querySelector  = (currentDeviceType == DeviceType.MOBILE) ? "#posted_results_table_mobile > section" : "#posted_results_table > section";
+		var $search_scope  = $(querySelector),
+			$tables 	   = $search_scope.find("table"),
+			$entries       = $search_scope.find("tr"),
+			emptyCharacter = ' ';
 
-		var $search_scope = $(querySelector);
-		var $listOfNames = $search_scope.find("td.table_baby_name");
-
-		$tables = $search_scope.find("table");
 		$tables.show();
-		
-		$listOfNames.each(function(index){
-			if( $(this).html().toLowerCase().indexOf(query) == -1)
-				$(this).parent().hide();
+
+		var queries = query.split(' ');
+
+		$entries.each(function(index){
+			var name = $(this).find("td.table_baby_name").html().toUpperCase();
+			var actions = $(this).find("td.table_baby_activity").find("img").data("type").toUpperCase();
+			var notes = $(this).find("td.table_notes").html().toUpperCase();
+			var occurrenceRate = 0;
+			for(var i in queries)
+				if( name.indexOf(queries[i]) > -1 || actions.indexOf(queries[i]) > -1 || notes.indexOf(queries[i]) > -1)
+						occurrenceRate++;
+			if(occurrenceRate == queries.length)
+				$(this).show();
 			else
-				$(this).parent().show();
+				$(this).hide();
 		});
 
 		//normalizing
@@ -1572,13 +1580,10 @@
 
 			var hiddenTableCount = $search_scope.children("table:hidden").length;
 			var TableCount = $search_scope.children("table").length;
-			
 			var newContent = hiddenTableCount == TableCount ? "No relevant results were found...": "";
-
 			changePseudoElem(querySelector + ":after", {
 						content: "'" + newContent + "'"
 			});
-			
 		}
 
 		normalize_results();
@@ -1869,7 +1874,7 @@
 			e.stopPropagation();
 			e.preventDefault();
 
-			$("#actions_logo").html("Remove baby");
+			$("#actions_logo").html("Delete baby");
 			$("#search_button_mobile").css("display", "none");
 			$("#hamburger-button > div").addClass("to-X");
 
@@ -2215,7 +2220,10 @@
 		$datepicker.val(dateStringified).trigger("change");
 
 		var search = $('#search_area_mobile');
-		if ( search.is(":visible") ) search.slideUp();
+		if ( search.is(":visible") ) {
+			search.find('input').val("").change();
+			search.slideUp();
+		}
 
 		$("#actions_logo").html("Add action");
 
@@ -2257,7 +2265,10 @@
 
 		$("#add_event_button_mobile").fadeOut(800);
 		var search = $('#search_area_mobile');
-		if ( search.is(":visible") ) search.slideUp();
+		if ( search.is(":visible") ) {
+			search.find('input').val("").change();
+			search.slideUp();
+		}
 		$("#actions_logo").html("Edit action");
 		$(".trash_panel_mobile").show();
 		$("#search_button_mobile").css("display", "none");
@@ -2341,7 +2352,6 @@
 						activityImg = $(".activity_panel_mobile").find(".illustration > img").attr("src");
 						notes = {
 							"AMOUNT": $("#amount_mobile").val(),
-							"TYPE": "Bottle",
 							"value": $("#notes_input_mobile").val()
 						};
 					break;
@@ -2440,7 +2450,6 @@
 						activityImg = $(".activity_panel_mobile").find(".illustration > img").attr("src");
 						notes = {
 							"AMOUNT": $("#amount_mobile").val(),
-							"TYPE": "Bottle",
 							"value": $("#notes_input_mobile").val()
 						};
 					break;
@@ -2532,9 +2541,13 @@
 
 	function onClick_SearchBtnMobile(){
 		var search = $('#search_area_mobile');
-		search.is(":visible") ? search.slideUp() : search.slideDown(function(){
-			search.find('input').focus();
-		});
+		if( search.is(":visible")){
+			search.find('input').val("").change();
+			search.slideUp();
+		}else
+			search.slideDown(function(){
+				search.find('input').focus();
+			});
 		return false;
 	}
 

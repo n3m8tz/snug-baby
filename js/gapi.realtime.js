@@ -135,9 +135,9 @@
 
 				/* in case of value deletion */
 				if (newValue === null && oldValue !== null){
+					NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE  });
 					NormalizeWindow({ window: BabyTrackWindows.CHOOSE_EXISTED_PERSON });
 					NormalizeWindow({ window: BabyTrackWindows.REMOVE_EXISTED_PERSON });
-					NormalizeWindow({ window: BabyTrackWindows.POSTED_RESULTS_TABLE  });
 					console.log("Property " + property + " was successfully removed!");
 				}
 
