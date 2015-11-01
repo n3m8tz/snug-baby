@@ -1862,10 +1862,14 @@
 
 	function loadLogicForMobile(){
 
-		var href = document.location.href;
-		var hashIndex = href.indexOf("#");
-		var nohashHref = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
-		$(".logout").attr("href", "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=" + nohashHref);
+		$(".logout").click(function(){
+			$('<iframe src="https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout" style="display: none"></iframe>').appendTo(document.body);
+			var href = document.location.href;
+			var hashIndex = href.indexOf("#");
+			var nohashHref = hashIndex !== -1 ? href.substring(0, hashIndex) : href;
+			document.location.href = nohashHref;
+		});
+
 		$(".button-collapse").sideNav();
 		
 		$("#posted_results_table_mobile").on("click", ".table_data_modify", onClick_OpenModifyWindowMobile);
